@@ -209,6 +209,7 @@ void ViaGateseq::auxFallingEdgeCallback() {
 
 void ViaGateseq::buttonPressedCallback() {
 
+	sequencer.skipClock = 0;
 	sequencer.aCounter = 0;
 	sequencer.bCounter = 0;
 
