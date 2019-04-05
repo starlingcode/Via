@@ -226,13 +226,13 @@ public:
 
 class PllController {
 
-	uint32_t pllCounter;
-	int32_t lastMultiplier;
-	int32_t lastYIndex;
+	uint32_t pllCounter = 0;
+	int32_t lastMultiplier = 1;
+	int32_t lastYIndex = 0;
 
 	int32_t lastRatioX = 1;
 	int32_t ratioXTransitionPoint = 0;
-	int32_t ratioXStable = 0;
+	int32_t ratioXStable = 1;
 
 	int32_t ratioXHysterisis(int32_t thisRatioX, int32_t control) {
 
@@ -251,7 +251,7 @@ class PllController {
 
 	int32_t lastRatioY = 1;
 	int32_t ratioYTransitionPoint = 0;
-	int32_t ratioYStable = 0;
+	int32_t ratioYStable = 1;
 
 	int32_t ratioYHysterisis(int32_t control, int32_t shiftAmount) {
 
@@ -274,7 +274,7 @@ public:
 
 	uint32_t virtualTimer;
 
-	uint32_t periodCount = 100000;
+	uint32_t periodCount = 48000;
 	int32_t pllNudge = 0;
 	buffer nudgeBuffer;
 	int32_t nudgeSum = 0;

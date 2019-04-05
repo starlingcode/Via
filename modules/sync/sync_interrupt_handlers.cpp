@@ -1,5 +1,6 @@
 #include "sync.hpp"
 
+
 const int32_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, phaseModPWM_3, phaseModPWM_4, phaseModPWM_5, phaseModPWM_6, phaseModPWM_7, phaseModPWM_8, phaseModPWM_9, phaseModPWM_10, phaseModPWM_11, phaseModPWM_12, phaseModPWM_13, phaseModPWM_14, phaseModPWM_15, phaseModPWM_16, phaseModPWM_17, phaseModPWM_18, phaseModPWM_19, phaseModPWM_20, phaseModPWM_21, phaseModPWM_22, phaseModPWM_23, phaseModPWM_24, phaseModPWM_25, phaseModPWM_26, phaseModPWM_27, phaseModPWM_28, phaseModPWM_29, phaseModPWM_30, phaseModPWM_31, phaseModPWM_32};
 
 void ViaSync::mainRisingEdgeCallback(void) {
@@ -69,7 +70,7 @@ void ViaSync::auxFallingEdgeCallback(void) {
 
 void ViaSync::buttonPressedCallback(void) {
 
-	if (pllController.tapTempo) {
+	if (pllController.tapTempo != 0) {
 		// store the length of the last period
 		// average against the current length
 
@@ -87,14 +88,14 @@ void ViaSync::buttonPressedCallback(void) {
 		pllController.virtualTimer = 0;
 #endif
 
-		writeBuffer(&tapStore, tap);
 		tapSum += tap - readBuffer(&tapStore, 3);
+		writeBuffer(&tapStore, tap);
 
 		pllController.periodCount = tapSum >> 2;
 
 		lastTap = tap;
 
-		pllController.doPLL();
+		// pllController.doPLL();
 		pllController.generateFrequency();
 
 		// should these be initialized to point to the same address?

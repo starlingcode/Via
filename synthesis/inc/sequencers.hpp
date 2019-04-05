@@ -55,7 +55,7 @@ public:
 
 	uint32_t offset = 0;
 
-	uint32_t periodCount;
+	uint32_t periodCount = 48000;
 	uint32_t clockOn;
 	uint32_t multiplier = 1;
 	uint32_t divider = 1;

@@ -143,6 +143,10 @@ void PllController::generateFrequency(void) {
 
 #ifdef BUILD_VIRTUAL
 
+	if (periodCount == 0) {
+		periodCount = 1;
+	}
+
 	uint64_t incrementCalc = ((uint64_t)intMultiplier << 16) | (fracMultiplier >> 16);
 	incrementCalc = ((uint64_t)(incrementCalc + pllNudge)) / (periodCount * 8);
 	increment = incrementCalc;
