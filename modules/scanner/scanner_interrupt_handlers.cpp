@@ -59,7 +59,7 @@ void ViaScanner::halfTransferCallback(void) {
 		#endif
 		#ifdef BUILD_VIRTUAL
 
-		ledCOutput = GET_ALOGIC_VIRTUAL_MASK(outputs.logicA[0]) - 1;
+		setLEDC(GET_ALOGIC_VIRTUAL_MASK(outputs.logicA[0]) - 1);
 
 		#endif
 
@@ -107,20 +107,11 @@ void ViaScanner::transferCompleteCallback(void) {
 		#endif
 		#ifdef BUILD_VIRTUAL
 
-		ledCOutput = GET_ALOGIC_VIRTUAL_MASK(outputs.logicA[0]) - 1;
+		setLEDC(GET_ALOGIC_VIRTUAL_MASK(outputs.logicA[0]) - 1);
 		
 		#endif
 
 	}
-
-//	scanner.xInput += 32767;
-//	scanner.yInput += 32767;
-//
-//	scanner.xInput &= 0xFFF0;
-//	scanner.yInput &= 0xFFF0;
-//
-//	scanner.xInput -= 32767;
-//	scanner.yInput -= 32767;
 
 	scanner.hardSync = inputs.trigInput;
 	inputs.trigInput = 1;
