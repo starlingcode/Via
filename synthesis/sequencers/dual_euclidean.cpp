@@ -53,39 +53,28 @@ void DualEuclidean::updateLogicOutput(void) {
 #define __XOR 2
 #define __NOR 3
 
+
 	switch (auxLogicMode) {
-	case __OR:
-		if (aOutput || bOutput) {
-			logicOutput = 1;
-		} else {
-			logicOutput = 0;
-		}
-		break;
 	case __AND:
-		if (aOutput && bOutput) {
-			logicOutput = 1;
-		} else {
-			logicOutput = 0;
-		}
+		logicOutput = (aOutput && bOutput);
+		break;
+	case __OR:
+		logicOutput = (aOutput || bOutput);
 		break;
 	case __XOR:
-		if (aOutput ^ bOutput) {
-			logicOutput = 1;
-		} else {
-			logicOutput = 0;
-		}
+		logicOutput = (aOutput ^ bOutput);
 		break;
 	case __NOR:
-		// nand instead?
-		if (!aOutput && !bOutput) {
-			logicOutput = 1;
-		} else {
-			logicOutput = 0;
-		}
+		logicOutput = (!aOutput && !bOutput);
 		break;
 	}
 
-	logicOutput &= virtualGateHigh;
+	// ??? (I think this is ok)
+	if (clockOn) {
+		logicOutput &= virtualGateHigh;
+	} else {
+		logicOutput &= mainGateHigh;
+	}
 
 }
 
@@ -126,15 +115,21 @@ void DualEuclidean::parseControls(ViaControls * controls,
 
 	if (modulateMultiplier) {
 
+		int32_t multIndex;
+
 		if (cv2Sample >= 2048) {
-			multiplier = (fix16_lerp(controls->knob2Value, 4095,
+			multIndex = (fix16_lerp(controls->knob2Value, 4095,
 					(cv2Sample - 2048) << 5)) >> 9;
 		} else {
-			multiplier = (fix16_lerp(0, controls->knob2Value,
+			multIndex = (fix16_lerp(0, controls->knob2Value,
 					cv2Sample << 5)) >> 9;
 		}
 		//0-7 -> 1-8
-		multiplier = multipliers[multiplier];
+		multiplier = multipliers[multIndex];
+		// ???
+		multReset = multiplierResets[multIndex];
+
+		perStepReset = perStepResets[multIndex];
 
 	} else if (shuffleOn) {
 
@@ -177,9 +172,16 @@ void DualEuclidean::processMainRisingEdge(void) {
 
 	advanceSequencerB();
 
+	mainGateHigh = 1;
+
 	if (skipClock & clockOn) {
 		skipClock = 0;
+		// ???
+		multiplierCount -= multiplierCount * perStepReset;
 	} else {
+		// ???
+		multiplierCount = 0;
+
 #ifdef BUILD_VIRTUAL
 	periodCount = virtualTimer1Count;
 	virtualTimer1Count = 0;
@@ -197,14 +199,12 @@ void DualEuclidean::processMainRisingEdge(void) {
 #ifdef BUILD_F373
 	periodCount = TIM5->CNT;
 	TIM5->CNT = 0;
+	if (!clockOn || TIM2->CNT > (periodCount >> 8)) {
 
-	if (!clockOn || TIM2->CNT > (clockPeriod >> 1)) {
-
-		TIM2->PSC = divider-1;
 		TIM17->CR1 &= ~TIM_CR1_CEN;
 		TIM17->CNT = 0;
 
-		TIM2->CNT = 0;
+		TIM2->CNT = 1;
 		TIM2->EGR = TIM_EGR_UG;
 		shuffledStep = 1;
 	}
@@ -212,7 +212,10 @@ void DualEuclidean::processMainRisingEdge(void) {
 	skipClock = 1;
 
 	}
-	updateLogicOutput();
+	// ???
+	if (clockOn) {
+		updateLogicOutput();
+	}
 #endif
 
 	// update the simple sequencer sample and hold control
@@ -237,7 +240,10 @@ void DualEuclidean::processInternalRisingEdge(void) {
 
 	// update the complex sequencer, s&h, gates, leds
 	advanceSequencerA();
-	updateLogicOutput();
+	// ???
+	if (multiplierCount < multReset) {
+		updateLogicOutput();
+	}
 
 	if (sampleA) {
 		shASignal = (!aOutput);
@@ -291,7 +297,10 @@ void DualEuclidean::processMainFallingEdge(void) {
 //	}
 
 	bOutput = 0;
-	updateLogicOutput();
+	mainGateHigh = 0;
+	if (!clockOn) {
+		updateLogicOutput();
+	}
 
 }
 
@@ -303,7 +312,11 @@ void DualEuclidean::processInternalFallingEdge(void) {
 	virtualGateHigh = 0;
 	aOutput = 0;
 	shASignal = sampleA;
-	updateLogicOutput();
+	if (clockOn) {
+		updateLogicOutput();
+	}
+	// ???
+	multiplierCount += 2;
 
 
 	// disable the gate timer

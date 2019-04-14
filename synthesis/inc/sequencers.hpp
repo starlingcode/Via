@@ -56,24 +56,31 @@ public:
 	uint32_t offset = 0;
 
 	uint32_t periodCount = 48000;
-	uint32_t clockOn;
+	uint32_t clockOn = 0;
 	uint32_t multiplier = 1;
+	uint32_t multReset = 0;
 	uint32_t divider = 1;
-	uint32_t clockPeriod;
-	uint32_t shuffleOn;
+	uint32_t perStepReset = 0;
+	uint32_t clockPeriod = 0;
+	uint32_t skipA;
+	uint32_t shuffleOn = 0;
 	uint32_t shuffle = 32767;
 	uint32_t shuffleDelay = 0;
 	uint32_t shuffledStep = 0;
 	uint32_t skipClock = 0;
-	uint32_t modulateMultiplier;
-	uint32_t virtualGateHigh;
-	uint32_t processSeq1;
+	uint32_t modulateMultiplier = 0;
+	uint32_t multiplierCount = 0;
+	uint32_t virtualGateHigh = 0;
+	uint32_t mainGateHigh = 0;
+	uint32_t processSeq1 = 0;
 
 	int32_t cv1Offset = 0;
 	int32_t cv2Offset = 0;
 	int32_t cv3Offset = 0;
 
 	int32_t multipliers[8] = {1, 2, 3, 4, 6, 8, 12, 16};
+	int32_t multiplierResets[8] = {0, 0, 6, 4, 6, 8, 12, 16};
+	int32_t perStepResets[8] = {0, 0, 0, 1, 1, 1, 1, 1};
 
 	// "inputs"
 	uint32_t aCounter = 0;

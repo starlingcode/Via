@@ -76,6 +76,8 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 #endif
 		sequencer.clockOn = 0;
 		sequencer.modulateMultiplier = 0;
+		sequencer.perStepReset = 0;
+		sequencer.multReset = 2;
 		sequencer.multiplier = 1;
 		sequencer.shuffleOn = 0;
 		sequencer.shuffle = 0;
@@ -90,6 +92,8 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 #endif
 		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 0;
+		sequencer.perStepReset = 0;
+		sequencer.multReset = 6;
 		sequencer.multiplier = 3;
 		sequencer.shuffleOn = 0;
 		sequencer.shuffle = 0;
@@ -104,6 +108,8 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 #endif
 		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 0;
+		sequencer.perStepReset = 1;
+		sequencer.multReset = 4;
 		sequencer.multiplier = 4;
 		sequencer.shuffleOn = 1;
 		sequencer.shuffle = 0;
@@ -118,6 +124,7 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 #endif
 		sequencer.clockOn = 1;
 		sequencer.modulateMultiplier = 1;
+		sequencer.perStepReset = 1;
 		sequencer.offset = 0;
 		sequencer.shuffleOn = 0;
 		sequencer.shuffle = 0;

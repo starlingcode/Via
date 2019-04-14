@@ -48,9 +48,66 @@ private:
 	int32_t xOffset = 0;
 	int32_t yOffset = 0;
 
+//	uint32_t noisyZIndex = 0;
+//	uint32_t lastZIndex = 0;
+//
+//	void scannerZHysterisis(void) {
+//		if (zIndex != lastZIndex) {
+//			if (zIndex > lastZIndex && zIndex > noisyZIndex) {
+//				noisyZIndex = lastZIndex;
+//				lastZIndex = zIndex;
+//			} else if (zIndex < lastZIndex && zIndex < noisyZIndex) {
+//				noisyZIndex = lastZIndex;
+//				lastZIndex = zIndex;
+//			} else {
+//				zIndex = lastZIndex;
+//			}
+//		}
+//	}
+
+	int32_t lastXValue = 1;
+	int32_t xValueTransitionSample = 0;
+	int32_t xValueOutputStable = 0;
+
+	inline int32_t xValueHysterisis(int32_t thisValue, int32_t sample) {
+
+		if (xValueOutputStable) {
+			xValueOutputStable = ((lastXValue - thisValue) == 0);
+			xValueTransitionSample = sample;
+			lastXValue = thisValue;
+			return thisValue;
+		} else {
+			xValueOutputStable = (abs(sample - xValueTransitionSample) > 1);
+			lastXValue = xValueOutputStable ? thisValue : lastXValue;
+			return lastXValue;
+		}
+
+	}
+
+	int32_t lastYValue = 1;
+	int32_t yValueTransitionSample = 0;
+	int32_t yValueOutputStable = 0;
+
+	inline int32_t yValueHysterisis(int32_t thisValue, int32_t sample) {
+
+		if (yValueOutputStable) {
+			yValueOutputStable = ((lastYValue - thisValue) == 0);
+			yValueTransitionSample = sample;
+			lastYValue = thisValue;
+			return thisValue;
+		} else {
+			yValueOutputStable = (abs(sample - yValueTransitionSample) > 1);
+			lastYValue = yValueOutputStable ? thisValue : lastYValue;
+			return lastYValue;
+		}
+
+	}
+
+
 	int32_t lastDeltaXState = 1;
 	int32_t deltaXTransitionSample = 0;
 	int32_t deltaXOutputStable = 0;
+	int32_t deltaXRising = 0;
 
 	inline int32_t deltaXHysterisis(int32_t thisDeltaState, int32_t sample) {
 
@@ -58,7 +115,7 @@ private:
 			deltaXOutputStable = ((lastDeltaXState - thisDeltaState) == 0);
 			deltaXTransitionSample = sample;
 			lastDeltaXState = thisDeltaState;
-			return thisDeltaState ^ xReversed;
+			return thisDeltaState;
 		} else {
 			deltaXOutputStable = (abs(sample - deltaXTransitionSample) > 1);
 			lastDeltaXState = deltaXOutputStable ? thisDeltaState : lastDeltaXState;
@@ -70,6 +127,7 @@ private:
 	int32_t lastDeltaYState = 1;
 	int32_t deltaYTransitionSample = 0;
 	int32_t deltaYOutputStable = 0;
+	int32_t deltaYRising = 0;
 
 	inline int32_t deltaYHysterisis(int32_t thisDeltaState, int32_t sample) {
 
@@ -86,40 +144,26 @@ private:
 
 	}
 
-	int32_t lastHemisphereXState = 1;
-	int32_t hemisphereXTransitionSample = 0;
-	int32_t hemisphereXOutputStable = 0;
+	int32_t xHemisphere = 0;
 
-	inline int32_t hemisphereXHysterisis(int32_t thisHemisphereState, int32_t sample) {
+	inline void hemisphereXHysterisis(uint32_t xValue) {
 
-		if (hemisphereXOutputStable) {
-			hemisphereXOutputStable = ((lastHemisphereXState - thisHemisphereState) == 0);
-			hemisphereXTransitionSample = sample;
-			lastHemisphereXState = thisHemisphereState;
-			return thisHemisphereState;
+		if (xHemisphere) {
+			xHemisphere = (xValue > (1 << 14) - 256);
 		} else {
-			hemisphereXOutputStable = (abs(sample - hemisphereXTransitionSample) > 1);
-			lastHemisphereXState = hemisphereXOutputStable ? thisHemisphereState : lastHemisphereXState;
-			return lastHemisphereXState;
+			xHemisphere = (xValue > (1 << 14) + 256);
 		}
 
 	}
 
-	int32_t lastHemisphereYState = 1;
-	int32_t hemisphereYTransitionSample = 0;
-	int32_t hemisphereYOutputStable = 0;
+	int32_t yHemisphere = 0;
 
-	inline int32_t hemisphereYHysterisis(int32_t thisHemisphereState, int32_t sample) {
+	inline void hemisphereYHysterisis(uint32_t yValue) {
 
-		if (hemisphereYOutputStable) {
-			hemisphereYOutputStable = ((lastHemisphereYState - thisHemisphereState) == 0);
-			hemisphereYTransitionSample = sample;
-			lastHemisphereYState = thisHemisphereState;
-			return thisHemisphereState;
+		if (yHemisphere) {
+			yHemisphere = (yValue > (1 << 14) - 256);
 		} else {
-			hemisphereYOutputStable = (abs(sample - hemisphereYTransitionSample) > 1);
-			lastHemisphereYState = hemisphereYOutputStable ? thisHemisphereState : lastHemisphereYState;
-			return lastHemisphereYState;
+			yHemisphere = (yValue > (1 << 14) + 256);
 		}
 
 	}
@@ -147,8 +191,8 @@ public:
 	uint32_t syncMode = 0;
 	uint32_t xTableSize = 0;
 	uint32_t yTableSize = 0;
-	uint32_t xInterpolateOn = 1;
-	uint32_t yInterpolateOn = 1;
+	uint32_t xInterpolateOff = 0;
+	uint32_t yInterpolateOff = 0;
 
 	int32_t * locationBlend;
 	int32_t * altitude;

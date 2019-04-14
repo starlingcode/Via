@@ -16,18 +16,16 @@ void ThreeAxisScanner::parseControls(ViaControls * controls) {
 	int32_t zKnobCV = controls->knob1Value - 2200 + controls->cv1Value;
 	zIndex = __USAT(zKnobCV, 12) << 6;
 
+//	scannerXHysterisis();
+//	scannerYHysterisis();
+//	scannerZHysterisis();
+
 }
 
 void ThreeAxisScanner::scanSetup() {
 
 	int32_t xIncrement = (xInput - lastXInput) * reverse;
 	int32_t yIncrement = (yInput - lastYInput) * reverse;
-
-	xReversed = (xIncrement == 0) ? lastXReversed : (uint32_t) xIncrement >> 31;
-	yReversed = (yIncrement == 0) ? lastYReversed : (uint32_t) yIncrement >> 31;
-
-	lastXReversed = xReversed;
-	lastYReversed = yReversed;
 
 	if (int32_abs(xIncrement) > 512 || int32_abs(yIncrement) > 512) {
 		oversample = 1;
@@ -61,6 +59,12 @@ void ThreeAxisScanner::scanSetup() {
 	// store
 	lastXIndex = xIndex;
 	lastYIndex = yIndex;
+
+	xReversed = (xIncrement == 0) ? lastXReversed : (uint32_t) xIncrement >> 31;
+	yReversed = (yIncrement == 0) ? lastYReversed : (uint32_t) yIncrement >> 31;
+
+	lastXReversed = xReversed;
+	lastYReversed = yReversed;
 
 }
 
@@ -100,8 +104,8 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 
 	uint32_t writeIndex = 0;
 
-	int32_t xDelta;
-	int32_t yDelta;
+	int32_t xDelta = 0;
+	int32_t yDelta = 0;
 
 	int32_t xSample;
 	int32_t ySample;
@@ -119,11 +123,26 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 	int32_t yIndexAtLogic;
 
 	if (oversample == 0) {
-
-		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) xTable, &xDelta, xInterpolateOn);
-		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) yTable, &yDelta, yInterpolateOn);
+		if (!xInterpolateOff) {
+			xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
+				(uint32_t *) xTable, &xDelta, xInterpolateOff);
+		} else {
+			phaseFrac = xIndexBuffer[writeIndex] >> 16;
+			morphFrac = zIndex & 0xFFFF;
+			leftSample = fast_15_16_lerp_prediff(xTableRead[phaseFrac], morphFrac);
+			xSample = xValueHysterisis(leftSample, phaseFrac);
+			xDelta = fast_15_16_lerp_prediff(xTableRead[phaseFrac + 1], morphFrac) - leftSample;
+		}
+		if (!yInterpolateOff) {
+			ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
+				(uint32_t *) yTable, &yDelta, yInterpolateOff);
+		} else {
+			phaseFrac = yIndexBuffer[writeIndex] >> 16;
+			morphFrac = zIndex & 0xFFFF;
+			leftSample = fast_15_16_lerp_prediff(yTableRead[phaseFrac], morphFrac);
+			ySample = yValueHysterisis(leftSample, phaseFrac);
+			yDelta = fast_15_16_lerp_prediff(yTableRead[phaseFrac + 1], morphFrac) - leftSample;
+		}
 
 		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
 		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
@@ -180,20 +199,18 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 		locationBlend[writeIndex] = (xIndexBuffer[writeIndex] + yIndexBuffer[writeIndex]) >> 14;
 	}
 
-	int32_t xHemisphere = xSample >> 14;
-	int32_t yHemisphere = ySample >> 14;
+	hemisphereXHysterisis(xSample);
+	hemisphereYHysterisis(ySample);
 
-	xSample = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
-	ySample = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
-
-	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31) ^ xReversed;
-	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31) ^ yReversed;
+	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31);
+	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31);
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
 
 	hemisphereBlend = xHemisphere | yHemisphere;
 	deltaBlend = xDelta | yDelta;
+
 
 }
 
@@ -221,10 +238,26 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 
 	if (oversample == 0) {
 
-		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) xTable, &xDelta, xInterpolateOn);
-		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) yTable, &yDelta, yInterpolateOn);
+		if (!xInterpolateOff) {
+			xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
+				(uint32_t *) xTable, &xDelta, xInterpolateOff);
+		} else {
+			phaseFrac = xIndexBuffer[writeIndex] >> 16;
+			morphFrac = zIndex & 0xFFFF;
+			leftSample = fast_15_16_lerp_prediff(xTableRead[phaseFrac], morphFrac);
+			xSample = xValueHysterisis(leftSample, phaseFrac);
+			xDelta = fast_15_16_lerp_prediff(xTableRead[phaseFrac + 1], morphFrac) - leftSample;
+		}
+		if (!yInterpolateOff) {
+			ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
+				(uint32_t *) yTable, &yDelta, yInterpolateOff);
+		} else {
+			phaseFrac = yIndexBuffer[writeIndex] >> 16;
+			morphFrac = zIndex & 0xFFFF;
+			leftSample = fast_15_16_lerp_prediff(yTableRead[phaseFrac], morphFrac);
+			ySample = yValueHysterisis(leftSample, phaseFrac);
+			yDelta = fast_15_16_lerp_prediff(yTableRead[phaseFrac + 1], morphFrac) - leftSample;
+		}
 
 		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
 		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
@@ -282,20 +315,11 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 
 	}
 
-	int32_t xHemisphere = xSample >> 14;
-	int32_t yHemisphere = ySample >> 14;
+	hemisphereXHysterisis(xSample);
+	hemisphereYHysterisis(ySample);
 
-	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
-	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
-
-	// xDelta = (uint32_t) xDelta >> 31;
-	// yDelta = (uint32_t) yDelta >> 31;
-
-	// xDelta ^= xReversed;
-	// yDelta ^= yReversed;
-
-	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31) ^ xReversed;
-	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31) ^ yReversed;
+	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31);
+	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31);
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
@@ -330,10 +354,26 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 
 	if (oversample == 0) {
 
-		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) xTable, &xDelta, xInterpolateOn);
-		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) yTable, &yDelta, yInterpolateOn);
+		if (!xInterpolateOff) {
+			xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
+				(uint32_t *) xTable, &xDelta, xInterpolateOff);
+		} else {
+			phaseFrac = xIndexBuffer[writeIndex] >> 16;
+			morphFrac = zIndex & 0xFFFF;
+			leftSample = fast_15_16_lerp_prediff(xTableRead[phaseFrac], morphFrac);
+			xSample = xValueHysterisis(leftSample, phaseFrac);
+			xDelta = fast_15_16_lerp_prediff(xTableRead[phaseFrac + 1], morphFrac) - leftSample;
+		}
+		if (!yInterpolateOff) {
+			ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
+				(uint32_t *) yTable, &yDelta, yInterpolateOff);
+		} else {
+			phaseFrac = yIndexBuffer[writeIndex] >> 16;
+			morphFrac = zIndex & 0xFFFF;
+			leftSample = fast_15_16_lerp_prediff(yTableRead[phaseFrac], morphFrac);
+			ySample = yValueHysterisis(leftSample, phaseFrac);
+			yDelta = fast_15_16_lerp_prediff(yTableRead[phaseFrac + 1], morphFrac) - leftSample;
+		}
 
 		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
 		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
@@ -392,20 +432,11 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 
 	}
 
-	int32_t xHemisphere = xSample >> 14;
-	int32_t yHemisphere = ySample >> 14;
+	hemisphereXHysterisis(xSample);
+	hemisphereYHysterisis(ySample);
 
-	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
-	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
-
-	// xDelta = (uint32_t) xDelta >> 31;
-	// yDelta = (uint32_t) yDelta >> 31;
-
-	// xDelta ^= xReversed;
-	// yDelta ^= yReversed;
-
-	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31) ^ xReversed;
-	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31) ^ yReversed;
+	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31);
+	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31);
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
@@ -439,10 +470,26 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 
 	if (oversample == 0) {
 
-		xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) xTable, &xDelta, xInterpolateOn);
-		ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
-				(uint32_t *) yTable, &yDelta, yInterpolateOn);
+		if (!xInterpolateOff) {
+			xSample = getSampleQuinticSplineDeltaValue(xIndexBuffer[writeIndex], zIndex,
+				(uint32_t *) xTable, &xDelta, xInterpolateOff);
+		} else {
+			phaseFrac = xIndexBuffer[writeIndex] >> 16;
+			morphFrac = zIndex & 0xFFFF;
+			leftSample = fast_15_16_lerp_prediff(xTableRead[phaseFrac], morphFrac);
+			xSample = xValueHysterisis(leftSample, phaseFrac);
+			xDelta = fast_15_16_lerp_prediff(xTableRead[phaseFrac + 1], morphFrac) - leftSample;
+		}
+		if (!yInterpolateOff) {
+			ySample = getSampleQuinticSplineDeltaValue(yIndexBuffer[writeIndex], zIndex,
+				(uint32_t *) yTable, &yDelta, yInterpolateOff);
+		} else {
+			phaseFrac = yIndexBuffer[writeIndex] >> 16;
+			morphFrac = zIndex & 0xFFFF;
+			leftSample = fast_15_16_lerp_prediff(yTableRead[phaseFrac], morphFrac);
+			ySample = yValueHysterisis(leftSample, phaseFrac);
+			yDelta = fast_15_16_lerp_prediff(yTableRead[phaseFrac + 1], morphFrac) - leftSample;
+		}
 
 		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
 		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
@@ -501,20 +548,11 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 
 	}
 
-	int32_t xHemisphere = xSample >> 14;
-	int32_t yHemisphere = ySample >> 14;
+	hemisphereXHysterisis(xSample);
+	hemisphereYHysterisis(ySample);
 
-	xHemisphere = hemisphereXHysterisis(xHemisphere, xIndexAtLogic);
-	yHemisphere = hemisphereYHysterisis(yHemisphere, yIndexAtLogic);
-
-	// xDelta = (uint32_t) xDelta >> 31;
-	// yDelta = (uint32_t) yDelta >> 31;
-
-	// xDelta ^= xReversed;
-	// yDelta ^= yReversed;
-
-	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31) ^ xReversed;
-	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31) ^ yReversed;
+	xDelta = (xDelta == 0) ? lastDeltaXState : ((uint32_t) xDelta >> 31);
+	yDelta = (yDelta == 0) ? lastDeltaYState : ((uint32_t) yDelta >> 31);
 
 	xDelta = deltaXHysterisis(xDelta, xIndexAtLogic);
 	yDelta = deltaYHysterisis(yDelta, yIndexAtLogic);
