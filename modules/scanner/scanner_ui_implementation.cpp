@@ -60,6 +60,9 @@ void ViaScanner::ViaScannerUI::recallModuleState(void) {
 	this_module.handleButton3ModeChange(this_module.scannerUI.button3Mode);
 	this_module.handleButton4ModeChange(this_module.scannerUI.button4Mode);
 
+	this_module.setLEDB(this_module.scannerUI.button3Mode & 1);
+	this_module.setLEDD(this_module.scannerUI.button3Mode & 2);
+
 }
 
 void ViaScanner::ViaScannerUI::uiSetLEDs(int mode) {

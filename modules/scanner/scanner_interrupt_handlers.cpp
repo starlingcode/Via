@@ -16,12 +16,16 @@ void ViaScanner::mainFallingEdgeCallback(void) {
 
 void ViaScanner::auxRisingEdgeCallback(void) {
 	setSH(1, 1);
-	setLEDA(1);
+	if (runtimeDisplay) {
+		setLEDA(1);
+	}
 	inputs.auxTrigInput = 1;
 }
 void ViaScanner::auxFallingEdgeCallback(void) {
 	setSH(0, 0);
-	setLEDA(0);
+	if (runtimeDisplay) {
+		setLEDA(0);
+	}
 	inputs.auxTrigInput = 0;
 }
 
