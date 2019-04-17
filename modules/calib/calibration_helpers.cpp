@@ -161,58 +161,6 @@ void ViaCalib::cv1TunerExecute(void) {
 		break;
 	}
 
-
-
-//	/// Implement an extra running average of length 256
-//	extraCV1Sum += controls.cv1Value - readLongBuffer(&extraCV1Buffer, 255);
-//	writeLongBuffer(&extraCV1Buffer, controls.cv1Value);
-//	int32_t longerAverage = extraCV1Sum >> 8;
-//
-//	/// Measure the deviation in the unaveraged CV from the average value.
-//	int32_t cv1Change = (int32_t)((4095 - controls.controlRateInputs[0]) - longerAverage);
-//
-//	/// If the CV1 stable flag is not set
-//	if (!cv1Stable) {
-//
-//		/// Take the difference in the average from the last sample.
-//		int32_t averageValueDifferential = longerAverage - lastLongerAverage;
-//
-//		/// If its 0, the average is stable.
-//		if ((averageValueDifferential == 0)) {
-//			/// Set the stable flag.
-//			cv1Stable = 1;
-//			/// Use the current average value to measure the size of the jump module an ideal octave (384)
-//			int32_t error = abs(baseCV1 - longerAverage) % 384;
-//			/// Blank LED A indicating a measurement has been made.
-//			setLEDA(0);
-//			/// If the error is 0, turn on the green LED, otherwise show an undershoot on the blue LED and an overshoot on the red LED.
-//			/// The blue and red error readings get slightly dimmer as the get smaller, with a min value added so even small error is immediately apparent.
-//			if (error == 0) {
-//				setGreenLED(1024);
-//				setRedLED(0);
-//				setBlueLED(0);
-//			} else if (error > 256) {
-//				setBlueLED(((384 - error) << 3) + 300);
-//				setRedLED(0);
-//				setGreenLED(0);
-//			} else if (error < 256) {
-//				setBlueLED(0);
-//				setRedLED((error << 3) + 300);
-//				setGreenLED(0);
-//			}
-//		}
-//	/// If the stable flag is high, look for a CV deviation greater than 300.
-//	} else if ((abs(cv1Change) > 300)) {
-//		/// Set LED A indicating that the CV is unstable and a reading will be made when it stabilizes.
-//		setLEDA(1);
-//		/// Set the stable flag low.
-//		cv1Stable = 0;
-//		/// Store the last average before the change to measure step size.
-//		baseCV1 = lastLongerAverage;
-//	}
-//	/// Store the current average to use on the next tuner execution call.
-//	lastLongerAverage = longerAverage;
-
 }
 
 void ViaCalib::measureCVOffsets(void) {
@@ -264,7 +212,7 @@ void ViaCalib::verifyCV2CV3(void) {
 	/// Heads up! When reading from the CV2 and CV3 DMA array, the first thing you should do is cast to 32 bit int and invert.
 	/// The DMA stream encodes the ADC reading as a 16 bit integer which gets mangled without type casting, input circuit inverts the value.
 	int32_t cv2Sample = -inputs.cv2Samples[0];
-	int32_t cv3Sample = inputs.cv3Samples[0];
+	int32_t cv3Sample = -inputs.cv3Samples[0];
 
 	/// Check if the CVs are significantly above ground. If they are, turn the red LED on for CV2 and the blue LED on for CV3, if they go back to ground, turn the LEDs off.
 	if (cv2Sample > 10000) {
