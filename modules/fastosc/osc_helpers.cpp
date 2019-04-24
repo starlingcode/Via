@@ -5,34 +5,35 @@
  *      Author: willmitchell
  */
 
-#include "template.hpp"
+#include <osc.hpp>
 
 //constexpr int32_t Sine::big_sine[4097];
 
 /// Iterate over the relevant section of the dac output buffers like in renderFixedOutputs().
-void ViaTemplate::renderTestOutputs(int32_t writePosition) {
+void ViaOsc::renderTestOutputs(int32_t writePosition) {
 
 
-	byteBeatExecute(byteBeatCounter);
+	int32_t pmInput = ((int32_t) inputs.cv2Samples[0]);
 
-//	int32_t pmInput = ((int32_t) inputs.cv2Samples[0]);
+	oscillator2.updatePM(pmInput << 11);
 
-//	oscillator.updatePM(fix16_mul(byteBeatResult, controls.knob2 << 4));
+	int32_t fmInput = ((oscillator2.evaluatePM() - 16383)) << 2;
 
-	oscillator.freq = fix16_mul(oscillator.freq, byteBeatResult);
+	fmInput = fix16_mul(fmInput, __USAT((controls.knob3 << 4) - ((int32_t) inputs.cv3Samples[0]), 16));
 
-//	oscillator.updatePM(byteBeatResult);
+//	int32_t fmInput = ((oscillator2.evaluatePM() - 16383)) >> 3;
+//	fmInput = expo.convert(__USAT(2048 + ((fmInput * controls.knob3Value) >> 12), 12)) >> 5;
+
+	oscillator.updatePM(pmInput << 11);
 
 	uint32_t sample;
 
 	int32_t samplesRemaining = TEMPLATE_BUFFER_SIZE;
 
-
-
 	while (samplesRemaining) {
 
 		/// Magic number alert, the sine output is 15 bits so we scale down to 12 bits.
-		sample = oscillator.evaluatePM() >> 3;
+		sample = oscillator.evaluatePMFM(fmInput) >> 3;
 
 		/// Write the 12 bit "inverse" (4095 - sample) of the sine sample to the channel A VCA control.
 		outputs.dac1Samples[writePosition] = 4095 - sample;
@@ -44,8 +45,6 @@ void ViaTemplate::renderTestOutputs(int32_t writePosition) {
 		samplesRemaining --;
 		writePosition ++;
 	}
-
-	setLEDC((byteBeatCounter & (1 << 31)) == 0);
 
 }
 

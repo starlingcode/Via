@@ -1,26 +1,36 @@
-/** \file delay.hpp
- * \brief delay implementation.
+/** \file calib.hpp
+ * \brief Calibration module implementation.
  *
  *  A module implementing a simple testing/calibration helper program that serves as a template.
  */
-#ifndef INC_Delay_HPP_
-#define INC_Delay_HPP_
-
-#include "user_interface.hpp"
-#include <via_platform_binding.hpp>
-#include <signal_processors.hpp>
 
 #ifdef BUILD_F373
 
 /// Macro used to specify the number of samples to per DAC transfer.
-#define DELAY_BUFFER_SIZE 1
+#define OSC_BUFFER_SIZE 32
 
 /// Callback to link to the C code in the STM32 Touch Sense Library.
-void delayTouchLink (void *);
+void oscTouchLink (void *);
+
+#ifndef INC_Calib_HPP_
+#define INC_Calib_HPP_
+
+#include "user_interface.hpp"
+#include <via_platform_binding.hpp>
+#include <oscillators.hpp>
+
+#ifdef BUILD_F373
+
+/// Macro used to specify the number of samples to per DAC transfer.
+#define TEMPLATE_BUFFER_SIZE 32
+
+/// Callback to link to the C code in the STM32 Touch Sense Library.
+void templateTouchLink (void *);
 
 /// Calibration/template module class.
+
 /** A simple self calibration tool that doubles as an introductory template.*/
-class ViaDelay : public ViaModule {
+class ViaOsc : public ViaModule {
 
 public:
 
@@ -31,7 +41,7 @@ public:
 	 * One C++ trick at a time for now.
 	 **/
 
-	class ViaDelayUI: public ViaUI {
+	class ViaOscUI: public ViaUI {
 
 	public:
 
@@ -39,7 +49,7 @@ public:
 		 * Pointer to the outer class to allow access to data and methods.
 		 * See constructor and outer class constructor for details.
 		 */
-		ViaDelay& this_module;
+		ViaOsc& this_module;
 
 
 		//@{
@@ -115,8 +125,8 @@ public:
 		void writeStockPresets(void) override {}
 
 		/// On construction, link the calibTouchLink callback to the STM32 touch sense library.
-		ViaDelayUI(ViaDelay& x): this_module(x) {
-			linkUI((void *) &delayTouchLink, (void *) this);
+		ViaOscUI(ViaOsc& x): this_module(x) {
+			linkUI((void *) &oscTouchLink, (void *) this);
 		}
 
 		//@{
@@ -132,7 +142,7 @@ public:
 	};
 
 	/// An instance of the UI implementation.
-	ViaDelayUI delayUI;
+	ViaOscUI oscUI;
 
 	/// A member that the UI implementation can use to turn the module's runtime display off.
 	int32_t runtimeDisplay = 1;
@@ -142,46 +152,45 @@ public:
 	/// For some reason I have it wrapped like this?
 	/// Perhaps the C code in the hardware executable mangled the namespace? Gotta check.
 	void ui_dispatch(int32_t sig) {
-		this->delayUI.dispatch(sig);
+		this->oscUI.dispatch(sig);
 	};
 
 
 	/*
 	 *
-	 * Processing functions
+	 * State functions
 	 *
 	 */
 
-	void render(int32_t writePosition);
+	/// Fill the dac buffers with fixed outputs.
+	void renderTestOutputs(int32_t writePosition);
 
-	Delay delay;
+	/// Instance of a sine oscillator.
+	Sine oscillator;
+	Sine oscillator2;
+	Sine oscillator3;
 
-	int32_t burstCounter = 0;
-	int32_t lfsrState = 1;
-	void advanceLFSR(void) {
-		lfsrState ^= lfsrState << 13;
-		lfsrState ^= lfsrState << 17;
-		lfsrState ^= lfsrState << 5;
-		lfsrState &= 65535;
+	int32_t * sharedTable;
+
+	void loadTable(void) {
+		sharedTable = (int32_t *) malloc(4095*sizeof(int32_t));
+		for (int i; i < 4096; i++) {
+			sharedTable[i] = oscillator.big_sine[i] | ((oscillator.big_sine[i + 1] - oscillator.big_sine[i]) << 16);
+		}
+		oscillator.tableRead = sharedTable;
+		oscillator2.tableRead = sharedTable;
+		oscillator3.tableRead = sharedTable;
 	}
 
 	/// Instance of the exponential converter class.
-	ExpoConverter revExpo;
-
-	int32_t feedbackModOn = 0;
-	int32_t delayModOn = 1;
-
-	int32_t delayTimeTarget = 0;
-	int32_t slewFactor = 0;
-	int32_t lastTarget = 0;
-	int32_t upsamplesLeft = 0;
+	ExpoConverter expo;
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
-
-		burstCounter = 128;
-
+		oscillator.phase = 0;
+		oscillator2.phase = 0;
+		oscillator3.phase = 0;
 	}
 	void mainFallingEdgeCallback(void) {
 	}
@@ -195,22 +204,16 @@ public:
 	void buttonReleasedCallback(void) {}
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
-		render(0);
+		renderTestOutputs(0);
 	}
 	void transferCompleteCallback(void) {
-		render(DELAY_BUFFER_SIZE);
+		renderTestOutputs(TEMPLATE_BUFFER_SIZE);
 	}
 	void slowConversionCallback(void) {
-		LOGICA_HIGH;
-		upsamplesLeft = 8;
-		controls.updateExtra();
-		int32_t rawControls = 4095 - __USAT(controls.cv1Value - 2048 + controls.knob1Value, 12);
-		lastTarget = delayTimeTarget;
-		delayTimeTarget = revExpo.convert(rawControls);
-		delayTimeTarget = fix16_mul(delayTimeTarget, 160000);
-		slewFactor = (delayTimeTarget - lastTarget) >> 3;
-		LOGICA_LOW;
-
+		controls.update();
+		oscillator.freq = fix16_mul(expo.convert((controls.knob1Value * 3) >> 2) >> 3,
+				expo.convert(controls.cv1Value) >> 2);
+		oscillator2.freq = (oscillator.freq * 8) / (16 - (controls.knob2 >> 8));
 	}
 	void auxTimer1InterruptCallback(void) {
 
@@ -220,28 +223,30 @@ public:
 	}
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
-	ViaDelay() : delayUI(*this) {
+	ViaOsc() : oscUI(*this) {
 
 		/// Link the module GPIO registers.
 		initializeAuxOutputs();
 
 		/// Initialize the input stream buffers.
-		inputs.init(DELAY_BUFFER_SIZE);
+		inputs.init(TEMPLATE_BUFFER_SIZE);
 		/// Initialize the output stream buffers.
-		outputs.init(DELAY_BUFFER_SIZE);
+		outputs.init(TEMPLATE_BUFFER_SIZE);
 		/// Set the data members that will be used to determine DMA stream initialization in the hardware executable.
-		outputBufferSize = DELAY_BUFFER_SIZE;
+		outputBufferSize = TEMPLATE_BUFFER_SIZE;
 		inputBufferSize = 1;
 
-		delay.init();
+		loadTable();
 
 		/// Call the UI initialization that needs to happen after outer class construction.
-		delayUI.initialize();
+		oscUI.initialize();
 
 
 	}
 
 };
+
+#endif
 
 #endif
 

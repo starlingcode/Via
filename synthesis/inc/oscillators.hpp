@@ -136,6 +136,13 @@ public:
 		return fast_15_16_lerp_prediff(tableRead[index], frac);
 	}
 
+	inline int32_t evaluateSineBeat(int32_t newIndex) {
+		phase = newIndex * freq;
+		int32_t index = phase >> 20;
+		int32_t frac = (phase >> 4) & 0xFFFF;
+		return fast_15_16_lerp_prediff(tableRead[index], frac) >> 3;
+	}
+
 
 };
 
