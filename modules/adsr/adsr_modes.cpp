@@ -21,24 +21,18 @@ void ViaAdsr::handleButton1ModeChange(int32_t mode) {
 
 void ViaAdsr::handleButton2ModeChange(int32_t mode) {
 
-	if (mode == 0) {
-		dSlope = (int32_t *) expoSlope;
-	} else if (mode == 1) {
-		dSlope = (int32_t *) linSlope;
-	} else if (mode ==  2) {
-		dSlope = (int32_t *) logSlope;
-	}
+	cycleTime = mode;
 
 }
 
 void ViaAdsr::handleButton3ModeChange(int32_t mode) {
 
 	if (mode == 0) {
-		rSlope = (int32_t *) expoSlope;
+		dSlope = (int32_t *) expoSlope;
 	} else if (mode == 1) {
-		rSlope = (int32_t *) linSlope;
+		dSlope = (int32_t *) linSlope;
 	} else if (mode ==  2) {
-		rSlope = (int32_t *) logSlope;
+		dSlope = (int32_t *) logSlope;
 	}
 
 }
@@ -51,12 +45,6 @@ void ViaAdsr::handleButton4ModeChange(int32_t mode) {
 
 void ViaAdsr::handleButton5ModeChange(int32_t mode) {
 
-	cycleTime = mode;
-
-}
-
-void ViaAdsr::handleButton6ModeChange(int32_t mode) {
-
 	if (mode == 0) {
 		*assignableLogic = attacking;
 	} else if (mode == 1) {
@@ -65,6 +53,18 @@ void ViaAdsr::handleButton6ModeChange(int32_t mode) {
 		*assignableLogic = sustaining;
 	} else if (mode == 3) {
 		*assignableLogic = releasing;
+	}
+
+}
+
+void ViaAdsr::handleButton6ModeChange(int32_t mode) {
+
+	if (mode == 0) {
+		rSlope = (int32_t *) expoSlope;
+	} else if (mode == 1) {
+		rSlope = (int32_t *) linSlope;
+	} else if (mode ==  2) {
+		rSlope = (int32_t *) logSlope;
 	}
 
 }

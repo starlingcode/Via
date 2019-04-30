@@ -307,10 +307,10 @@ public:
 		void processGateHigh(void) override {
 			module.adsrState = &module.retrigger;
 			module.adsrState->phase = 0;
-			module.adsrState->aLevel = 0;
-			module.adsrState->bLevel = 65535;
-			module.adsrState->aScale = 0;
-			module.adsrState->bScale = 65535;
+			module.adsrState->aLevel = aLevel;
+			module.adsrState->bLevel = bLevel;
+			module.adsrState->aScale = aLevel;
+			module.adsrState->bScale = bLevel;
 			module.decaying = 0;
 			module.attacking = 1;
 		}
@@ -543,6 +543,10 @@ public:
 
 	int32_t shOn = 0;
 
+	int32_t attackTimeSample;
+	int32_t decayTimeSample;
+	int32_t releaseTimeSample;
+
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
@@ -581,6 +585,7 @@ public:
 		render(VIA_ADSR_BUFFER_SIZE);
 	}
 	void slowConversionCallback(void) {
+
 		controls.updateExtra();
 
 		int32_t dMod = (int32_t) inputs.cv2Samples[0];
@@ -592,22 +597,43 @@ public:
 		dMod = expo.convert(dMod) >> 5;
 		rMod = expo.convert(rMod) >> 5;
 
-		int32_t cycleMod = expo.convert(4095 - controls.cv1Value) >> 5;
+		int32_t cycleMod;
 
 		if (cycleTime) {
+			cycleMod = expo.convert(controls.cv1Value) >> 5;
 			dMod = fix16_mul(cycleMod, dMod);
 			rMod = fix16_mul(cycleMod, rMod);
+		} else {
+			cycleMod = expo.convert(4095 - controls.cv1Value) >> 5;
 		}
 
-		adsrState->attackIncrement = fix16_mul(cycleMod,
-				expo.convert(4095 - controls.knob1Value) >> 6);
-		adsrState->decayIncrement = fix16_mul(expo.convert(4095 - controls.knob2Value) >> 6,
-				dMod);
-		adsrState->releaseIncrement = fix16_mul(expo.convert(4095 - controls.knob3Value) >> 6,
-				rMod);
+		adsrState->attackIncrement = __USAT(fix16_mul(cycleMod,
+				expo.convert(4095 - controls.knob1Value) >> 6), 25);
+		adsrState->decayIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob2Value) >> 6,
+				dMod), 25);
+		adsrState->releaseIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob3Value) >> 6,
+				rMod), 25);
 		setRedLED(adsrState->bLevel * runtimeDisplay);
 		setBlueLED(adsrState->aLevel * runtimeDisplay);
 		setGreenLED((adsrState->aLevel + adsrState->bLevel) * cycleTime * runtimeDisplay);
+
+		if (shOn & attacking) {
+			adsrState->attackIncrement = attackTimeSample;
+		} else {
+			attackTimeSample = adsrState->attackIncrement;
+		}
+		if (shOn & decaying) {
+			adsrState->decayIncrement = decayTimeSample;
+		} else {
+			decayTimeSample = adsrState->decayIncrement;
+		}
+		if (shOn & releasing) {
+			adsrState->releaseIncrement = releaseTimeSample;
+		} else {
+			releaseTimeSample = adsrState->releaseIncrement;
+		}
+
+
 	}
 	void auxTimer1InterruptCallback(void) {
 
@@ -617,11 +643,11 @@ public:
 	}
 
 	int32_t numButton1Modes = 3;
-	int32_t numButton2Modes = 3;
+	int32_t numButton2Modes = 2;
 	int32_t numButton3Modes = 3;
 	int32_t numButton4Modes = 2;
-	int32_t numButton5Modes = 2;
-	int32_t numButton6Modes = 4;
+	int32_t numButton5Modes = 4;
+	int32_t numButton6Modes = 3;
 
 	void handleButton1ModeChange(int32_t);
 	void handleButton2ModeChange(int32_t);

@@ -51,7 +51,19 @@ void adsrTouchLink (void * uiVoid) {
 
 void ViaAdsr::ViaAdsrUI::recallModuleState(void) {
 
-	/// Put your code to initialze the module to a given state here
+	button1Mode %= this_module.numButton1Modes;
+	button2Mode %= this_module.numButton2Modes;
+	button3Mode %= this_module.numButton3Modes;
+	button4Mode %= this_module.numButton4Modes;
+	button5Mode %= this_module.numButton5Modes;
+	button6Mode %= this_module.numButton6Modes;
+
+	this_module.handleButton1ModeChange(button1Mode);
+	this_module.handleButton2ModeChange(button1Mode);
+	this_module.handleButton3ModeChange(button1Mode);
+	this_module.handleButton4ModeChange(button1Mode);
+	this_module.handleButton5ModeChange(button1Mode);
+	this_module.handleButton6ModeChange(button1Mode);
 
 }
 
