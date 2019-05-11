@@ -40,7 +40,7 @@ void ViaCalib::renderTestOutputs(int32_t writePosition) {
 		/// At each iteration, increment the sine oscillator.
 		sinePhase += sineFreq;
 		/// Magic number alert, the sine output is 15 bits so we scale down to 12 bits.
-		sample = oscillator.evaluate(sinePhase) >> 3;
+		sample = oscillator.evaluateFromFlash(sinePhase) >> 3;
 
 		/// Write the 12 bit "inverse" (4095 - sample) of the sine sample to the channel A VCA control.
 		outputs.dac1Samples[writePosition] = 4095 - sample;
