@@ -168,7 +168,7 @@ public:
 	public:
 		uint32_t execute(void) override {
 			int32_t modulator = ((t&48>>t%13)&(((t%64==0)?t>>2:t<<2)>>((t%64)/16))&((t%6==0)?(37&t>>11):(11&t<<37))|(t&t>>5)&(t*3<<4)&((t&2048)?((t>>11)/4):(t>>7))-2);
-			outerFM = modulator >> 24;
+			outerFM = modulator;
 			return oscillator1.evaluateSineBeat(modulator);
 		}
 	};
@@ -179,9 +179,10 @@ public:
 		uint32_t execute(void) override {
 			oscillator2.freq = oscillator1.freq >> 1;
 			oscillator3.freq = oscillator1.freq >> 2;
-			int32_t modulator = oscillator3.evaluateSineBeat((((((t%256)?(t>>4):(t<<4))-7))/2)|((t>>63)|(((9-(1^4&(t>>11)))|(t&t%((t%1024==0)?1023:1024))-256|(t&(t-16)>>23)))|((((t%4096==0)?t>>5:t<<3)>>((t%256)/32)|(t*3>>13))/1024)/1));
-			modulator = oscillator2.evaluateSineBeat(modulator);
+			int32_t modulator = (((((t%256)?(t>>4):(t<<4))-7))/2)|((t>>63)|(((9-(1^4&(t>>11)))|(t&t%((t%1024==0)?1023:1024))-256|(t&(t-16)>>23)))|((((t%4096==0)?t>>5:t<<3)>>((t%256)/32)|(t*3>>13))/1024)/1);
 			outerFM = modulator;
+			modulator = oscillator3.evaluateSineBeat(modulator);
+			modulator = oscillator2.evaluateSineBeat(modulator);
 			return oscillator1.evaluateSineBeat(modulator);
 		}
 	};
@@ -192,9 +193,10 @@ public:
 		uint32_t execute(void) override {
 			oscillator2.freq = oscillator1.freq >> 1;
 			oscillator3.freq = oscillator1.freq >> 2;
-			int32_t modulator = oscillator3.evaluateSineBeat(((t%511)^(t&t%255)|(t&t%511)|(t&t%1023)|(t|t%2047)));
+			int32_t modulator = ((t%511)^(t&t%255)|(t&t%511)|(t&t%1023)|(t|t%2047));
+			modulator = oscillator3.evaluateSineBeat(modulator);
 			modulator = oscillator2.evaluateSineBeat(modulator);
-			outerFM = SINE_TO_SIGNED16BIT(modulator);
+			outerFM = modulator;
 			return oscillator1.evaluateSineBeat(outerFM);
 		}
 	};
@@ -218,9 +220,10 @@ public:
 		uint32_t execute(void) override {
 			oscillator2.freq = oscillator1.freq >> 1;
 			oscillator3.freq = oscillator1.freq >> 2;
-			int32_t modulator = oscillator3.evaluateSineBeat(((phaseindex4drums(t)|(t>>(4-(1^7&(t>>14))))|(9015+(t%8192)?((t*9)%4096):t/2)/2)));
-			modulator = oscillator2.evaluateSineBeat(modulator);
+			int32_t modulator = ((phaseindex4drums(t)|(t>>(4-(1^7&(t>>14))))|(9015+(t%8192)?((t*9)%4096):t/2)/2));
 			outerFM = modulator;
+			modulator = oscillator3.evaluateSineBeat(modulator);
+			modulator = oscillator2.evaluateSineBeat(modulator);
 			return oscillator1.evaluateSineBeat(modulator);
 		}
 
@@ -245,6 +248,8 @@ public:
 
 	int32_t * sharedTable;
 
+	// this is goofy, the oscillator class should have a "load prediff fuction" and the pointer should be shared by other instances of the class
+	// i think this is maybe how the static keyword works
 	void initializeOscs(void) {
 		sharedTable = (int32_t *) malloc(4095*sizeof(int32_t));
 		for (int i; i < 4096; i++) {
@@ -274,19 +279,18 @@ public:
 		outputs.dac1Samples[writePosition] = 4095 - outputSample;
 		outputs.dac2Samples[writePosition] = outputSample;
 		outputs.dac3Samples[writePosition] = sineBeat->outerFM << 4;
+		outputs.logicA[0] = GET_ALOGIC_MASK((sineBeat->t & 0x4000) != 0);
 	}
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
-		sineBeat->oscillator1.phase = 0;
-		sineBeat->oscillator2.phase = 0;
-		sineBeat->oscillator3.phase = 0;
+		sineBeat->t = 0;
 	}
 	void mainFallingEdgeCallback(void) {
 	}
 	void auxRisingEdgeCallback(void) {
-		sineBeat->t = 0;
+
 	}
 	void auxFallingEdgeCallback(void) {
 	}
@@ -295,18 +299,22 @@ public:
 	void buttonReleasedCallback(void) {}
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
+		setLogicOut(0, runtimeDisplay);
 		render(0);
 	}
 	void transferCompleteCallback(void) {
+		setLogicOut(0, runtimeDisplay);
 		render(SINEBEAT_BUFFER_SIZE);
 	}
 	void slowConversionCallback(void) {
 		controls.update();
-		sineBeat->oscillator1.freq = fix16_mul(expo.convert((controls.knob1Value * 3) >> 2) >> 3,
-				expo.convert(controls.cv1Value) >> 4);
+		sineBeat->oscillator1.freq = fix16_mul(expo.convert((controls.knob1Value * 3) >> 2) >> 1,
+				expo.convert(controls.cv1Value) >> 2);
 		if (runtimeDisplay) {
 			setBlueLED(4095);
 		}
+		int32_t srMod = inputs.cv2Samples[0];
+		TIM6->ARR = 1440 + controls.knob2Value + (srMod >> 4) + 2048;
 	}
 	void auxTimer1InterruptCallback(void) {
 

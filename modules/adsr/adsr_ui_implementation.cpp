@@ -59,11 +59,11 @@ void ViaAdsr::ViaAdsrUI::recallModuleState(void) {
 	button6Mode %= this_module.numButton6Modes;
 
 	this_module.handleButton1ModeChange(button1Mode);
-	this_module.handleButton2ModeChange(button1Mode);
-	this_module.handleButton3ModeChange(button1Mode);
-	this_module.handleButton4ModeChange(button1Mode);
-	this_module.handleButton5ModeChange(button1Mode);
-	this_module.handleButton6ModeChange(button1Mode);
+	this_module.handleButton2ModeChange(button2Mode);
+	this_module.handleButton3ModeChange(button3Mode);
+	this_module.handleButton4ModeChange(button4Mode);
+	this_module.handleButton5ModeChange(button5Mode);
+	this_module.handleButton6ModeChange(button6Mode);
 
 }
 

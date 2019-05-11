@@ -138,9 +138,12 @@ public:
 
 	inline int32_t evaluateSineBeat(int32_t newIndex) {
 		phase = newIndex * freq;
+		// scale to the wavetable size in 16 bit fixed point
+		// wavetable size is 4096 (12 bits)
 		int32_t index = phase >> 20;
 		int32_t frac = (phase >> 4) & 0xFFFF;
-		return fast_15_16_lerp_prediff(tableRead[index], frac) >> 3;
+		// linear interpolate between 15 bit values and return 12 bit value
+		return fast_15_16_lerp_prediff(tableRead[index], frac) >> 7;
 	}
 
 
