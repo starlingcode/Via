@@ -5,9 +5,9 @@
  *      Author: willmitchell
  */
 
-#include "adsr.hpp"
+#include "atsr.hpp"
 
-void ViaAdsr::handleButton1ModeChange(int32_t mode) {
+void ViaAtsr::handleButton1ModeChange(int32_t mode) {
 
 	if (mode == 0) {
 		aSlope = (int32_t *) expoSlope;
@@ -22,7 +22,7 @@ void ViaAdsr::handleButton1ModeChange(int32_t mode) {
 
 }
 
-void ViaAdsr::handleButton2ModeChange(int32_t mode) {
+void ViaAtsr::handleButton2ModeChange(int32_t mode) {
 
 	if (mode == 0) {
 		dSlope = (int32_t *) expoSlope;
@@ -37,12 +37,12 @@ void ViaAdsr::handleButton2ModeChange(int32_t mode) {
 
 }
 
-void ViaAdsr::handleButton3ModeChange(int32_t mode) {
+void ViaAtsr::handleButton3ModeChange(int32_t mode) {
 
 	if (mode == 0) {
 		assignableLogic = &attacking;
 	} else if (mode == 1) {
-		assignableLogic = &decaying;
+		assignableLogic = &transitioning;
 	} else if (mode == 2) {
 		assignableLogic = &sustaining;
 	} else if (mode == 3) {
@@ -51,19 +51,19 @@ void ViaAdsr::handleButton3ModeChange(int32_t mode) {
 
 }
 
-void ViaAdsr::handleButton4ModeChange(int32_t mode) {
+void ViaAtsr::handleButton4ModeChange(int32_t mode) {
 
 	cycleTime = mode;
 
 }
 
-void ViaAdsr::handleButton5ModeChange(int32_t mode) {
+void ViaAtsr::handleButton5ModeChange(int32_t mode) {
 
 	shOn = mode;
 
 }
 
-void ViaAdsr::handleButton6ModeChange(int32_t mode) {
+void ViaAtsr::handleButton6ModeChange(int32_t mode) {
 
 	if (mode == 0) {
 		rSlope = (int32_t *) expoSlope;

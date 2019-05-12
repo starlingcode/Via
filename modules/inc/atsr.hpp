@@ -4,7 +4,6 @@
  *  A module implementing a simple testing/calibration helper program that serves as a template.
  */
 
-#ifdef BUILD_F373
 
 #ifndef INC_Calib_HPP_
 #define INC_Calib_HPP_
@@ -14,15 +13,15 @@
 #include <oscillators.hpp>
 
 /// Macro used to specify the number of samples to per DAC transfer.
-#define VIA_ADSR_BUFFER_SIZE 32
+#define VIA_ATSR_BUFFER_SIZE 32
 
 /// Callback to link to the C code in the STM32 Touch Sense Library.
-void adsrTouchLink (void *);
+void atsrTouchLink (void *);
 
 /// Calibration/template module class.
 
 /** A simple self calibration tool that doubles as an introductory template.*/
-class ViaAdsr : public ViaModule {
+class ViaAtsr : public ViaModule {
 
 public:
 
@@ -33,7 +32,7 @@ public:
 	 * One C++ trick at a time for now.
 	 **/
 
-	class ViaAdsrUI: public ViaUI {
+	class ViaAtsrUI: public ViaUI {
 
 	public:
 
@@ -41,7 +40,7 @@ public:
 		 * Pointer to the outer class to allow access to data and methods.
 		 * See constructor and outer class constructor for details.
 		 */
-		ViaAdsr& this_module;
+		ViaAtsr& this_module;
 
 
 		//@{
@@ -117,15 +116,15 @@ public:
 		void writeStockPresets(void) override {}
 
 		/// On construction, link the calibTouchLink callback to the STM32 touch sense library.
-		ViaAdsrUI(ViaAdsr& x): this_module(x) {
-			linkUI((void *) &adsrTouchLink, (void *) this);
+		ViaAtsrUI(ViaAtsr& x): this_module(x) {
+			linkUI((void *) &atsrTouchLink, (void *) this);
 		}
 
 
 	};
 
 	/// An instance of the UI implementation.
-	ViaAdsrUI adsrUI;
+	ViaAtsrUI atsrUI;
 
 	/// A member that the UI implementation can use to turn the module's runtime display off.
 	int32_t runtimeDisplay = 1;
@@ -135,7 +134,7 @@ public:
 	/// For some reason I have it wrapped like this?
 	/// Perhaps the C code in the hardware executable mangled the namespace? Gotta check.
 	void ui_dispatch(int32_t sig) {
-		this->adsrUI.dispatch(sig);
+		this->atsrUI.dispatch(sig);
 	};
 
 
@@ -188,12 +187,12 @@ public:
 	/// Fill the dac buffers with fixed outputs.
 	void render(int32_t writePosition);
 
-	class AdsrState {
+	class AtsrState {
 
 	public:
 
 		int32_t attackIncrement = 0;
-		int32_t decayIncrement = 0;
+		int32_t transitionIncrement = 0;
 		int32_t releaseIncrement = 0;
 
 		int32_t aLevel = 0;
@@ -209,13 +208,13 @@ public:
 
 	};
 
-	AdsrState * adsrState;
+	AtsrState * atsrState;
 
-	class Resting: public AdsrState {
+	class Resting: public AtsrState {
 
 	public:
 
-		ViaAdsr& module;
+		ViaAtsr& module;
 
 		void step(void) override {
 			phase = 0;
@@ -223,34 +222,34 @@ public:
 			bLevel = 0;
 		}
 		void processGateHigh(void) override {
-			module.adsrState = &module.attack;
-			module.adsrState->phase = 0;
-			module.adsrState->aLevel = 0;
-			module.adsrState->bLevel = 0;
+			module.atsrState = &module.attack;
+			module.atsrState->phase = 0;
+			module.atsrState->aLevel = 0;
+			module.atsrState->bLevel = 0;
 			module.attacking = 1;
 		}
 
 		/// Define the pointer to the outer class.
-		Resting(ViaAdsr& x): module(x) {}
+		Resting(ViaAtsr& x): module(x) {}
 
 	};
 
-	class Attack: public AdsrState {
+	class Attack: public AtsrState {
 
 	public:
 
-		ViaAdsr& module;
+		ViaAtsr& module;
 
 		void step(void) override {
 			phase += attackIncrement;
 			if (phase >= 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
-				module.adsrState = &module.decay;
-				module.adsrState->phase = 0;
-				module.adsrState->aLevel = 65535;
-				module.adsrState->bLevel = 0;
+				module.atsrState = &module.transition;
+				module.atsrState->phase = 0;
+				module.atsrState->aLevel = 65535;
+				module.atsrState->bLevel = 0;
 				module.attacking = 0;
-				module.decaying = 1;
+				module.transitioning = 1;
 			} else {
 				aLevel = module.evaluateA(phase);
 				bLevel = 0;
@@ -258,35 +257,35 @@ public:
 
 		}
 		void processGateLow(void) override {
-			module.adsrState = &module.releaseFromA;
-			module.adsrState->phase = 0;
-			module.adsrState->aLevel = aLevel;
-			module.adsrState->aScale = aLevel;
-			module.adsrState->bLevel = 0;
+			module.atsrState = &module.releaseFromA;
+			module.atsrState->phase = 0;
+			module.atsrState->aLevel = aLevel;
+			module.atsrState->aScale = aLevel;
+			module.atsrState->bLevel = 0;
 			module.attacking = 0;
 			module.releasing = 1;
 		}
 
 		/// Define the pointer to the outer class.
-		Attack(ViaAdsr& x): module(x) {}
+		Attack(ViaAtsr& x): module(x) {}
 
 	};
 
-	class Decay: public AdsrState {
+	class Transition: public AtsrState {
 
 	public:
 
-		ViaAdsr& module;
+		ViaAtsr& module;
 
 		void step(void) override {
-			phase += decayIncrement;
+			phase += transitionIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
-				module.adsrState = &module.sustain;
-				module.adsrState->phase = 0;
-				module.adsrState->aLevel = 0;
-				module.adsrState->bLevel = 65535;
-				module.decaying = 0;
+				module.atsrState = &module.sustain;
+				module.atsrState->phase = 0;
+				module.atsrState->aLevel = 0;
+				module.atsrState->bLevel = 65535;
+				module.transitioning = 0;
 				module.sustaining = 1;
 			} else {
 				aLevel = module.evaluateD(MAX_PHASE - phase);
@@ -296,37 +295,37 @@ public:
 		}
 
 		void processGateHigh(void) override {
-			module.adsrState = &module.retrigger;
-			module.adsrState->phase = 0;
-			module.adsrState->aLevel = aLevel;
-			module.adsrState->bLevel = bLevel;
-			module.adsrState->aScale = aLevel;
-			module.adsrState->bScale = bLevel;
-			module.decaying = 0;
+			module.atsrState = &module.retrigger;
+			module.atsrState->phase = 0;
+			module.atsrState->aLevel = aLevel;
+			module.atsrState->bLevel = bLevel;
+			module.atsrState->aScale = aLevel;
+			module.atsrState->bScale = bLevel;
+			module.transitioning = 0;
 			module.attacking = 1;
 		}
 
 		void processGateLow(void) override {
-			module.adsrState = &module.releaseFromD;
-			module.adsrState->phase = 0;
-			module.adsrState->aLevel = aLevel;
-			module.adsrState->aScale = aLevel;
-			module.adsrState->bScale = bLevel;
-			module.adsrState->bLevel = bLevel;
-			module.decaying = 0;
+			module.atsrState = &module.releaseFromT;
+			module.atsrState->phase = 0;
+			module.atsrState->aLevel = aLevel;
+			module.atsrState->aScale = aLevel;
+			module.atsrState->bScale = bLevel;
+			module.atsrState->bLevel = bLevel;
+			module.transitioning = 0;
 			module.releasing = 1;
 		}
 
 		/// Define the pointer to the outer class.
-		Decay(ViaAdsr& x): module(x) {}
+		Transition(ViaAtsr& x): module(x) {}
 
 	};
 
-	class Sustain: public AdsrState {
+	class Sustain: public AtsrState {
 
 	public:
 
-		ViaAdsr& module;
+		ViaAtsr& module;
 
 		void step(void) override {
 			aLevel = 0;
@@ -334,44 +333,44 @@ public:
 		}
 
 		void processGateHigh(void) override {
-			module.adsrState = &module.retrigger;
-			module.adsrState->phase = 0;
-			module.adsrState->aLevel = 0;
-			module.adsrState->bLevel = 65535;
-			module.adsrState->aScale = 0;
-			module.adsrState->bScale = 65535;
+			module.atsrState = &module.retrigger;
+			module.atsrState->phase = 0;
+			module.atsrState->aLevel = 0;
+			module.atsrState->bLevel = 65535;
+			module.atsrState->aScale = 0;
+			module.atsrState->bScale = 65535;
 			module.sustaining = 0;
 			module.attacking = 1;
 		}
 
 		void processGateLow(void) override {
-			module.adsrState = &module.releaseFromS;
-			module.adsrState->phase = 0;
-			module.adsrState->aLevel = 0;
-			module.adsrState->bLevel = 65535;
+			module.atsrState = &module.releaseFromS;
+			module.atsrState->phase = 0;
+			module.atsrState->aLevel = 0;
+			module.atsrState->bLevel = 65535;
 			module.sustaining = 0;
 			module.releasing = 1;
 		}
 
 		/// Define the pointer to the outer class.
-		Sustain(ViaAdsr& x): module(x) {}
+		Sustain(ViaAtsr& x): module(x) {}
 
 	};
 
-	class ReleaseFromA: public AdsrState {
+	class ReleaseFromA: public AtsrState {
 
 	public:
 
-		ViaAdsr& module;
+		ViaAtsr& module;
 
 		void step(void) override {
 			phase += releaseIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
-				module.adsrState = &module.resting;
-				module.adsrState->phase = 0;
-				module.adsrState->aLevel = 0;
-				module.adsrState->bLevel = 0;
+				module.atsrState = &module.resting;
+				module.atsrState->phase = 0;
+				module.atsrState->aLevel = 0;
+				module.atsrState->bLevel = 0;
 				module.releasing = 0;
 			} else {
 				aLevel = fix16_mul(aScale, module.evaluateR(MAX_PHASE - phase));
@@ -379,35 +378,35 @@ public:
 			}
 		}
 		void processGateHigh(void) override {
-			module.adsrState = &module.retrigger;
-			module.adsrState->phase = 0;
-			module.adsrState->aLevel = aLevel;
-			module.adsrState->bLevel = 0;
-			module.adsrState->aScale = aLevel;
-			module.adsrState->bScale = 0;
+			module.atsrState = &module.retrigger;
+			module.atsrState->phase = 0;
+			module.atsrState->aLevel = aLevel;
+			module.atsrState->bLevel = 0;
+			module.atsrState->aScale = aLevel;
+			module.atsrState->bScale = 0;
 			module.releasing = 0;
 			module.attacking = 1;
 		}
 
 		/// Define the pointer to the outer class.
-		ReleaseFromA(ViaAdsr& x): module(x) {}
+		ReleaseFromA(ViaAtsr& x): module(x) {}
 
 	};
 
-	class ReleaseFromD: public AdsrState {
+	class ReleaseFromT: public AtsrState {
 
 	public:
 
-		ViaAdsr& module;
+		ViaAtsr& module;
 
 		void step(void) override {
 			phase += releaseIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
-				module.adsrState = &module.resting;
-				module.adsrState->phase = 0;
-				module.adsrState->aLevel = 0;
-				module.adsrState->bLevel = 0;
+				module.atsrState = &module.resting;
+				module.atsrState->phase = 0;
+				module.atsrState->aLevel = 0;
+				module.atsrState->bLevel = 0;
 				module.releasing = 0;
 			} else {
 				aLevel = fix16_mul(aScale, module.evaluateR(MAX_PHASE - phase));
@@ -415,35 +414,35 @@ public:
 			}
 		}
 		void processGateHigh(void) override {
-			module.adsrState = &module.retrigger;
-			module.adsrState->phase = 0;
-			module.adsrState->aLevel = aLevel;
-			module.adsrState->bLevel = bLevel;
-			module.adsrState->aScale = aLevel;
-			module.adsrState->bScale = bLevel;
+			module.atsrState = &module.retrigger;
+			module.atsrState->phase = 0;
+			module.atsrState->aLevel = aLevel;
+			module.atsrState->bLevel = bLevel;
+			module.atsrState->aScale = aLevel;
+			module.atsrState->bScale = bLevel;
 			module.releasing = 0;
 			module.attacking = 1;
 		}
 
 		/// Define the pointer to the outer class.
-		ReleaseFromD(ViaAdsr& x): module(x) {}
+		ReleaseFromT(ViaAtsr& x): module(x) {}
 
 	};
 
-	class ReleaseFromS: public AdsrState {
+	class ReleaseFromS: public AtsrState {
 
 	public:
 
-		ViaAdsr& module;
+		ViaAtsr& module;
 
 		void step(void) override {
 			phase += releaseIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
-				module.adsrState = &module.resting;
-				module.adsrState->phase = 0;
-				module.adsrState->aLevel = 0;
-				module.adsrState->bLevel = 0;
+				module.atsrState = &module.resting;
+				module.atsrState->phase = 0;
+				module.atsrState->aLevel = 0;
+				module.atsrState->bLevel = 0;
 				module.releasing = 0;
 			} else {
 				aLevel = 0;
@@ -451,37 +450,37 @@ public:
 			}
 		}
 		void processGateHigh(void) override {
-			module.adsrState = &module.retrigger;
-			module.adsrState->phase = 0;
-			module.adsrState->aLevel = 0;
-			module.adsrState->bLevel = bLevel;
-			module.adsrState->aScale = 0;
-			module.adsrState->bScale = bLevel;
+			module.atsrState = &module.retrigger;
+			module.atsrState->phase = 0;
+			module.atsrState->aLevel = 0;
+			module.atsrState->bLevel = bLevel;
+			module.atsrState->aScale = 0;
+			module.atsrState->bScale = bLevel;
 			module.releasing = 0;
 			module.attacking = 1;
 		}
 
 		/// Define the pointer to the outer class.
-		ReleaseFromS(ViaAdsr& x): module(x) {}
+		ReleaseFromS(ViaAtsr& x): module(x) {}
 
 	};
 
-	class Retrigger: public AdsrState {
+	class Retrigger: public AtsrState {
 
 	public:
 
-		ViaAdsr& module;
+		ViaAtsr& module;
 
 		void step(void) override {
 			phase += attackIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
-				module.adsrState = &module.decay;
-				module.adsrState->phase = 0;
-				module.adsrState->aLevel = 65535;
-				module.adsrState->bLevel = 0;
+				module.atsrState = &module.transition;
+				module.atsrState->phase = 0;
+				module.atsrState->aLevel = 65535;
+				module.atsrState->bLevel = 0;
 				module.attacking = 0;
-				module.decaying = 1;
+				module.transitioning = 1;
 			} else {
 				int32_t position = module.evaluateA(phase);
 				aLevel = aScale + fix16_mul(65535 - aScale, module.evaluateA(phase));
@@ -489,33 +488,33 @@ public:
 			}
 		}
 		void processGateLow(void) override {
-			module.adsrState = &module.releaseFromD;
-			module.adsrState->phase = 0;
-			module.adsrState->aLevel = aLevel;
-			module.adsrState->aScale = aLevel;
-			module.adsrState->bLevel = bLevel;
-			module.adsrState->bScale = bLevel;
+			module.atsrState = &module.releaseFromT;
+			module.atsrState->phase = 0;
+			module.atsrState->aLevel = aLevel;
+			module.atsrState->aScale = aLevel;
+			module.atsrState->bLevel = bLevel;
+			module.atsrState->bScale = bLevel;
 			module.attacking = 0;
 			module.releasing = 1;
 		}
 
 		/// Define the pointer to the outer class.
-		Retrigger(ViaAdsr& x): module(x) {}
+		Retrigger(ViaAtsr& x): module(x) {}
 
 	};
 
 	Resting resting;
 	Attack attack;
-	Decay decay;
+	Transition transition;
 	Sustain sustain;
 	ReleaseFromS releaseFromS;
 	ReleaseFromA releaseFromA;
-	ReleaseFromD releaseFromD;
+	ReleaseFromT releaseFromT;
 	Retrigger retrigger;
 
 	int32_t releasing = 0;
 	int32_t attacking = 0;
-	int32_t decaying = 0;
+	int32_t transitioning = 0;
 	int32_t sustaining = 0;
 
 	// random module utilities
@@ -534,37 +533,43 @@ public:
 
 	int32_t shOn = 0;
 
-	int32_t attackTimeSample;
-	int32_t decayTimeSample;
-	int32_t releaseTimeSample;
+	int32_t attackTimeSample = 0;
+	int32_t transitionTimeSample = 0;
+	int32_t releaseTimeSample = 0;
+
+	// aux logic min trigger length
+
+	int32_t lastSustain = 0;
+	int32_t auxLogicHold = 0;
+	int32_t auxLogicCounter = 0;
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
-		adsrState->processGateHigh();
+		atsrState->processGateHigh();
 		gateOn = 1;
 	}
 	void mainFallingEdgeCallback(void) {
 		if (!buttonOn) {
-			adsrState->processGateLow();
+			atsrState->processGateLow();
 		}
 		gateOn = 0;
 	}
 	void auxRisingEdgeCallback(void) {
 		if (gateOn | buttonOn) {
-			adsrState->processGateHigh();
+			atsrState->processGateHigh();
 		}
 	}
 	void auxFallingEdgeCallback(void) {
 		// do nothing
 	}
 	void buttonPressedCallback(void) {
-		adsrState->processGateHigh();
+		atsrState->processGateHigh();
 		buttonOn = 1;
 	}
 	void buttonReleasedCallback(void) {
 		if (!gateOn) {
-			adsrState->processGateLow();
+			atsrState->processGateLow();
 		}
 		buttonOn = 0;
 	}
@@ -573,7 +578,7 @@ public:
 		render(0);
 	}
 	void transferCompleteCallback(void) {
-		render(VIA_ADSR_BUFFER_SIZE);
+		render(VIA_ATSR_BUFFER_SIZE);
 	}
 	void slowConversionCallback(void) {
 
@@ -598,30 +603,30 @@ public:
 			cycleMod = expo.convert(4095 - controls.cv1Value) >> 5;
 		}
 
-		adsrState->attackIncrement = __USAT(fix16_mul(cycleMod,
+		atsrState->attackIncrement = __USAT(fix16_mul(cycleMod,
 				expo.convert(4095 - controls.knob1Value) >> 6), 25);
-		adsrState->decayIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob2Value) >> 6,
+		atsrState->transitionIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob2Value) >> 6,
 				dMod), 25);
-		adsrState->releaseIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob3Value) >> 6,
+		atsrState->releaseIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob3Value) >> 6,
 				rMod), 25);
-		setRedLED(adsrState->bLevel * runtimeDisplay);
-		setBlueLED(adsrState->aLevel * runtimeDisplay);
-		setGreenLED((adsrState->aLevel + adsrState->bLevel) * cycleTime * runtimeDisplay);
+		setRedLED(atsrState->bLevel * runtimeDisplay);
+		setBlueLED(atsrState->aLevel * runtimeDisplay);
+		setGreenLED((atsrState->aLevel + atsrState->bLevel) * cycleTime * runtimeDisplay);
 
 		if (shOn & attacking) {
-			adsrState->attackIncrement = attackTimeSample;
+			atsrState->attackIncrement = attackTimeSample;
 		} else {
-			attackTimeSample = adsrState->attackIncrement;
+			attackTimeSample = atsrState->attackIncrement;
 		}
-		if (shOn & decaying) {
-			adsrState->decayIncrement = decayTimeSample;
+		if (shOn & transitioning) {
+			atsrState->transitionIncrement = transitionTimeSample;
 		} else {
-			decayTimeSample = adsrState->decayIncrement;
+			transitionTimeSample = atsrState->transitionIncrement;
 		}
 		if (shOn & releasing) {
-			adsrState->releaseIncrement = releaseTimeSample;
+			atsrState->releaseIncrement = releaseTimeSample;
 		} else {
-			releaseTimeSample = adsrState->releaseIncrement;
+			releaseTimeSample = atsrState->releaseIncrement;
 		}
 
 
@@ -648,30 +653,28 @@ public:
 	void handleButton6ModeChange(int32_t);
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
-	ViaAdsr() : adsrUI(*this), attack(*this), decay(*this), sustain(*this), releaseFromA(*this),
-			releaseFromD(*this), releaseFromS(*this), retrigger(*this), resting(*this) {
+	ViaAtsr() : atsrUI(*this), attack(*this), transition(*this), sustain(*this), releaseFromA(*this),
+			releaseFromT(*this), releaseFromS(*this), retrigger(*this), resting(*this) {
 
 		/// Link the module GPIO registers.
 		initializeAuxOutputs();
 
 		/// Initialize the input stream buffers.
-		inputs.init(VIA_ADSR_BUFFER_SIZE);
+		inputs.init(VIA_ATSR_BUFFER_SIZE);
 		/// Initialize the output stream buffers.
-		outputs.init(VIA_ADSR_BUFFER_SIZE);
+		outputs.init(VIA_ATSR_BUFFER_SIZE);
 		/// Set the data members that will be used to determine DMA stream initialization in the hardware executable.
-		outputBufferSize = VIA_ADSR_BUFFER_SIZE;
+		outputBufferSize = VIA_ATSR_BUFFER_SIZE;
 		inputBufferSize = 1;
 
-		adsrState = &resting;
+		atsrState = &resting;
 
 		/// Call the UI initialization that needs to happen after outer class construction.
-		adsrUI.initialize();
+		atsrUI.initialize();
 
 
 	}
 
 };
-
-#endif
 
 #endif /* INC_Calib_HPP_ */

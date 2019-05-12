@@ -5,29 +5,40 @@
  *      Author: willmitchell
  */
 
-#include <adsr.hpp>
+#include <atsr.hpp>
 
-constexpr int32_t ViaAdsr::expoSlope[4097];
-constexpr int32_t ViaAdsr::logSlope[4097];
-constexpr int32_t ViaAdsr::linSlope[4097];
-constexpr int32_t ViaAdsr::sigmoidSlope[4097];
+constexpr int32_t ViaAtsr::expoSlope[4097];
+constexpr int32_t ViaAtsr::logSlope[4097];
+constexpr int32_t ViaAtsr::linSlope[4097];
+constexpr int32_t ViaAtsr::sigmoidSlope[4097];
 
-void ViaAdsr::render(int32_t writePosition) {
+void ViaAtsr::render(int32_t writePosition) {
 
 	setLogicOut(0, 0);
 
-	adsrState->step();
+	atsrState->step();
 
-	uint32_t aLevel = adsrState->aLevel;
-	uint32_t bLevel = adsrState->bLevel;
+	uint32_t aLevel = atsrState->aLevel;
+	uint32_t bLevel = atsrState->bLevel;
 	int32_t aPulseWidth = (aLevel & 15) >> 1;
 	int32_t bPulseWidth = (bLevel & 15) >> 1;
 	aLevel >>= 4;
 	bLevel >>= 4;
 
 	int32_t loopGate = !releasing & !sustaining;
-	int32_t assignableLogicOut = 2048 - loopGate * 2048;
-	int32_t auxLogic = sustaining;
+	int32_t loopGateOut = 2048 - loopGate * 2048;
+
+	if (sustaining != lastSustain) {
+		auxLogicHold = 1;
+		auxLogicCounter = 0;
+	} else if (auxLogicHold) {
+		auxLogicCounter ++;
+		auxLogicHold = (auxLogicCounter < 7);
+	} else {
+		auxLogicHold = 0;
+	}
+
+	int32_t auxLogic = __USAT(sustaining + auxLogicHold, 1);
 
 	outputs.logicA[0] = GET_ALOGIC_MASK(*assignableLogic);
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(auxLogic);
@@ -44,20 +55,32 @@ void ViaAdsr::render(int32_t writePosition) {
 		setLEDC(*assignableLogic);
 	}
 
-	int32_t samplesRemaining = VIA_ADSR_BUFFER_SIZE;
+#ifdef BUILD_F373
+
+	int32_t samplesRemaining = VIA_ATSR_BUFFER_SIZE;
 	int32_t pwmCounter = 0;
 
 	while (samplesRemaining) {
 
 		outputs.dac1Samples[writePosition] = __USAT(aLevel + (pwmCounter < aPulseWidth), 12);
 		outputs.dac2Samples[writePosition] = __USAT(bLevel + (pwmCounter < bPulseWidth), 12);
-		outputs.dac3Samples[writePosition] = assignableLogicOut;
+		outputs.dac3Samples[writePosition] = loopGateOut;
 
 		pwmCounter ++;
 		pwmCounter &= 7;
 		samplesRemaining --;
 		writePosition ++;
 	}
+
+#endif
+
+#ifdef BUILD_VIRTUAL
+
+	outputs.dac1Samples[0] = atsrState->aLevel >> 1;
+	outputs.dac2Samples[0] = atsrState->bLevel >> 1;
+	outputs.dac3Samples[0] = loopGateOut;
+
+#endif
 
 }
 
