@@ -262,7 +262,7 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 		xIndexAtLogic = xIndexBuffer[writeIndex] >> 16;
 		yIndexAtLogic = yIndexBuffer[writeIndex] >> 16;
 
-		int32_t mainScan = (((xSample - (1<<14)) * (ySample - (1<<14))) >> 17) + 2048; //15 bit fixed point multiply and right shift by 3
+		int32_t mainScan = (((xSample - (16383)) * (ySample - (16383))) >> 17) + 2048; //15 bit fixed point multiply and right shift by 3
 
 		int32_t samplesRemaining = bufferSize;
 
@@ -289,7 +289,7 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 
 			ySample = fast_15_16_bilerp_prediff(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac);
 
-			altitude[writeIndex] = (((xSample - (1<<14)) * (ySample - (1<<14))) >> 17) + 2048;
+			altitude[writeIndex] = (((xSample - (16383)) * (ySample - (16383))) >> 17) + 2048;
 			locationBlend[writeIndex] = ((((xIndexBuffer[writeIndex] >> 13) - 2048) * ((yIndexBuffer[writeIndex] >> 13) - 2048)) >> 12) + 2048;
 
 			writeIndex ++;
@@ -310,7 +310,7 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 
 		ySample = fast_15_16_bilerp_prediff_deltaValue(yTableRead[leftSample], yTableRead[leftSample + 1], morphFrac, phaseFrac, &yDelta);
 
-		altitude[writeIndex] = (((xSample - (1<<14)) * (ySample - (1<<14))) >> 17) + 2048;
+		altitude[writeIndex] = (((xSample - (16383)) * (ySample - (16383))) >> 17) + 2048;
 		locationBlend[writeIndex] = ((((xIndexBuffer[writeIndex] >> 13) - 2048) * ((yIndexBuffer[writeIndex] >> 13) - 2048)) >> 12) + 2048;
 
 	}

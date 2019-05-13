@@ -357,7 +357,7 @@ int32_t MetaController::envReleaseState(void) {
 int32_t MetaController::envRetriggerState(void) {
 
 	// if at b from attack or at b from release
-	if (abs(phaseEvent) == AT_B_FROM_ATTACK) {
+	if (abs(phaseEvent) == AT_B_FROM_RELEASE) {
 
 		incrementArbiter = &MetaController::envReleaseState;
 		return increment2;
