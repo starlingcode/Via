@@ -610,9 +610,9 @@ public:
 				dMod), 25);
 		atsrState->releaseIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob3Value) >> 6,
 				rMod), 25);
-		setRedLED(atsrState->bLevel * runtimeDisplay);
-		setBlueLED(atsrState->aLevel * runtimeDisplay);
-		setGreenLED((atsrState->aLevel + atsrState->bLevel) * cycleTime * runtimeDisplay);
+		setRedLED((atsrState->bLevel >> 4) * runtimeDisplay);
+		setBlueLED((atsrState->aLevel >> 4) * runtimeDisplay);
+		setGreenLED(((atsrState->aLevel + atsrState->bLevel) >> 4) * cycleTime * runtimeDisplay);
 
 		if (cvSH & attacking) {
 			atsrState->attackIncrement = attackTimeSample;
