@@ -532,6 +532,7 @@ public:
 	int32_t * assignableLogic = &attacking;
 
 	int32_t shOn = 0;
+	int32_t cvSH = 1;
 
 	int32_t attackTimeSample = 0;
 	int32_t transitionTimeSample = 0;
@@ -613,17 +614,17 @@ public:
 		setBlueLED(atsrState->aLevel * runtimeDisplay);
 		setGreenLED((atsrState->aLevel + atsrState->bLevel) * cycleTime * runtimeDisplay);
 
-		if (shOn & attacking) {
+		if (cvSH & attacking) {
 			atsrState->attackIncrement = attackTimeSample;
 		} else {
 			attackTimeSample = atsrState->attackIncrement;
 		}
-		if (shOn & transitioning) {
+		if (cvSH & transitioning) {
 			atsrState->transitionIncrement = transitionTimeSample;
 		} else {
 			transitionTimeSample = atsrState->transitionIncrement;
 		}
-		if (shOn & releasing) {
+		if (cvSH & releasing) {
 			atsrState->releaseIncrement = releaseTimeSample;
 		} else {
 			releaseTimeSample = atsrState->releaseIncrement;
