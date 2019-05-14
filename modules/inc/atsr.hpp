@@ -544,6 +544,8 @@ public:
 	int32_t auxLogicHold = 0;
 	int32_t auxLogicCounter = 0;
 
+	int32_t incScale = 65536;
+
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
@@ -613,6 +615,14 @@ public:
 		setRedLED((atsrState->bLevel >> 4) * runtimeDisplay);
 		setBlueLED((atsrState->aLevel >> 4) * runtimeDisplay);
 		setGreenLED(((atsrState->aLevel + atsrState->bLevel) >> 4) * cycleTime * runtimeDisplay);
+
+#ifdef BUILD_VIRTUAL
+
+		atsrState->attackIncrement = fix16_mul(atsrState->attackIncrement, incScale);
+		atsrState->transitionIncrement = fix16_mul(atsrState->transitionIncrement, incScale);
+		atsrState->releaseIncrement = fix16_mul(atsrState->releaseIncrement, incScale);
+
+#endif
 
 		if (cvSH & attacking) {
 			atsrState->attackIncrement = attackTimeSample;
