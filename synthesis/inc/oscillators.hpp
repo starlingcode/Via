@@ -411,6 +411,9 @@ public:
 	int32_t cv1Offset = 0;
 	int32_t cv2Offset = 0;
 
+	// hack
+	int32_t audioBaseIncrementStore = 34894;
+	int32_t drumBaseIncrementStore = 58623;
 	int32_t audioBaseIncrement = 34894;
 	int32_t drumBaseIncrement = 58623;
 

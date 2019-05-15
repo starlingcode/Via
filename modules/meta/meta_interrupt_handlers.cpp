@@ -27,19 +27,29 @@ void ViaMeta::mainRisingEdgeCallback(void) {
 	freqTransient.trigger = 0;
 	morphEnvelope.trigger = 0;
 
-	updateRGB = &ViaMeta::updateRGBBlink;
+	if (presetSequenceMode) {
+		metaUI.loadFromEEPROM(presetSequence[presetSequenceIndex]);
+		if (!presetSequenceEdit) {
+			setLEDs(presetSequenceIndex);
+		}
+		presetSequenceIndex ++;
+		presetSequenceIndex &= 7;
+		metaUI.recallModuleState();
+	} else {
+		updateRGB = &ViaMeta::updateRGBBlink;
 
-	#ifdef BUILD_F373
+		#ifdef BUILD_F373
 
-	TIM17->CR1 |= TIM_CR1_CEN;
+		TIM17->CR1 |= TIM_CR1_CEN;
 
-	#endif
-	#ifdef BUILD_VIRTUAL
+		#endif
+		#ifdef BUILD_VIRTUAL
 
-	blinkTimerEnable = 1;
+		blinkTimerEnable = 1;
 
-	#endif
+		#endif
 
+	}
 
 }
 
@@ -51,7 +61,11 @@ void ViaMeta::mainFallingEdgeCallback(void) {
 
 void ViaMeta::auxRisingEdgeCallback(void) {
 
-	metaController.freeze = 0;
+	if (presetSequenceMode) {
+		presetSequenceIndex = 1;
+	} else {
+		metaController.freeze = 0;
+	}
 
 }
 void ViaMeta::auxFallingEdgeCallback(void)
@@ -62,15 +76,24 @@ void ViaMeta::auxFallingEdgeCallback(void)
 
 void ViaMeta::buttonPressedCallback(void) {
 
-	metaController.triggerSignal = 0;
+	if (presetSequenceMode) {
+		if (presetSequenceEdit) {
+			presetSequenceEdit = 0;
+		} else {
+			presetSequenceEdit = 1;
+			updateRGB = &ViaMeta::updateRGBEdit;
+		}
+	} else {
+		metaController.triggerSignal = 0;
 
-	metaController.gateSignal = 1 * metaController.gateOn;
+		metaController.gateSignal = 1 * metaController.gateOn;
 
-	ampEnvelope.trigger = 0;
-	freqTransient.trigger = 0;
-	morphEnvelope.trigger = 0;
+		ampEnvelope.trigger = 0;
+		freqTransient.trigger = 0;
+		morphEnvelope.trigger = 0;
 
-	this->metaUI.dispatch(EXPAND_SW_ON_SIG);
+		this->metaUI.dispatch(EXPAND_SW_ON_SIG);
+	}
 
 }
 void ViaMeta::buttonReleasedCallback(void) {
@@ -89,7 +112,7 @@ void ViaMeta::ioProcessCallback(void) {
 
 void ViaMeta::halfTransferCallback(void) {
 
-	setLogicOut(0, runtimeDisplay);
+	setLogicOut(0, runtimeDisplay && !presetSequenceMode);
 
 	metaController.generateIncrementsExternal(&inputs);
 	metaController.advancePhaseExternal((uint32_t *) phaseModPWMTables);
@@ -107,7 +130,7 @@ void ViaMeta::halfTransferCallback(void) {
 
 void ViaMeta::transferCompleteCallback(void) {
 
-	setLogicOut(1, runtimeDisplay);
+	setLogicOut(1, runtimeDisplay && !presetSequenceMode);
 
 	metaController.generateIncrementsExternal(&inputs);
 	metaController.advancePhaseExternal((uint32_t *) phaseModPWMTables);
@@ -126,25 +149,32 @@ void ViaMeta::transferCompleteCallback(void) {
 void ViaMeta::slowConversionCallback(void) {
 
 
-	controls.update();
-	metaWavetable.parseControls(&controls);
-	metaController.parseControlsExternal(&controls, &inputs);
-	ampEnvelope.parseControls(&controls, &inputs);
-	freqTransient.attack = __USAT(ampEnvelope.release * freqAttackMultiplier, 19);
-	if (freqTransient.attack < 524287) {
-		freqTransient.attack = 524287;
-	}
-	freqTransient.release = __USAT(ampEnvelope.release * freqReleaseMultiplier - minTransientLength, 15);
-	if (freqTransient.release < 32767) {
-		freqTransient.attack = 32767;
-	}
-	morphEnvelope.release = ampEnvelope.release * morphReleaseMultiplier;
-	if (morphEnvelope.release < morphReleaseClamp) {
-		morphEnvelope.release = morphReleaseClamp;
-	}
-	morphEnvelope.attack = __USAT(ampEnvelope.release * morphAttackMultiplier, 19);
-	if (morphEnvelope.attack < 143360) {
-		morphEnvelope.attack = 200360;
+	controls.updateExtra();
+	if (!presetSequenceEdit) {
+		metaWavetable.parseControls(&controls);
+		metaController.parseControlsExternal(&controls, &inputs);
+		ampEnvelope.parseControls(&controls, &inputs);
+		freqTransient.attack = __USAT(ampEnvelope.release * freqAttackMultiplier, 19);
+		if (freqTransient.attack < 524287) {
+			freqTransient.attack = 524287;
+		}
+		freqTransient.release = __USAT(ampEnvelope.release * freqReleaseMultiplier - minTransientLength, 15);
+		if (freqTransient.release < 32767) {
+			freqTransient.attack = 32767;
+		}
+		morphEnvelope.release = ampEnvelope.release * morphReleaseMultiplier;
+		if (morphEnvelope.release < morphReleaseClamp) {
+			morphEnvelope.release = morphReleaseClamp;
+		}
+		morphEnvelope.attack = __USAT(ampEnvelope.release * morphAttackMultiplier, 19);
+		if (morphEnvelope.attack < 143360) {
+			morphEnvelope.attack = 200360;
+		}
+	} else {
+		presetSequenceEditIndex = controls.knob3Value >> 9;
+		presetSequenceRandom = controls.knob2Value;
+		setLEDs(presetSequenceEditIndex);
+//		presetSequenceBank = controls.knob1Value;
 	}
 
 

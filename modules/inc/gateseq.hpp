@@ -281,9 +281,11 @@ public:
 	int32_t readGateBEvent;
 	//@}
 
+	int32_t userSequence[32];
+
 	/*
 	 *
-	 * Event meta_handlers
+	 * Event handlers
 	 *
 	 */
 

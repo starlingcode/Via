@@ -124,6 +124,8 @@ public:
 		void aux3EnterMenuCallback(void) override;
 		void aux4EnterMenuCallback(void) override;
 
+		void specialMenuCallback(void) override;
+
 		void initialize(void) override;
 
 		void writeStockPresets(void) override;
@@ -356,6 +358,18 @@ public:
 
 	}
 
+	void updateRGBEdit(void) {
+
+		int32_t hue = presetSequence[presetSequenceEditIndex] << 1;
+
+		updateRGBDisplay(hueSpace[hue].r,
+				hueSpace[hue].g,
+				hueSpace[hue].b,
+				1);
+
+	}
+
+
 
 
 	void init(void);
@@ -363,6 +377,14 @@ public:
 	ViaMetaUI metaUI;
 
 	int32_t runtimeDisplay;
+
+	int32_t presetSequenceMode = 0;
+	int32_t presetSequenceEdit = 0;
+	int32_t presetSequenceIndex = 0;
+	int32_t presetSequenceRandom = 0;
+	int32_t presetSequenceEditIndex = 0;
+	int32_t presetSequenceBank = 0;
+	int32_t presetSequence[8] = {1, 2, 3, 4, 5, 6, 1, 2};
 
 	MetaWavetable metaWavetable;
 	MetaController metaController;

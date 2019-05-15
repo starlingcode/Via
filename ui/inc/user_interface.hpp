@@ -147,46 +147,90 @@ public:
 	virtual void button1TapCallback(void) {
 		transition(&ViaUI::defaultMenu);
 	}
-	virtual void button1HoldCallback(void) = 0;
-	virtual void button2TapCallback(void) = 0;
-	virtual void button2HoldCallback(void) = 0;
-	virtual void button3TapCallback(void) = 0;
-	virtual void button3HoldCallback(void) = 0;
-	virtual void button4TapCallback(void) = 0;
-	virtual void button4HoldCallback(void) = 0;
-	virtual void button5TapCallback(void) = 0;
-	virtual void button5HoldCallback(void) = 0;
-	virtual void button6TapCallback(void) = 0;
-	virtual void button6HoldCallback(void) = 0;
+	virtual void button1HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button2TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button2HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button3TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button3HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button4TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button4HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button5TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button5HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button6TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button6HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
 
-	virtual void aux1TapCallback(void) = 0;
-	virtual void aux1HoldCallback(void) = 0;
-	virtual void aux2TapCallback(void) = 0;
-	virtual void aux2HoldCallback(void) = 0;
-	virtual void aux2AltTapCallback(void) = 0;
-	virtual void aux2AltHoldCallback(void) = 0;
-	virtual void aux3TapCallback(void) = 0;
-	virtual void aux3HoldCallback(void) = 0;
-	virtual void aux4TapCallback(void) = 0;
-	virtual void aux4HoldCallback(void) = 0;
+	virtual void aux1TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux1HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux2TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux2HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux2AltTapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux2AltHoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux3TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux3HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux4TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux4HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
 
-	virtual void defaultEnterMenuCallback(void) = 0;
-	virtual void newModeEnterMenuCallback(void) = 0;
-	virtual void newAuxModeEnterMenuCallback(void) = 0;
-	virtual void presetEnterMenuCallback(void) = 0;
+	virtual void defaultEnterMenuCallback(void) {};
+	virtual void newModeEnterMenuCallback(void) {};
+	virtual void newAuxModeEnterMenuCallback(void) {};
+	virtual void presetEnterMenuCallback(void) {};
 
-	virtual void button1EnterMenuCallback(void) = 0;
-	virtual void button2EnterMenuCallback(void) = 0;
-	virtual void button3EnterMenuCallback(void) = 0;
-	virtual void button4EnterMenuCallback(void) = 0;
-	virtual void button5EnterMenuCallback(void) = 0;
-	virtual void button6EnterMenuCallback(void) = 0;
+	virtual void button1EnterMenuCallback(void) {};
+	virtual void button2EnterMenuCallback(void) {};
+	virtual void button3EnterMenuCallback(void) {};
+	virtual void button4EnterMenuCallback(void) {};
+	virtual void button5EnterMenuCallback(void) {};
+	virtual void button6EnterMenuCallback(void) {};
 
-	virtual void aux1EnterMenuCallback(void) = 0;
-	virtual void aux2EnterMenuCallback(void) = 0;
-	virtual void aux2AltEnterMenuCallback(void) = 0;
-	virtual void aux3EnterMenuCallback(void) = 0;
-	virtual void aux4EnterMenuCallback(void) = 0;
+	virtual void aux1EnterMenuCallback(void) {};
+	virtual void aux2EnterMenuCallback(void) {};
+	virtual void aux2AltEnterMenuCallback(void) {};
+	virtual void aux3EnterMenuCallback(void) {};
+	virtual void aux4EnterMenuCallback(void) {};
+
+	virtual void specialMenuCallback(void) {};
 	//@}
 
 	/// Virtual method used in subclasses to access module display drivers.

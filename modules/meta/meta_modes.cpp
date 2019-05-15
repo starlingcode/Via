@@ -272,7 +272,10 @@ void ViaMeta::handleAux4ModeChange(int32_t mode) {
 
 void ViaMeta::initializeDrum(void) {
 
-	updateRGB = &ViaMeta::updateRGBDrum;
+	if (!presetSequenceEdit) {
+		updateRGB = &ViaMeta::updateRGBDrum;
+	}
+	metaController.drumBaseIncrement = metaController.drumBaseIncrementStore;
 	currentRGBBehavior = &ViaMeta::updateRGBDrum;
 
 	metaController.generateIncrements = &MetaController::generateIncrementsDrum;
@@ -294,10 +297,17 @@ void ViaMeta::initializeDrum(void) {
 }
 void ViaMeta::initializeOscillator(void) {
 
-	updateRGB = &ViaMeta::updateRGBOsc;
+	if (!presetSequenceEdit) {
+		updateRGB = &ViaMeta::updateRGBOsc;
+	}
 	currentRGBBehavior = &ViaMeta::updateRGBOsc;
 
-	metaController.parseControls = &MetaController::parseControlsAudio;
+	if (presetSequenceMode) {
+		metaController.parseControls = &MetaController::parseControlsDrum;
+		metaController.drumBaseIncrement = (metaController.drumBaseIncrementStore)*3;
+	} else {
+		metaController.parseControls = &MetaController::parseControlsAudio;
+	}
 	metaController.generateIncrements = &MetaController::generateIncrementsAudio;
 	metaController.advancePhase = &MetaController::advancePhaseOversampled;
 	metaController.fm = inputs.cv2Samples;
@@ -316,7 +326,9 @@ void ViaMeta::initializeOscillator(void) {
 }
 void ViaMeta::initializeEnvelope(void) {
 
-	updateRGB = &ViaMeta::updateRGBSubaudio;
+	if (!presetSequenceEdit) {
+		updateRGB = &ViaMeta::updateRGBSubaudio;
+	}
 	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
 
 	metaController.parseControls = &MetaController::parseControlsEnv;
@@ -337,8 +349,9 @@ void ViaMeta::initializeEnvelope(void) {
 
 }
 void ViaMeta::initializeSimpleLFO(void) {
-
-	updateRGB = &ViaMeta::updateRGBSubaudio;
+	if (!presetSequenceEdit) {
+		updateRGB = &ViaMeta::updateRGBSubaudio;
+	}
 	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
 
 	metaController.parseControls = &MetaController::parseControlsEnv;
@@ -359,8 +372,9 @@ void ViaMeta::initializeSimpleLFO(void) {
 
 }
 void ViaMeta::initializeSequence(void) {
-
-	updateRGB = &ViaMeta::updateRGBSubaudio;
+	if (!presetSequenceEdit) {
+		updateRGB = &ViaMeta::updateRGBSubaudio;
+	}
 	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
 
 	metaController.parseControls = &MetaController::parseControlsSeq;
@@ -382,7 +396,9 @@ void ViaMeta::initializeSequence(void) {
 }
 void ViaMeta::initializeComplexLFO(void) {
 
-	updateRGB = &ViaMeta::updateRGBSubaudio;
+	if (!presetSequenceEdit) {
+		updateRGB = &ViaMeta::updateRGBSubaudio;
+	}
 	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
 
 	metaController.parseControls = &MetaController::parseControlsSeq;

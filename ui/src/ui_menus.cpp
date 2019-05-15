@@ -21,9 +21,9 @@ void ViaUI::button1Menu(int32_t sig) {
 			} else {
 				button1HoldCallback();
 			}
-		} else if ((*button1 == pressedState) && (*button4 == pressedState) &&
+		} else if ((*button3 == pressedState) && (*button4 == pressedState) &&
 				(*button6 == pressedState)) {
-			writeStockPresets();
+			specialMenuCallback();
 		}
 		break;
 	}
@@ -63,6 +63,9 @@ void ViaUI::button3Menu(int32_t sig) {
 			} else {
 				button3HoldCallback();
 			}
+		}  else if ((*button4 == pressedState) && (*button1 == pressedState) &&
+				(*button6 == pressedState)) {
+			specialMenuCallback();
 		}
 		break;
 
@@ -88,7 +91,7 @@ void ViaUI::button4Menu(int32_t sig) {
 			}
 		}  else if ((*button3 == pressedState) && (*button1 == pressedState) &&
 				(*button6 == pressedState)) {
-			writeStockPresets();
+			specialMenuCallback();
 		}
 		break;
 
@@ -147,7 +150,7 @@ void ViaUI::button6Menu(int32_t sig) {
 			}
 		}  else if ((*button3 == pressedState) && (*button4 == pressedState) &&
 				(*button1 == pressedState)) {
-			writeStockPresets();
+			specialMenuCallback();
 		}
 		break;
 
