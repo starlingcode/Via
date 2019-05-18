@@ -27,6 +27,7 @@ void oscTouchLink (void *);
 /// Callback to link to the C code in the STM32 Touch Sense Library.
 void templateTouchLink (void *);
 
+
 /// Calibration/template module class.
 
 /** A simple self calibration tool that doubles as an introductory template.*/
@@ -162,25 +163,28 @@ public:
 	 *
 	 */
 
-	/// Fill the dac buffers with fixed outputs.
-	void renderTestOutputs(int32_t writePosition);
+	void (ViaOsc::*render)(int32_t writePosition);
 
-	/// Instance of a sine oscillator.
-	Sine oscillator;
-	Sine oscillator2;
-	Sine oscillator3;
+	void renderSaw(int32_t writePosition);
+	void renderSquare(int32_t writePosition);
+	void renderTri(int32_t writePosition);
 
-	int32_t * sharedTable;
+	int32_t detune = 0;
+	uint32_t aPhase = 0;
+	uint32_t bPhase = 0;
+	uint32_t cPhase = 0;
+	int32_t basePitch = 0;
 
-	void loadTable(void) {
-		sharedTable = (int32_t *) malloc(4095*sizeof(int32_t));
-		for (int i; i < 4096; i++) {
-			sharedTable[i] = oscillator.big_sine[i] | ((oscillator.big_sine[i + 1] - oscillator.big_sine[i]) << 16);
-		}
-		oscillator.tableRead = sharedTable;
-		oscillator2.tableRead = sharedTable;
-		oscillator3.tableRead = sharedTable;
-	}
+	int32_t octave = 1;
+	int32_t unity = 0;
+
+	int32_t lastLogicA = 0;
+	int32_t lastLogicB = 0;
+	int32_t lastPM = 0;
+
+	Sine sine;
+
+	int32_t tableRead[4095];
 
 	/// Instance of the exponential converter class.
 	ExpoConverter expo;
@@ -188,32 +192,41 @@ public:
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
-		oscillator.phase = 0;
-		oscillator2.phase = 0;
-		oscillator3.phase = 0;
+
+		octave = 2;
+
 	}
 	void mainFallingEdgeCallback(void) {
+
+		octave = 1;
+
 	}
 	void auxRisingEdgeCallback(void) {
 
+		unity = 1;
+
 	}
 	void auxFallingEdgeCallback(void) {
+		unity = 0;
 	}
 	void buttonPressedCallback(void) {
 	}
 	void buttonReleasedCallback(void) {}
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
-		renderTestOutputs(0);
+		(this->*render)(0);
 	}
 	void transferCompleteCallback(void) {
-		renderTestOutputs(TEMPLATE_BUFFER_SIZE);
+		(this->*render)(TEMPLATE_BUFFER_SIZE);
 	}
 	void slowConversionCallback(void) {
 		controls.update();
-		oscillator.freq = fix16_mul(expo.convert((controls.knob1Value * 3) >> 2) >> 3,
+		basePitch = fix16_mul(expo.convert(((controls.knob1Value * 3) >> 2)) >> 3,
 				expo.convert(controls.cv1Value) >> 2);
-		oscillator2.freq = (oscillator.freq * 8) / (16 - (controls.knob2 >> 8));
+		basePitch = fix16_mul(basePitch, 65535 + (controls.knob2Value << 3));
+		detune = (controls.knob3Value << 4) + ((int32_t) -inputs.cv3Samples[0]);
+		detune = __USAT(detune, 16);
+
 	}
 	void auxTimer1InterruptCallback(void) {
 
@@ -221,6 +234,20 @@ public:
 	void auxTimer2InterruptCallback(void) {
 
 	}
+
+	int32_t numButton1Modes = 0;
+	int32_t numButton2Modes = 3;
+	int32_t numButton3Modes = 0;
+	int32_t numButton4Modes = 0;
+	int32_t numButton5Modes = 0;
+	int32_t numButton6Modes = 0;
+
+	void handleButton1ModeChange(int32_t);
+	void handleButton2ModeChange(int32_t);
+	void handleButton3ModeChange(int32_t);
+	void handleButton4ModeChange(int32_t);
+	void handleButton5ModeChange(int32_t);
+	void handleButton6ModeChange(int32_t);
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
 	ViaOsc() : oscUI(*this) {
@@ -236,7 +263,11 @@ public:
 		outputBufferSize = TEMPLATE_BUFFER_SIZE;
 		inputBufferSize = 1;
 
-		loadTable();
+		for (int i = 0; i < 4096; i++) {
+			tableRead[i] = sine.big_sine[i];
+		}
+
+		render = &ViaOsc::renderTri;
 
 		/// Call the UI initialization that needs to happen after outer class construction.
 		oscUI.initialize();
