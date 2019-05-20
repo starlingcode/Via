@@ -168,23 +168,125 @@ public:
 	void renderSaw(int32_t writePosition);
 	void renderSquare(int32_t writePosition);
 	void renderTri(int32_t writePosition);
+	void renderTrap(int32_t writePosition);
 
+	int32_t detuneBase = 0;
 	int32_t detune = 0;
+	int32_t pm = 0;
+	int32_t pmTracker = 0;
+	int32_t aFreq = 0;
+	int32_t bFreq = 0;
+	int32_t cFreq = 0;
 	uint32_t aPhase = 0;
 	uint32_t bPhase = 0;
 	uint32_t cPhase = 0;
-	int32_t basePitch = 0;
+	int32_t aBasePitch = 0;
+	int32_t bBasePitch = 0;
+	int32_t cBasePitch = 0;
 
-	int32_t octave = 1;
+	int32_t octave = 0;
+	int32_t octaveRange = 0;
 	int32_t unity = 0;
 
 	int32_t lastLogicA = 0;
 	int32_t lastLogicB = 0;
 	int32_t lastPM = 0;
 
-	Sine sine;
+	int32_t shAOn = 1;
+	int32_t shBOn = 1;
 
-	int32_t tableRead[4095];
+	int32_t chromatic[128] = {0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122};
+	int32_t major[128] = {0, 0, 0, 0, 0, 0, 2, 2, 4, 5, 5, 7, 7, 9, 9, 11, 12, 12, 14, 14, 16, 17, 17, 19, 19, 21, 21, 23, 24, 24, 26, 26, 28, 29, 29, 31, 31, 33, 33, 35, 36, 36, 38, 38, 40, 41, 41, 43, 43, 45, 45, 47, 48, 48, 50, 50, 52, 53, 53, 55, 55, 57, 57, 59, 60, 60, 62, 62, 64, 65, 65, 67, 67, 69, 69, 71, 72, 72, 74, 74, 76, 77, 77, 79, 79, 81, 81, 83, 84, 84, 86, 86, 88, 89, 89, 91, 91, 93, 93, 95, 96, 96, 98, 98, 100, 101, 101, 103, 103, 105, 105, 107, 108, 108, 110, 110, 112, 113, 113, 115, 115, 117, 117, 119, 120, 120, 122};
+	int32_t minor[128] = {0, 0, 0, 0, 0, 0, 2, 2, 3, 5, 5, 7, 7, 8, 8, 10, 12, 12, 14, 14, 15, 17, 17, 19, 19, 20, 20, 22, 24, 24, 26, 26, 27, 29, 29, 31, 31, 32, 32, 34, 36, 36, 38, 38, 39, 41, 41, 43, 43, 44, 44, 46, 48, 48, 50, 50, 51, 53, 53, 55, 55, 56, 56, 58, 60, 60, 62, 62, 63, 65, 65, 67, 67, 68, 68, 70, 72, 72, 74, 74, 75, 77, 77, 79, 79, 80, 80, 82, 84, 84, 86, 86, 87, 89, 89, 91, 91, 92, 92, 94, 96, 96, 98, 98, 99, 101, 101, 103, 103, 104, 104, 106, 108, 108, 110, 110, 111, 113, 113, 115, 115, 116, 116, 118, 120, 120, 122};
+
+	int32_t * scale = chromatic;
+	int32_t scaleMode = 0;
+
+	int32_t chordMode = 0;
+
+	int32_t beat = 1;
+
+	inline void beatDetect(uint32_t aPhase, uint32_t bPhase) {
+		int32_t aQuadrant = aPhase >> 30;
+		int32_t bQuadrant = bPhase >> 30;
+		if (beat) {
+			beat = (abs(aQuadrant - bQuadrant) != 2);
+		} else {
+			beat = (aQuadrant == bQuadrant);
+		}
+	}
+
+	void linearDetune(int32_t detuneMod) {
+
+		detune = (detuneBase + detuneMod) * (detuneBase != 0);
+
+		aFreq = (cBasePitch << (octave * octaveRange)) + (detune >> 2) * !unity;
+		bFreq = (cBasePitch << (octave * octaveRange)) - (detune >> 2) * !unity;
+
+	}
+
+	void scaledDetune(int32_t detuneMod) {
+
+		detune = (detuneBase + detuneMod) * (detuneBase != 0);
+
+		aFreq = fix16_mul(cBasePitch << (octave * octaveRange), 65536 - (detune >> 5) * !unity);
+		bFreq = fix16_mul(cBasePitch << (octave * octaveRange), 65536 + (detune >> 5) * !unity);
+
+	}
+
+	void chordalDetune(int32_t detuneMod) {
+
+		aFreq = aBasePitch << (octave * octaveRange);
+		bFreq = bBasePitch << (octave * octaveRange);
+
+	}
+
+	void (ViaOsc::*doDetune)(int32_t detuneMod);
+
+	inline void updateFrequencies(void) {
+
+		(this->*doDetune)((int32_t) -inputs.cv3Samples[0]);
+
+		cFreq = cBasePitch << (octave * octaveRange);
+
+		int32_t pmInput = inputs.cv2Samples[0];
+
+		// quadrature
+		int32_t aError = aPhase - (cPhase + pmTracker + (1 << 30));
+		int32_t bError = bPhase - (cPhase + pmTracker + (1 << 31));
+
+		aFreq += __SSAT(aError * ((detuneBase == 0)), 12);
+		bFreq += __SSAT(bError * ((detuneBase == 0)), 12);
+
+		aFreq += __SSAT(aError * (unity), 14);
+		bFreq += __SSAT(bError * (unity), 14);
+
+		pm = (pmInput - lastPM) << 11;
+
+		pmTracker += pm;
+
+		lastPM = pmInput;
+
+	}
+
+	inline void parsePhase(int32_t aPhaseWorker, int32_t bPhaseWorker, int32_t cPhaseWorker) {
+
+		int32_t resample = (cPhase > (0xFFFFFFFF - (1 << 30))) & (cPhaseWorker < (1 << 30));
+
+		beatDetect(aPhaseWorker, bPhaseWorker);
+
+		aPhase = aPhaseWorker;
+		bPhase = bPhaseWorker;
+		cPhase = cPhaseWorker;
+
+		outputs.logicA[0] = GET_ALOGIC_MASK(beat * (detuneBase != 0) * (unity == 0));
+		outputs.auxLogic[0] = 0;
+		outputs.shA[0] = GET_SH_A_MASK(resample * shAOn);
+		outputs.shB[0] = GET_SH_B_MASK(resample * shBOn);
+
+	}
+
+//	int32_t tableRead[4095];
 
 	/// Instance of the exponential converter class.
 	ExpoConverter expo;
@@ -193,12 +295,12 @@ public:
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
 
-		octave = 2;
+		octave = 1;
 
 	}
 	void mainFallingEdgeCallback(void) {
 
-		octave = 1;
+		octave = 0;
 
 	}
 	void auxRisingEdgeCallback(void) {
@@ -214,18 +316,68 @@ public:
 	void buttonReleasedCallback(void) {}
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
+		setLogicOut(0, runtimeDisplay);
 		(this->*render)(0);
 	}
 	void transferCompleteCallback(void) {
+		setLogicOut(0, runtimeDisplay);
 		(this->*render)(TEMPLATE_BUFFER_SIZE);
 	}
 	void slowConversionCallback(void) {
-		controls.update();
-		basePitch = fix16_mul(expo.convert(((controls.knob1Value * 3) >> 2)) >> 3,
-				expo.convert(controls.cv1Value) >> 2);
-		basePitch = fix16_mul(basePitch, 65535 + (controls.knob2Value << 3));
-		detune = (controls.knob3Value << 4) + ((int32_t) -inputs.cv3Samples[0]);
-		detune = __USAT(detune, 16);
+		controls.updateExtra();
+		int32_t cv1Index;
+		int32_t knob1Index;
+		if (scaleMode) {
+			cv1Index = scale[controls.cv1Value >> 5] << 5;
+			knob1Index = ((controls.knob1Value * 3) >> 2) & 0b111111100000;
+		} else {
+			cv1Index = __USAT((controls.cv1Value - (4 << 5)), 12);
+			knob1Index = ((controls.knob1Value * 3) >> 2);
+		}
+		if (chordMode) {
+
+			int32_t fineTune = 65535 + (controls.knob2Value << 3);
+			int32_t coarseTune = expo.convert(knob1Index) >> 3;
+			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16) >> 12;
+
+			int32_t chordTranspose = 0;
+
+			if ((knob1Index >> 5) < 52) {
+				chordTranspose = (52 - (knob1Index >> 5)) / 12;
+			}
+
+			cBasePitch = fix16_mul(coarseTune,
+					expo.convert(cv1Index) >> 2);
+			cBasePitch = fix16_mul(cBasePitch, 65762);
+			cBasePitch = fix16_mul(cBasePitch, fineTune);
+
+			int32_t chordMultiplier = scale[__USAT((controls.cv1Value >> 5) + chord, 8)] << 5;
+
+			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
+			aBasePitch = fix16_mul(aBasePitch, 65762);
+			aBasePitch = fix16_mul(aBasePitch, fineTune) << chordTranspose;
+
+			chordMultiplier = scale[__USAT((controls.cv1Value >> 5) - chord, 8)] << 5;
+
+			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
+			bBasePitch = fix16_mul(bBasePitch, 65762);
+			bBasePitch = fix16_mul(bBasePitch, fineTune) << chordTranspose;
+
+			detuneBase = 2000;
+
+		} else {
+			cBasePitch = fix16_mul(expo.convert(knob1Index) >> 3,
+					expo.convert(cv1Index) >> 2);
+			cBasePitch = fix16_mul(cBasePitch, 65762);
+			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
+			detuneBase = controls.knob3Value << 4;
+		}
+
+		if (runtimeDisplay) {
+			setRedLED(hueSpace[scaleMode * 4].r);
+			setGreenLED(hueSpace[scaleMode * 4].g);
+			setBlueLED(hueSpace[scaleMode * 4].b);
+		}
 
 	}
 	void auxTimer1InterruptCallback(void) {
@@ -235,12 +387,12 @@ public:
 
 	}
 
-	int32_t numButton1Modes = 0;
-	int32_t numButton2Modes = 3;
-	int32_t numButton3Modes = 0;
-	int32_t numButton4Modes = 0;
-	int32_t numButton5Modes = 0;
-	int32_t numButton6Modes = 0;
+	int32_t numButton1Modes = 2;
+	int32_t numButton2Modes = 4;
+	int32_t numButton3Modes = 2;
+	int32_t numButton4Modes = 4;
+	int32_t numButton5Modes = 4;
+	int32_t numButton6Modes = 2;
 
 	void handleButton1ModeChange(int32_t);
 	void handleButton2ModeChange(int32_t);
@@ -263,11 +415,8 @@ public:
 		outputBufferSize = TEMPLATE_BUFFER_SIZE;
 		inputBufferSize = 1;
 
-		for (int i = 0; i < 4096; i++) {
-			tableRead[i] = sine.big_sine[i];
-		}
-
 		render = &ViaOsc::renderTri;
+		doDetune = &ViaOsc::linearDetune;
 
 		/// Call the UI initialization that needs to happen after outer class construction.
 		oscUI.initialize();
