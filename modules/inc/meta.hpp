@@ -369,7 +369,20 @@ public:
 
 	}
 
+	void updateRGBPreset(void) {
 
+		int32_t hue = (metaUI.presetNumber) << 1;
+
+		int32_t fade = __USAT((7000 - metaUI.timerRead()), 12);
+
+		if (hue) {
+			updateRGBDisplay((fade * hueSpace[hue].r) >> 12,
+					(fade * hueSpace[hue].g) >> 12,
+					(fade * hueSpace[hue].b) >> 12,
+					1);
+		}
+
+	}
 
 
 	void init(void);

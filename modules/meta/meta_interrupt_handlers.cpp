@@ -92,6 +92,8 @@ void ViaMeta::buttonPressedCallback(void) {
 		freqTransient.trigger = 0;
 		morphEnvelope.trigger = 0;
 
+		updateRGB = &ViaMeta::updateRGBPreset;
+
 		this->metaUI.dispatch(EXPAND_SW_ON_SIG);
 	}
 
@@ -99,6 +101,8 @@ void ViaMeta::buttonPressedCallback(void) {
 void ViaMeta::buttonReleasedCallback(void) {
 
 	metaController.gateSignal = 0;
+
+	updateRGB = currentRGBBehavior;
 
 	this->metaUI.dispatch(EXPAND_SW_OFF_SIG);
 

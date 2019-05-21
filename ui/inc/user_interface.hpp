@@ -132,6 +132,8 @@ public:
 	void presetMenu(int32_t sig);
 	/// State entered after touch event in preset menu state.
 	void presetPressedMenu(int32_t sig);
+	/// State entered after touch event in preset menu state.
+	void presetDoubleTappedMenu(int32_t sig);
 	/// State to indicate storage of a new preset
 	void newPreset(int32_t sig);
 	/// State to indicate preset recall.

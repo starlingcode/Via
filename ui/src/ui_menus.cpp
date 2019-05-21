@@ -7,7 +7,7 @@
 
 #include "user_interface.hpp"
 
-/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::button1Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
@@ -16,7 +16,7 @@ void ViaUI::button1Menu(int32_t sig) {
 
 	case SENSOR_EVENT_SIG:
 		if (*button1 == releasedState) {
-			if(timerRead() < 3000) {
+			if(timerRead() < 2048) {
 				button1TapCallback();
 			} else {
 				button1HoldCallback();
@@ -29,7 +29,7 @@ void ViaUI::button1Menu(int32_t sig) {
 	}
 }
 
-/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::button2Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
@@ -38,7 +38,7 @@ void ViaUI::button2Menu(int32_t sig) {
 
 	case SENSOR_EVENT_SIG:
 		if (*button2 == releasedState) {
-			if(timerRead() < 3000) {
+			if(timerRead() < 2048) {
 				button2TapCallback();
 			} else {
 				button2HoldCallback();
@@ -48,7 +48,7 @@ void ViaUI::button2Menu(int32_t sig) {
 	}
 }
 
-/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::button3Menu(int32_t sig) {
 	switch (sig) {
 
@@ -58,7 +58,7 @@ void ViaUI::button3Menu(int32_t sig) {
 
 	case SENSOR_EVENT_SIG:
 		if (*button3 == releasedState) {
-			if(timerRead() < 3000) {
+			if(timerRead() < 2048) {
 				button3TapCallback();
 			} else {
 				button3HoldCallback();
@@ -74,7 +74,7 @@ void ViaUI::button3Menu(int32_t sig) {
 	}
 }
 
-/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::button4Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
@@ -84,7 +84,7 @@ void ViaUI::button4Menu(int32_t sig) {
 	case SENSOR_EVENT_SIG:
 
 		if (*button4 == releasedState) {
-			if(timerRead() < 3000) {
+			if(timerRead() < 2048) {
 				button4TapCallback();
 			} else {
 				button4HoldCallback();
@@ -101,7 +101,7 @@ void ViaUI::button4Menu(int32_t sig) {
 
 }
 
-/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 /// If a different button is pressed before release, enter that the corresponding aux menu state.
 void ViaUI::button5Menu(int32_t sig) {
 	switch (sig) {
@@ -123,7 +123,7 @@ void ViaUI::button5Menu(int32_t sig) {
 		} else if (*button6 == pressedState) {
 			transition(&ViaUI::aux4Menu);
 		} else if (*button5 == releasedState) {
-			if(timerRead() < 3000) {
+			if(timerRead() < 2048) {
 				button5TapCallback();
 			} else {
 				button5HoldCallback();
@@ -133,7 +133,7 @@ void ViaUI::button5Menu(int32_t sig) {
 	}
 }
 
-/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::button6Menu(int32_t sig) {
 	switch (sig) {
 
@@ -143,7 +143,7 @@ void ViaUI::button6Menu(int32_t sig) {
 
 	case SENSOR_EVENT_SIG:
 		if (*button6 == releasedState) {
-			if(timerRead() < 3000) {
+			if(timerRead() < 2048) {
 				button6TapCallback();
 			} else {
 				button6HoldCallback();
@@ -159,7 +159,7 @@ void ViaUI::button6Menu(int32_t sig) {
 	}
 }
 
-/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::aux1Menu(int32_t sig) {
 	switch (sig) {
 
@@ -169,11 +169,14 @@ void ViaUI::aux1Menu(int32_t sig) {
 
 	case SENSOR_EVENT_SIG:
 		if (*button1 == releasedState) {
-			if(timerRead() < 3000) {
+			if(timerRead() < 2048) {
 				aux1TapCallback();
 			} else {
 				aux1HoldCallback();
 			}
+		} else if ((*button3 == pressedState) && (*button4 == pressedState) &&
+				(*button6 == pressedState)) {
+			specialMenuCallback();
 		}
 		break;
 
@@ -182,7 +185,7 @@ void ViaUI::aux1Menu(int32_t sig) {
 	}
 }
 
-/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::aux2Menu(int32_t sig) {
 	switch (sig) {
 
@@ -192,11 +195,14 @@ void ViaUI::aux2Menu(int32_t sig) {
 
 	case SENSOR_EVENT_SIG:
 		if (*button3 == releasedState) {
-			if(timerRead() < 3000) {
+			if(timerRead() < 2048) {
 				aux2TapCallback();
 			} else {
 				aux2HoldCallback();
 			}
+		} else if ((*button1 == pressedState) && (*button4 == pressedState) &&
+				(*button6 == pressedState)) {
+			specialMenuCallback();
 		}
 		break;
 
@@ -205,7 +211,7 @@ void ViaUI::aux2Menu(int32_t sig) {
 	}
 }
 
-/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::aux2MenuAlt(int32_t sig) {
 	switch (sig) {
 
@@ -215,7 +221,7 @@ void ViaUI::aux2MenuAlt(int32_t sig) {
 
 	case SENSOR_EVENT_SIG:
 		if (*button2 == releasedState) {
-			if(timerRead() < 3000) {
+			if(timerRead() < 2048) {
 				aux2AltTapCallback();
 			} else {
 				aux2AltHoldCallback();
@@ -228,7 +234,7 @@ void ViaUI::aux2MenuAlt(int32_t sig) {
 	}
 }
 
-/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::aux3Menu(int32_t sig) {
 	switch (sig) {
 
@@ -238,11 +244,14 @@ void ViaUI::aux3Menu(int32_t sig) {
 
 	case SENSOR_EVENT_SIG:
 		if (*button4 == releasedState) {
-			if(timerRead() < 3000) {
+			if(timerRead() < 2048) {
 				aux3TapCallback();
 			} else {
 				aux3HoldCallback();
 			}
+		} else if ((*button3 == pressedState) && (*button1 == pressedState) &&
+				(*button6 == pressedState)) {
+			specialMenuCallback();
 		}
 		break;
 
@@ -251,7 +260,7 @@ void ViaUI::aux3Menu(int32_t sig) {
 	}
 }
 
-/// On entry, call handler function. If release before 3000 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
+/// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::aux4Menu(int32_t sig) {
 	switch (sig) {
 
@@ -261,11 +270,14 @@ void ViaUI::aux4Menu(int32_t sig) {
 
 	case SENSOR_EVENT_SIG:
 		if (*button6 == releasedState) {
-			if(timerRead() < 3000) {
+			if(timerRead() < 2048) {
 				aux4TapCallback();
 			} else {
 				aux4HoldCallback();
 			}
+		} else if ((*button3 == pressedState) && (*button4 == pressedState) &&
+				(*button1 == pressedState)) {
+			specialMenuCallback();
 		}
 		break;
 
