@@ -25,23 +25,16 @@ void ViaAtsr::render(int32_t writePosition) {
 	aLevel >>= 4;
 	bLevel >>= 4;
 
+	gateDelayProcess();
+
 	int32_t loopGate = !releasing & !sustaining;
+	gateLowCountdown += ((lastLoop > loopGate) & gateOn) * 8;
+	lastLoop = loopGate;
+	loopGate |= (gateLowCountdown > 0);
 	int32_t loopGateOut = 2048 - loopGate * 2048;
 
-	if (sustaining != lastSustain) {
-		auxLogicHold = 1;
-		auxLogicCounter = 0;
-	} else if (auxLogicHold) {
-		auxLogicCounter ++;
-		auxLogicHold = (auxLogicCounter < 7);
-	} else {
-		auxLogicHold = 0;
-	}
-
-	int32_t auxLogic = __USAT(sustaining + auxLogicHold, 1);
-
 	outputs.logicA[0] = GET_ALOGIC_MASK(*assignableLogic);
-	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(auxLogic);
+	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(gateDelayOut);
 	outputs.shA[0] = GET_SH_A_MASK((aLevel != 0) * shOn);
 	outputs.shB[0] = GET_SH_B_MASK((bLevel != 0) * shOn);
 

@@ -327,6 +327,9 @@ public:
 	uint32_t virtualTimer;
 
 	uint32_t periodCount = 48000;
+	uint32_t aggregatePeriod = 48000;
+	uint32_t pileUp = 0;
+	uint32_t skipPll = 0;
 	int32_t pllNudge = 0;
 	buffer nudgeBuffer;
 	int32_t nudgeSum = 0;
@@ -360,11 +363,12 @@ public:
 
 #ifdef BUILD_F373
 
-		// store the length of the last period
-		periodCount = TIM2->CNT;
+			// store the length of the last period
+			periodCount = TIM2->CNT;
 
-		// reset the timer value
-		TIM2->CNT = 0;
+			// reset the timer value
+			TIM2->CNT = 0;
+
 #endif
 
 #ifdef BUILD_VIRTUAL

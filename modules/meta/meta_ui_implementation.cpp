@@ -89,6 +89,11 @@ void ViaMeta::ViaMetaUI::defaultEnterMenuCallback(void) {
 	this_module.clearLEDs();
 	this_module.runtimeDisplay = 1;
 	this_module.setLEDD(aux4Mode);
+	timerReset();
+	timerDisable();
+	if (!this_module.presetSequenceMode) {
+		this_module.updateRGB = this_module.currentRGBBehavior;
+	}
 }
 void ViaMeta::ViaMetaUI::newModeEnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
@@ -105,28 +110,35 @@ void ViaMeta::ViaMetaUI::presetEnterMenuCallback(void) {
 void ViaMeta::ViaMetaUI::button1EnterMenuCallback(void) {
 	if (this_module.presetSequenceEdit) {
 		this_module.presetSequence[this_module.presetSequenceEditIndex] = 1;
+	} else if (this_module.presetSequenceMode) {
+		this_module.presetOverride = 1;
 	} else {
 		this_module.runtimeDisplay = 0;
 		this_module.clearLEDs();
 		this_module.clearRGB();
 		this_module.setLEDs(SH_MODE);
-		resetTimerMenu();
 	}
+	resetTimerMenu();
+
 }
 void ViaMeta::ViaMetaUI::button2EnterMenuCallback(void) {
 	if (this_module.presetSequenceEdit) {
 		this_module.presetSequence[this_module.presetSequenceEditIndex] = 2;
+	} else if (this_module.presetSequenceMode) {
+		this_module.presetOverride = 2;
 	} else {
 		this_module.runtimeDisplay = 0;
 		this_module.clearLEDs();
 		this_module.clearRGB();
 		this_module.setLEDs(TABLE);
-		resetTimerMenu();
 	}
+	resetTimerMenu();
 }
 void ViaMeta::ViaMetaUI::button3EnterMenuCallback(void) {
 	if (this_module.presetSequenceEdit) {
 		this_module.presetSequence[this_module.presetSequenceEditIndex] = 3;
+	}  else if (this_module.presetSequenceMode) {
+		this_module.presetOverride = 3;
 	} else {
 		this_module.runtimeDisplay = 0;
 		this_module.clearLEDs();
@@ -153,7 +165,9 @@ void ViaMeta::ViaMetaUI::button3EnterMenuCallback(void) {
 void ViaMeta::ViaMetaUI::button4EnterMenuCallback(void) {
 	if (this_module.presetSequenceEdit) {
 		this_module.presetSequence[this_module.presetSequenceEditIndex] = 4;
-	} else {
+	} else if (this_module.presetSequenceMode) {
+		this_module.presetOverride = 4;
+	}  else {
 		this_module.runtimeDisplay = 0;
 		this_module.clearLEDs();
 		this_module.clearRGB();
@@ -169,6 +183,8 @@ void ViaMeta::ViaMetaUI::button4EnterMenuCallback(void) {
 void ViaMeta::ViaMetaUI::button5EnterMenuCallback(void) {
 	if (this_module.presetSequenceEdit) {
 		this_module.presetSequence[this_module.presetSequenceEditIndex] = 5;
+	} else if (this_module.presetSequenceMode) {
+		this_module.presetOverride = 5;
 	} else {
 		this_module.runtimeDisplay = 0;
 		this_module.clearLEDs();
@@ -180,6 +196,8 @@ void ViaMeta::ViaMetaUI::button5EnterMenuCallback(void) {
 void ViaMeta::ViaMetaUI::button6EnterMenuCallback(void) {
 	if (this_module.presetSequenceEdit) {
 		this_module.presetSequence[this_module.presetSequenceEditIndex] = 6;
+	} else if (this_module.presetSequenceMode) {
+		this_module.presetOverride = 6;
 	} else {
 		this_module.runtimeDisplay = 0;
 		this_module.clearLEDs();
@@ -219,46 +237,77 @@ void ViaMeta::ViaMetaUI::aux4EnterMenuCallback(void) {
 }
 
 void ViaMeta::ViaMetaUI::button1TapCallback(void) {
-	SH_MODE = incrementModeAndStore(SH_MODE, BUTTON1_MASK, numButton1Modes, BUTTON1_SHIFT);
-	this_module.handleButton1ModeChange(SH_MODE);
-	this_module.clearLEDs();
-	this_module.setLEDs(SH_MODE);
-	transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	if (!this_module.presetSequenceMode) {
+		SH_MODE = incrementModeAndStore(SH_MODE, BUTTON1_MASK, numButton1Modes, BUTTON1_SHIFT);
+		this_module.handleButton1ModeChange(SH_MODE);
+		this_module.clearLEDs();
+		this_module.setLEDs(SH_MODE);
+		transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	} else {
+		this_module.presetOverride = 0;
+		transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	}
+
 }
 void ViaMeta::ViaMetaUI::button2TapCallback(void) {
-	TABLE = incrementModeAndStore(TABLE, BUTTON2_MASK, numButton2Modes, BUTTON2_SHIFT);
-	this_module.handleButton2ModeChange(TABLE);
-	this_module.clearLEDs();
-	this_module.setLEDs(TABLE);
-	transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	if (!this_module.presetSequenceMode) {
+		TABLE = incrementModeAndStore(TABLE, BUTTON2_MASK, numButton2Modes, BUTTON2_SHIFT);
+		this_module.handleButton2ModeChange(TABLE);
+		this_module.clearLEDs();
+		this_module.setLEDs(TABLE);
+		transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	} else {
+		this_module.presetOverride = 0;
+		transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	}
 }
 void ViaMeta::ViaMetaUI::button3TapCallback(void) {
-	FREQ_MODE = incrementModeAndStore(FREQ_MODE, BUTTON3_MASK, numButton3Modes, BUTTON3_SHIFT);
-	this_module.handleButton3ModeChange(FREQ_MODE);
-	this_module.clearLEDs();
-	this_module.setLEDs(FREQ_MODE);
-	transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	if (!this_module.presetSequenceMode) {
+		FREQ_MODE = incrementModeAndStore(FREQ_MODE, BUTTON3_MASK, numButton3Modes, BUTTON3_SHIFT);
+		this_module.handleButton3ModeChange(FREQ_MODE);
+		this_module.clearLEDs();
+		this_module.setLEDs(FREQ_MODE);
+		transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	} else {
+		this_module.presetOverride = 0;
+		transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	}
 }
 void ViaMeta::ViaMetaUI::button4TapCallback(void) {
-	TRIG_MODE = incrementModeAndStore(TRIG_MODE, BUTTON4_MASK, numButton4Modes, BUTTON4_SHIFT);
-	this_module.handleButton4ModeChange(TRIG_MODE);
-	this_module.clearLEDs();
-	this_module.setLEDs(TRIG_MODE);
-	transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	if (!this_module.presetSequenceMode) {
+		TRIG_MODE = incrementModeAndStore(TRIG_MODE, BUTTON4_MASK, numButton4Modes, BUTTON4_SHIFT);
+		this_module.handleButton4ModeChange(TRIG_MODE);
+		this_module.clearLEDs();
+		this_module.setLEDs(TRIG_MODE);
+		transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	} else {
+		this_module.presetOverride = 0;
+		transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	}
 }
 void ViaMeta::ViaMetaUI::button5TapCallback(void) {
-	TABLE = decrementModeAndStore(TABLE, BUTTON5_MASK, numButton5Modes, BUTTON5_SHIFT);
-	this_module.handleButton5ModeChange(TABLE);
-	this_module.clearLEDs();
-	this_module.setLEDs(TABLE);
-	transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	if (!this_module.presetSequenceMode) {
+		TABLE = decrementModeAndStore(TABLE, BUTTON5_MASK, numButton5Modes, BUTTON5_SHIFT);
+		this_module.handleButton5ModeChange(TABLE);
+		this_module.clearLEDs();
+		this_module.setLEDs(TABLE);
+		transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	} else {
+		this_module.presetOverride = 0;
+		transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	}
 }
 void ViaMeta::ViaMetaUI::button6TapCallback(void) {
-	LOOP_MODE = incrementModeAndStore(LOOP_MODE, BUTTON6_MASK, numButton6Modes, BUTTON6_SHIFT);
-	this_module.handleButton6ModeChange(LOOP_MODE);
-	this_module.clearLEDs();
-	this_module.setLEDs(LOOP_MODE);
-	transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	if (!this_module.presetSequenceMode) {
+		LOOP_MODE = incrementModeAndStore(LOOP_MODE, BUTTON6_MASK, numButton6Modes, BUTTON6_SHIFT);
+		this_module.handleButton6ModeChange(LOOP_MODE);
+		this_module.clearLEDs();
+		this_module.setLEDs(LOOP_MODE);
+		transition(&ViaMeta::ViaMetaUI::newModeMenu);
+	} else {
+		this_module.presetOverride = 0;
+		transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	}
 }
 
 void ViaMeta::ViaMetaUI::aux1TapCallback(void) {
@@ -267,6 +316,7 @@ void ViaMeta::ViaMetaUI::aux1TapCallback(void) {
 	this_module.clearLEDs();
 	this_module.setLEDs(DRUM_AUX_MODE);
 	transition(&ViaMeta::ViaMetaUI::newAuxModeMenu);
+
 }
 
 void ViaMeta::ViaMetaUI::aux2TapCallback(void) {
@@ -299,41 +349,52 @@ void ViaMeta::ViaMetaUI::aux4TapCallback(void) {
 
 void ViaMeta::ViaMetaUI::button1HoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	this_module.presetOverride = 0;
 }
 void ViaMeta::ViaMetaUI::button2HoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	this_module.presetOverride = 0;
 }
 void ViaMeta::ViaMetaUI::button3HoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	this_module.presetOverride = 0;
 }
 void ViaMeta::ViaMetaUI::button4HoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	this_module.presetOverride = 0;
 }
 void ViaMeta::ViaMetaUI::button5HoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	this_module.presetOverride = 0;
 }
 void ViaMeta::ViaMetaUI::button6HoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	this_module.presetOverride = 0;
 }
 
 void ViaMeta::ViaMetaUI::aux1HoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::button5Menu);
+	this_module.presetOverride = 0;
 }
 
 void ViaMeta::ViaMetaUI::aux2HoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	this_module.presetOverride = 0;
 }
 
 void ViaMeta::ViaMetaUI::aux2AltHoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	this_module.presetOverride = 0;
 }
 
 void ViaMeta::ViaMetaUI::aux3HoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	this_module.presetOverride = 0;
 }
 
 void ViaMeta::ViaMetaUI::aux4HoldCallback(void) {
 	transition(&ViaMeta::ViaMetaUI::defaultMenu);
+	this_module.presetOverride = 0;
 }
 
 void ViaMeta::ViaMetaUI::writeStockPresets(void) {
@@ -354,8 +415,14 @@ void ViaMeta::ViaMetaUI::specialMenuCallback(void) {
 	if (this_module.presetSequenceMode) {
 		this_module.presetSequenceMode = 0;
 		recallModuleState();
+		this_module.clearRGB();
+		this_module.clearLEDs();
 	} else {
 		this_module.presetSequenceMode = 1;
+		this_module.clearRGB();
+		this_module.clearLEDs();
+		this_module.updateRGB = &ViaMeta::updateRGBPreset;
+		this_module.currentRGBBehavior = &ViaMeta::updateRGBPreset;
 	}
 
 	transition(&ViaMeta::ViaMetaUI::switchPreset);

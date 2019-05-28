@@ -157,6 +157,7 @@ void ViaScanner::slowConversionCallback(void) {
 	uint32_t blueLevel = abs(scanner.yInput) >> 4;
 
 	updateRGBDisplay(redLevel, greenLevel, blueLevel, runtimeDisplay);
+	updateRGBPreset(scannerUI.timerRead(), scannerUI.presetNumber);
 
 }
 

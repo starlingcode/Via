@@ -22,11 +22,11 @@ void ViaSync::mainRisingEdgeCallback(void) {
 	pllController.doPLL();
 	pllController.generateFrequency();
 
+
 	// should these be initialized to point to the same address?
 
 	syncWavetable.increment = pllController.increment;
 	syncWavetable.phase = pllController.phaseSignal;
-
 
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
 	if (runtimeDisplay & showYChange) {
@@ -230,6 +230,7 @@ void ViaSync::slowConversionCallback(void) {
 	int32_t greenSignal = fix16_mul(sample << 4, scaleColor.g);
 
 	updateRGBDisplay(redSignal, greenSignal, blueSignal, runtimeDisplay);
+	updateRGBPreset(syncUI.timerRead(), syncUI.presetNumber);
 
 }
 

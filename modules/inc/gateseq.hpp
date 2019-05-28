@@ -281,7 +281,32 @@ public:
 	int32_t readGateBEvent;
 	//@}
 
-	int32_t userSequence[32];
+	uint32_t pwmCounter;
+
+	uint32_t blueLED;
+
+	void initializeAuxOutputsGateseq(void) {
+
+		/// Tie the output pointers of the module to GPIO control registers.
+		aLogicOutput = &(GPIOC->BSRR);
+		auxLogicOutput = &(GPIOA->BSRR);
+		shAOutput = &(GPIOB->BSRR);
+		shBOutput = &(GPIOB->BSRR);
+
+		ledAOutput = &(GPIOF->BSRR);
+		ledBOutput = &(GPIOC->BSRR);
+		ledCOutput = &(GPIOA->BSRR);
+		ledDOutput = &(GPIOB->BSRR);
+
+		/// Tie the PWM control output pointers of the module class to GPIO control registers.
+		// tim3 channel 2
+		redLevel = &TIM3->CCR1 + 1;
+		// tim4 channel 4
+		greenLevel = &TIM4->CCR1 + 3;
+		// tim5 channel 1
+		blueLevel = (volatile uint32_t *) &blueLED;
+
+	}
 
 	/*
 	 *

@@ -360,25 +360,30 @@ public:
 
 	void updateRGBEdit(void) {
 
-		int32_t hue = presetSequence[presetSequenceEditIndex] << 1;
+		int32_t hue = presetSequence[presetSequenceEditIndex];
 
-		updateRGBDisplay(hueSpace[hue].r,
-				hueSpace[hue].g,
-				hueSpace[hue].b,
+		int32_t inactive = (presetSequenceIndex != presetSequenceEditIndex) * 2;
+
+		updateRGBDisplay(presetHues[hue - 1].r >> inactive,
+				presetHues[hue - 1].g  >> inactive,
+				presetHues[hue - 1].b  >> inactive,
 				1);
 
 	}
 
 	void updateRGBPreset(void) {
 
-		int32_t hue = (metaUI.presetNumber) << 1;
+		int32_t hue = (metaUI.presetNumber);
 
-		int32_t fade = __USAT((7000 - metaUI.timerRead()), 12);
+		int32_t fade = 4095;
+		if (!presetSequenceMode) {
+			fade = __USAT((7000 - metaUI.timerRead()), 12);
+		}
 
 		if (hue) {
-			updateRGBDisplay((fade * hueSpace[hue].r) >> 12,
-					(fade * hueSpace[hue].g) >> 12,
-					(fade * hueSpace[hue].b) >> 12,
+			updateRGBDisplay((fade * presetHues[hue - 1].r) >> 12,
+					(fade * presetHues[hue - 1].g) >> 12,
+					(fade * presetHues[hue - 1].b) >> 12,
 					1);
 		}
 
@@ -397,6 +402,7 @@ public:
 	int32_t presetSequenceRandom = 0;
 	int32_t presetSequenceEditIndex = 0;
 	int32_t presetSequenceBank = 0;
+	int32_t presetOverride = 0;
 	int32_t presetSequence[8] = {1, 2, 3, 4, 5, 6, 1, 2};
 
 	MetaWavetable metaWavetable;

@@ -28,14 +28,16 @@ void ViaMeta::mainRisingEdgeCallback(void) {
 	morphEnvelope.trigger = 0;
 
 	if (presetSequenceMode) {
-		metaUI.loadFromEEPROM(presetSequence[presetSequenceIndex]);
+		int32_t preset = (presetOverride > 0) ? presetOverride : presetSequence[presetSequenceIndex];
+		metaUI.loadFromEEPROM(preset);
 		if (!presetSequenceEdit) {
+			metaUI.presetNumber = preset;
 			setLEDs(presetSequenceIndex);
 		}
 		presetSequenceIndex ++;
 		presetSequenceIndex &= 7;
 		metaUI.recallModuleState();
-	} else {
+	} else if (runtimeDisplay) {
 		updateRGB = &ViaMeta::updateRGBBlink;
 
 		#ifdef BUILD_F373
@@ -62,7 +64,7 @@ void ViaMeta::mainFallingEdgeCallback(void) {
 void ViaMeta::auxRisingEdgeCallback(void) {
 
 	if (presetSequenceMode) {
-		presetSequenceIndex = 1;
+		presetSequenceIndex = 0;
 	} else {
 		metaController.freeze = 0;
 	}
@@ -79,9 +81,16 @@ void ViaMeta::buttonPressedCallback(void) {
 	if (presetSequenceMode) {
 		if (presetSequenceEdit) {
 			presetSequenceEdit = 0;
+			setLEDs(presetSequenceIndex);
+			metaUI.presetNumber = presetSequence[presetSequenceIndex];
+			updateRGB = &ViaMeta::updateRGBPreset;
+			currentRGBBehavior = &ViaMeta::updateRGBPreset;
+			clearLEDs();
+			clearRGB();
 		} else {
 			presetSequenceEdit = 1;
 			updateRGB = &ViaMeta::updateRGBEdit;
+			currentRGBBehavior = &ViaMeta::updateRGBEdit;
 		}
 	} else {
 		metaController.triggerSignal = 0;
@@ -175,14 +184,29 @@ void ViaMeta::slowConversionCallback(void) {
 			morphEnvelope.attack = 200360;
 		}
 	} else {
+		metaController.parseControlsExternal(&controls, &inputs);
+		ampEnvelope.parseControls(&controls, &inputs);
+		freqTransient.attack = __USAT(ampEnvelope.release * freqAttackMultiplier, 19);
+		if (freqTransient.attack < 524287) {
+			freqTransient.attack = 524287;
+		}
+		freqTransient.release = __USAT(ampEnvelope.release * freqReleaseMultiplier - minTransientLength, 15);
+		if (freqTransient.release < 32767) {
+			freqTransient.attack = 32767;
+		}
+		morphEnvelope.release = ampEnvelope.release * morphReleaseMultiplier;
+		if (morphEnvelope.release < morphReleaseClamp) {
+			morphEnvelope.release = morphReleaseClamp;
+		}
+		morphEnvelope.attack = __USAT(ampEnvelope.release * morphAttackMultiplier, 19);
+		if (morphEnvelope.attack < 143360) {
+			morphEnvelope.attack = 200360;
+		}
 		presetSequenceEditIndex = controls.knob3Value >> 9;
-		presetSequenceRandom = controls.knob2Value;
+//		presetSequenceRandom = controls.knob2Value;
 		setLEDs(presetSequenceEditIndex);
 //		presetSequenceBank = controls.knob1Value;
 	}
-
-
-
 
 	(this->*updateRGB)();
 
@@ -196,7 +220,7 @@ void ViaMeta::auxTimer1InterruptCallback(void) {
 
 void ViaMeta::auxTimer2InterruptCallback(void) {
 
-	updateRGB = currentRGBBehavior;
+	updateRGB = runtimeDisplay ? currentRGBBehavior : updateRGB;
 
 }
 

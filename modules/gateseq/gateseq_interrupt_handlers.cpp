@@ -244,12 +244,17 @@ void ViaGateseq::halfTransferCallback() {
 	if (sequencer.sampleB) {
 		sequencer.shBSignal = 1;
 	}
-//	if (readGateAEvent == sequencer.gateAEvent) {
-//		sequencer.gateAEvent = SOFT_GATE_EXECUTE;
-//	}
-//	if (readGateBEvent == sequencer.gateBEvent) {
-//		sequencer.gateBEvent = SOFT_GATE_EXECUTE;
-//	}
+
+#ifdef BUILD_F373
+
+	if (runtimeDisplay) {
+		SET_BLUE_LED_ONOFF((outputs.dac2Samples[0] >> 7) > pwmCounter);
+	}
+
+	pwmCounter ++;
+	pwmCounter &= 63;
+
+#endif
 
 }
 
@@ -269,12 +274,8 @@ void ViaGateseq::transferCompleteCallback() {
 	if (sequencer.sampleB) {
 		sequencer.shBSignal = 1;
 	}
-//	if (readGateAEvent == sequencer.gateAEvent) {
-//		sequencer.gateAEvent = SOFT_GATE_EXECUTE;
-//	}
-//	if (readGateBEvent == sequencer.gateBEvent) {
-//		sequencer.gateBEvent = SOFT_GATE_EXECUTE;
-//	}
+
+
 
 }
 
@@ -287,14 +288,7 @@ void ViaGateseq::slowConversionCallback() {
 	updateRGBDisplay(outputs.dac1Samples[0],
 			sequencer.logicOutput * 4095,
 			outputs.dac2Samples[0], runtimeDisplay);
-
-#ifdef BUILD_F373
-
-	if (runtimeDisplay) {
-		SET_BLUE_LED_ONOFF((outputs.dac2Samples[0] >> 11));
-	}
-
-#endif
+	updateRGBPreset(gateseqUI.timerRead(), gateseqUI.presetNumber);
 
 }
 

@@ -1,8 +1,3 @@
-/** \file calib.hpp
- * \brief Calibration module implementation.
- *
- *  A module implementing a simple testing/calibration helper program that serves as a template.
- */
 #ifndef INC_Calib_HPP_
 #define INC_Calib_HPP_
 
@@ -18,8 +13,7 @@
 /// Callback to link to the C code in the STM32 Touch Sense Library.
 void sinebeatTouchLink (void *);
 
-/// Calibration/template module class.
-/** A simple self calibration tool that doubles as an introductory template.*/
+/// From https://gist.github.com/Skoddiethecat/174d4d9d35ea1a80f94da899a2c2075d
 class ViaSinebeat : public ViaModule {
 
 public:

@@ -2,7 +2,7 @@
 
 void ViaGateseq::init(void) {
 
-	initializeAuxOutputs();
+	initializeAuxOutputsGateseq();
 
 	initializePatterns();
 

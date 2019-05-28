@@ -262,6 +262,10 @@ public:
 			module.atsrState->aLevel = aLevel;
 			module.atsrState->aScale = aLevel;
 			module.atsrState->bLevel = 0;
+			if (!module.gateDelayActive) {
+				module.gateDelayActive = 1;
+				module.gateDelayPhase = phase;
+			}
 			module.attacking = 0;
 			module.releasing = 1;
 		}
@@ -312,6 +316,10 @@ public:
 			module.atsrState->aScale = aLevel;
 			module.atsrState->bScale = bLevel;
 			module.atsrState->bLevel = bLevel;
+			if (!module.gateDelayActive) {
+				module.gateDelayActive = 1;
+				module.gateDelayPhase = phase + (1 << 28);
+			}
 			module.transitioning = 0;
 			module.releasing = 1;
 		}
@@ -541,10 +549,35 @@ public:
 	// aux logic min trigger length
 
 	int32_t lastSustain = 0;
+	int32_t lastLoop = 0;
 	int32_t auxLogicHold = 0;
 	int32_t auxLogicCounter = 0;
 
 	int32_t incScale = 65536;
+
+	int32_t gateLowCountdown = 0;
+
+	int32_t gateDelayPhase = 0;
+	int32_t gateDelayActive = 0;
+	int32_t gateDelayOut = 0;
+	int32_t gateDelayTransition;
+	int32_t gateDelayTrigger = 0;
+
+	void gateDelayProcess(void) {
+		if (gateDelayActive) {
+			gateDelayPhase += (gateDelayPhase > 0xFFFFFFF) ? atsrState->attackIncrement : atsrState->transitionIncrement;
+			if (gateDelayPhase > 0xFFFFFFF) {
+				gateDelayPhase = 0;
+				gateDelayActive = 0;
+				gateDelayTrigger = 8;
+			}
+		}
+		gateDelayTrigger = __USAT(gateDelayTrigger - 1, 8);
+		gateDelayTrigger += (sustaining < lastSustain) * 4;
+		lastSustain = sustaining;
+		gateDelayOut = (sustaining | (gateDelayTrigger > 0)) & !gateDelayActive;
+	}
+
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
@@ -559,12 +592,13 @@ public:
 		gateOn = 0;
 	}
 	void auxRisingEdgeCallback(void) {
-		if (gateOn | buttonOn) {
+		if (gateOn | buttonOn | (gateLowCountdown != 0)) {
 			atsrState->processGateHigh();
+			auxLogicHold = 1;
 		}
 	}
 	void auxFallingEdgeCallback(void) {
-		// do nothing
+		auxLogicHold = 0;
 	}
 	void buttonPressedCallback(void) {
 		atsrState->processGateHigh();
@@ -579,37 +613,55 @@ public:
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
 		render(0);
+		gateLowCountdown = __USAT(gateLowCountdown - 1, 16);
 	}
 	void transferCompleteCallback(void) {
 		render(VIA_ATSR_BUFFER_SIZE);
+		gateLowCountdown = __USAT(gateLowCountdown - 1, 16);
 	}
 	void slowConversionCallback(void) {
 
 		controls.updateExtra();
 
-		int32_t dMod = (int32_t) inputs.cv2Samples[0];
+		int32_t tMod = (int32_t) inputs.cv2Samples[0];
 		int32_t rMod = (int32_t) inputs.cv3Samples[0];
-		dMod += 32767;
+		tMod += 32767;
 		rMod += 32767;
-		dMod >>= 4;
+		tMod >>= 4;
 		rMod >>= 4;
-		dMod = expo.convert(__USAT(dMod, 12)) >> 5;
+		tMod = expo.convert(__USAT(tMod, 12)) >> 5;
 		rMod = expo.convert(__USAT(rMod, 12)) >> 5;
 
 		int32_t cycleMod;
 
 		if (cycleTime) {
 			cycleMod = expo.convert(controls.cv1Value) >> 5;
-			dMod = fix16_mul(cycleMod, dMod);
+			tMod = fix16_mul(cycleMod, tMod);
 			rMod = fix16_mul(cycleMod, rMod);
 		} else {
 			cycleMod = expo.convert(4095 - controls.cv1Value) >> 5;
 		}
 
+		if (attacking) {
+			cycleMod = attackTimeSample;
+		} else {
+			attackTimeSample = cycleMod;
+		}
+		if (transitioning) {
+			tMod = transitionTimeSample;
+		} else {
+			transitionTimeSample = tMod;
+		}
+		if (releasing) {
+			rMod = releaseTimeSample;
+		} else {
+			releaseTimeSample = rMod;
+		}
+
 		atsrState->attackIncrement = __USAT(fix16_mul(cycleMod,
 				expo.convert(4095 - controls.knob1Value) >> 6), 25);
 		atsrState->transitionIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob2Value) >> 6,
-				dMod), 25);
+				tMod), 25);
 		atsrState->releaseIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob3Value) >> 6,
 				rMod), 25);
 		setRedLED((atsrState->bLevel >> 4) * runtimeDisplay);
@@ -623,22 +675,6 @@ public:
 		atsrState->releaseIncrement = fix16_mul(atsrState->releaseIncrement, incScale);
 
 #endif
-
-		if (cvSH & attacking) {
-			atsrState->attackIncrement = attackTimeSample;
-		} else {
-			attackTimeSample = atsrState->attackIncrement;
-		}
-		if (cvSH & transitioning) {
-			atsrState->transitionIncrement = transitionTimeSample;
-		} else {
-			transitionTimeSample = atsrState->transitionIncrement;
-		}
-		if (cvSH & releasing) {
-			atsrState->releaseIncrement = releaseTimeSample;
-		} else {
-			releaseTimeSample = atsrState->releaseIncrement;
-		}
 
 
 	}
