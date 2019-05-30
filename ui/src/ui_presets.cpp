@@ -195,7 +195,7 @@ void ViaUI::newPreset(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		timerReset();
-		timerSetOverflow(500);
+		timerSetOverflow(300);
 		timerEnable();
 		break;
 
@@ -222,7 +222,7 @@ void ViaUI::switchPreset(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		timerReset();
-		timerSetOverflow(500);
+		timerSetOverflow(300);
 		timerEnable();
 		break;
 
@@ -254,12 +254,12 @@ void ViaUI::overwritePresets(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		timerReset();
-		timerSetOverflow(500);
+		timerSetOverflow(250);
 		timerEnable();
 		break;
 
 	case TIMEOUT_SIG:
-		if (flashCounter < 32) {
+		if (flashCounter < 3) {
 			flashCounter++;
 			uiSetLEDs(flashCounter % 8);
 		} else {
