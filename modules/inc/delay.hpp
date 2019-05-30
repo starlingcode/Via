@@ -108,6 +108,18 @@ public:
 		void aux4EnterMenuCallback(void) override;
 		//@}
 
+		void blinkOnCallback(void) override {
+			restoreRed = *(this_module.redLevel);
+			restoreGreen = *(this_module.greenLevel);
+			restoreBlue = *(this_module.blueLevel);
+			this_module.updateRGBDisplay(4095, 4095, 4095, 1);
+		}
+
+		void blinkOffCallback(void) override {
+			this_module.updateRGBDisplay(restoreRed, restoreGreen,
+					restoreBlue, 1);
+		}
+
 		/// A method to handle any initialization that needs to be done after some or all of the outer class constructor.
 		void initialize(void) override;
 

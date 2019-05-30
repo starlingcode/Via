@@ -12,11 +12,12 @@ void ViaUI::button1Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		button1EnterMenuCallback();
+		resetTimerMenu();
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (*button1 == releasedState) {
-			if(timerRead() < 2048) {
+			if(tapped) {
 				button1TapCallback();
 			} else {
 				button1HoldCallback();
@@ -26,6 +27,22 @@ void ViaUI::button1Menu(int32_t sig) {
 			specialMenuCallback();
 		}
 		break;
+
+	case TIMEOUT_SIG:
+		if (tapped) {
+			resetTimerBlink();
+			tapped = 0;
+			blink = 1;
+			blinkOnCallback();
+		} else if (blink) {
+			resetTimerHold();
+			blink = 0;
+			blinkOffCallback();
+		}
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -34,17 +51,35 @@ void ViaUI::button2Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		button2EnterMenuCallback();
+		resetTimerMenu();
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (*button2 == releasedState) {
-			if(timerRead() < 2048) {
+			if(tapped) {
 				button2TapCallback();
 			} else {
 				button2HoldCallback();
 			}
 		}
 		break;
+
+	case TIMEOUT_SIG:
+		if (tapped) {
+			resetTimerBlink();
+			tapped = 0;
+			blink = 1;
+			blinkOnCallback();
+		} else if (blink) {
+			resetTimerHold();
+			blink = 0;
+			blinkOffCallback();
+		}
+		break;
+
+	default:
+		break;
+
 	}
 }
 
@@ -54,11 +89,12 @@ void ViaUI::button3Menu(int32_t sig) {
 
 	case ENTRY_SIG:
 		button3EnterMenuCallback();
+		resetTimerMenu();
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (*button3 == releasedState) {
-			if(timerRead() < 2048) {
+			if(tapped) {
 				button3TapCallback();
 			} else {
 				button3HoldCallback();
@@ -71,6 +107,23 @@ void ViaUI::button3Menu(int32_t sig) {
 
 		case INIT_SIG:
 		break;
+
+		case TIMEOUT_SIG:
+			if (tapped) {
+				resetTimerBlink();
+				tapped = 0;
+				blink = 1;
+				blinkOnCallback();
+			} else if (blink) {
+				resetTimerHold();
+				blink = 0;
+				blinkOffCallback();
+			}
+			break;
+
+		default:
+			break;
+
 	}
 }
 
@@ -79,12 +132,13 @@ void ViaUI::button4Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		button4EnterMenuCallback();
+		resetTimerMenu();
 		break;
 
 	case SENSOR_EVENT_SIG:
 
 		if (*button4 == releasedState) {
-			if(timerRead() < 2048) {
+			if(tapped) {
 				button4TapCallback();
 			} else {
 				button4HoldCallback();
@@ -95,7 +149,20 @@ void ViaUI::button4Menu(int32_t sig) {
 		}
 		break;
 
-		default:
+	case TIMEOUT_SIG:
+		if (tapped) {
+			resetTimerBlink();
+			tapped = 0;
+			blink = 1;
+			blinkOnCallback();
+		} else if (blink) {
+			resetTimerHold();
+			blink = 0;
+			blinkOffCallback();
+		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -107,30 +174,63 @@ void ViaUI::button5Menu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		button5EnterMenuCallback();
+		resetTimerMenu();
 		break;
 
 	case SENSOR_EVENT_SIG:
 
 		// Check for entry into an aux mode
 		if (*button1 == pressedState) {
-			transition(&ViaUI::aux1Menu);
+			if (aux1Enabled) {
+				transition(&ViaUI::aux1Menu);
+				tapped = 1;
+			}
 		} else if (*button3 == pressedState) {
-			transition(&ViaUI::aux2Menu);
+			if (aux2Enabled) {
+				transition(&ViaUI::aux2Menu);
+				tapped = 1;
+			}
 		} else if (*button2 == pressedState) {
-			transition(&ViaUI::aux2MenuAlt);
+			if (aux2AltEnabled) {
+				transition(&ViaUI::aux2MenuAlt);
+				tapped = 1;
+			}
 		} else if (*button4 == pressedState) {
-			transition(&ViaUI::aux3Menu);
+			if (aux3Enabled) {
+				transition(&ViaUI::aux3Menu);
+				tapped = 1;
+			}
 		} else if (*button6 == pressedState) {
-			transition(&ViaUI::aux4Menu);
+			if (aux4Enabled) {
+				transition(&ViaUI::aux4Menu);
+				tapped = 1;
+			}
 		} else if (*button5 == releasedState) {
-			if(timerRead() < 2048) {
+			if (tapped) {
 				button5TapCallback();
 			} else {
 				button5HoldCallback();
 			}
 		}
 		break;
+
+	case TIMEOUT_SIG:
+		if (tapped) {
+			resetTimerBlink();
+			tapped = 0;
+			blink = 1;
+			blinkOnCallback();
+		} else if (blink) {
+			resetTimerHold();
+			blink = 0;
+			blinkOffCallback();
+		}
+		break;
+
+	default:
+		break;
 	}
+
 }
 
 /// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
@@ -139,11 +239,12 @@ void ViaUI::button6Menu(int32_t sig) {
 
 	case ENTRY_SIG:
 		button6EnterMenuCallback();
+		resetTimerMenu();
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (*button6 == releasedState) {
-			if(timerRead() < 2048) {
+			if(tapped) {
 				button6TapCallback();
 			} else {
 				button6HoldCallback();
@@ -156,6 +257,21 @@ void ViaUI::button6Menu(int32_t sig) {
 
 		case INIT_SIG:
 		break;
+		case TIMEOUT_SIG:
+			if (tapped) {
+				resetTimerBlink();
+				tapped = 0;
+				blink = 1;
+				blinkOnCallback();
+			} else if (blink) {
+				resetTimerHold();
+				blink = 0;
+				blinkOffCallback();
+			}
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -165,11 +281,12 @@ void ViaUI::aux1Menu(int32_t sig) {
 
 	case ENTRY_SIG:
 		aux1EnterMenuCallback();
+		resetTimerMenu();
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (*button1 == releasedState) {
-			if(timerRead() < 2048) {
+			if(tapped) {
 				aux1TapCallback();
 			} else {
 				aux1HoldCallback();
@@ -182,6 +299,22 @@ void ViaUI::aux1Menu(int32_t sig) {
 
 		case INIT_SIG:
 		break;
+
+		case TIMEOUT_SIG:
+			if (tapped) {
+				resetTimerBlink();
+				tapped = 0;
+				blink = 1;
+				blinkOnCallback();
+			} else if (blink) {
+				resetTimerHold();
+				blink = 0;
+				blinkOffCallback();
+			}
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -191,11 +324,12 @@ void ViaUI::aux2Menu(int32_t sig) {
 
 	case ENTRY_SIG:
 		aux2EnterMenuCallback();
+		resetTimerMenu();
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (*button3 == releasedState) {
-			if(timerRead() < 2048) {
+			if(tapped) {
 				aux2TapCallback();
 			} else {
 				aux2HoldCallback();
@@ -208,6 +342,22 @@ void ViaUI::aux2Menu(int32_t sig) {
 
 		case INIT_SIG:
 		break;
+
+		case TIMEOUT_SIG:
+			if (tapped) {
+				resetTimerBlink();
+				tapped = 0;
+				blink = 1;
+				blinkOnCallback();
+			} else if (blink) {
+				resetTimerHold();
+				blink = 0;
+				blinkOffCallback();
+			}
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -217,11 +367,12 @@ void ViaUI::aux2MenuAlt(int32_t sig) {
 
 	case ENTRY_SIG:
 		aux2AltEnterMenuCallback();
+		resetTimerMenu();
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (*button2 == releasedState) {
-			if(timerRead() < 2048) {
+			if(tapped) {
 				aux2AltTapCallback();
 			} else {
 				aux2AltHoldCallback();
@@ -231,6 +382,22 @@ void ViaUI::aux2MenuAlt(int32_t sig) {
 
 		case INIT_SIG:
 		break;
+
+		case TIMEOUT_SIG:
+			if (tapped) {
+				resetTimerBlink();
+				tapped = 0;
+				blink = 1;
+				blinkOnCallback();
+			} else if (blink) {
+				resetTimerHold();
+				blink = 0;
+				blinkOffCallback();
+			}
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -240,11 +407,12 @@ void ViaUI::aux3Menu(int32_t sig) {
 
 	case ENTRY_SIG:
 		aux3EnterMenuCallback();
+		resetTimerMenu();
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (*button4 == releasedState) {
-			if(timerRead() < 2048) {
+			if(tapped) {
 				aux3TapCallback();
 			} else {
 				aux3HoldCallback();
@@ -257,6 +425,22 @@ void ViaUI::aux3Menu(int32_t sig) {
 
 		case INIT_SIG:
 		break;
+
+		case TIMEOUT_SIG:
+			if (tapped) {
+				resetTimerBlink();
+				tapped = 0;
+				blink = 1;
+				blinkOnCallback();
+			} else if (blink) {
+				resetTimerHold();
+				blink = 0;
+				blinkOffCallback();
+			}
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -266,11 +450,12 @@ void ViaUI::aux4Menu(int32_t sig) {
 
 	case ENTRY_SIG:
 		aux4EnterMenuCallback();
+		resetTimerMenu();
 		break;
 
 	case SENSOR_EVENT_SIG:
 		if (*button6 == releasedState) {
-			if(timerRead() < 2048) {
+			if(tapped) {
 				aux4TapCallback();
 			} else {
 				aux4HoldCallback();
@@ -283,6 +468,22 @@ void ViaUI::aux4Menu(int32_t sig) {
 
 		case INIT_SIG:
 		break;
+
+		case TIMEOUT_SIG:
+			if (tapped) {
+				resetTimerBlink();
+				tapped = 0;
+				blink = 1;
+				blinkOnCallback();
+			} else if (blink) {
+				resetTimerHold();
+				blink = 0;
+				blinkOffCallback();
+			}
+			break;
+
+		default:
+			break;
 	}
 }
 

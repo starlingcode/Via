@@ -130,6 +130,18 @@ public:
 			linkUI((void *) &oscTouchLink, (void *) this);
 		}
 
+		void blinkOnCallback(void) override {
+			restoreRed = *(this_module.redLevel);
+			restoreGreen = *(this_module.greenLevel);
+			restoreBlue = *(this_module.blueLevel);
+			this_module.updateRGBDisplay(4095, 4095, 4095, 1);
+		}
+
+		void blinkOffCallback(void) override {
+			this_module.updateRGBDisplay(restoreRed, restoreGreen,
+					restoreBlue, 1);
+		}
+
 		//@{
 		/// Some firmware-specific data members used to register touch events on each sensor for testing.
 		int32_t touch1OK = 0;

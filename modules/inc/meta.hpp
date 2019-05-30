@@ -130,6 +130,18 @@ public:
 
 		void writeStockPresets(void) override;
 
+		void blinkOnCallback(void) override {
+			restoreRed = *(this_module.redLevel);
+			restoreGreen = *(this_module.greenLevel);
+			restoreBlue = *(this_module.blueLevel);
+			this_module.updateRGBDisplay(4095, 4095, 4095, 1);
+		}
+
+		void blinkOffCallback(void) override {
+			this_module.updateRGBDisplay(restoreRed, restoreGreen,
+					restoreBlue, 1);
+		}
+
 		// TODO use enums ....
 		// drum
 		uint32_t stockPreset1 = ENCODE_PRESET(0, 0, 0, 0, 0, 0, 2, 0, 0, 0);

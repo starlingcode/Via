@@ -115,6 +115,18 @@ public:
 		/// A utility method to write the factory presets from memory.
 		void writeStockPresets(void) override {}
 
+		void blinkOnCallback(void) override {
+			restoreRed = *(this_module.redLevel);
+			restoreGreen = *(this_module.greenLevel);
+			restoreBlue = *(this_module.blueLevel);
+			this_module.updateRGBDisplay(4095, 4095, 4095, 1);
+		}
+
+		void blinkOffCallback(void) override {
+			this_module.updateRGBDisplay(restoreRed, restoreGreen,
+					restoreBlue, 1);
+		}
+
 		/// On construction, link the calibTouchLink callback to the STM32 touch sense library.
 		ViaAtsrUI(ViaAtsr& x): this_module(x) {
 			linkUI((void *) &atsrTouchLink, (void *) this);

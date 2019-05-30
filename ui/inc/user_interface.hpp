@@ -144,6 +144,19 @@ public:
 	/// Used by the preset menu to indicate the preset slot to be recalled or overwritten.
 	int32_t presetNumber = 0;
 
+	int32_t tapped = 0;
+	int32_t blink = 0;
+
+	int32_t restoreRed = 0;
+	int32_t restoreGreen = 0;
+	int32_t restoreBlue = 0;
+
+	int32_t aux1Enabled = 1;
+	int32_t aux2Enabled = 1;
+	int32_t aux2AltEnabled = 1;
+	int32_t aux3Enabled = 1;
+	int32_t aux4Enabled = 1;
+
 	//@{
 	/// State change event handlers. TODO add default methods.
 	virtual void button1TapCallback(void) {
@@ -231,6 +244,9 @@ public:
 	virtual void aux2AltEnterMenuCallback(void) {};
 	virtual void aux3EnterMenuCallback(void) {};
 	virtual void aux4EnterMenuCallback(void) {};
+
+	virtual void blinkOnCallback(void) {};
+	virtual void blinkOffCallback(void) {};
 
 	virtual void specialMenuCallback(void) {};
 	//@}
@@ -422,12 +438,24 @@ public:
 
 #endif
 
-		/// An aggregate function to reset the timer, set the timeout to max, and enable it. Useful when entering a button menu and measuring length of press on release event with timerRead().
-	void resetTimerMenu(void) {
-		timerReset();
-		timerSetOverflow(65535);
-		timerEnable();
-	}
+	/// An aggregate function to reset the timer, set the timeout to max, and enable it. Useful when entering a button menu and measuring length of press on release event with timerRead().
+void resetTimerMenu(void) {
+	timerReset();
+	timerSetOverflow(2048);
+	timerEnable();
+}
+void resetTimerBlink(void) {
+	timerReset();
+	timerSetOverflow(256);
+	timerEnable();
+}
+void resetTimerHold(void) {
+	timerReset();
+	timerSetOverflow(65535);
+	timerEnable();
+}
+
+
 
 };
 

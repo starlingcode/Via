@@ -42,7 +42,8 @@ void ViaMeta::ViaMetaUI::initialize(void) {
 
 #ifdef BUILD_F373
 
-	
+	aux1Enabled = 0;
+	aux3Enabled = 0;
 
 #endif
 
@@ -118,7 +119,7 @@ void ViaMeta::ViaMetaUI::button1EnterMenuCallback(void) {
 		this_module.clearRGB();
 		this_module.setLEDs(SH_MODE);
 	}
-	resetTimerMenu();
+
 
 }
 void ViaMeta::ViaMetaUI::button2EnterMenuCallback(void) {
@@ -132,7 +133,7 @@ void ViaMeta::ViaMetaUI::button2EnterMenuCallback(void) {
 		this_module.clearRGB();
 		this_module.setLEDs(TABLE);
 	}
-	resetTimerMenu();
+
 }
 void ViaMeta::ViaMetaUI::button3EnterMenuCallback(void) {
 	if (this_module.presetSequenceEdit) {
@@ -160,7 +161,7 @@ void ViaMeta::ViaMetaUI::button3EnterMenuCallback(void) {
 			break;
 		}
 	}
-	resetTimerMenu();
+
 }
 void ViaMeta::ViaMetaUI::button4EnterMenuCallback(void) {
 	if (this_module.presetSequenceEdit) {
@@ -177,7 +178,7 @@ void ViaMeta::ViaMetaUI::button4EnterMenuCallback(void) {
 			this_module.setLEDs(TRIG_MODE);
 		}
 	}
-	resetTimerMenu();
+
 
 }
 void ViaMeta::ViaMetaUI::button5EnterMenuCallback(void) {
@@ -191,7 +192,7 @@ void ViaMeta::ViaMetaUI::button5EnterMenuCallback(void) {
 		this_module.clearRGB();
 		this_module.setLEDs(TABLE);
 	}
-	resetTimerMenu();
+
 }
 void ViaMeta::ViaMetaUI::button6EnterMenuCallback(void) {
 	if (this_module.presetSequenceEdit) {
@@ -204,17 +205,17 @@ void ViaMeta::ViaMetaUI::button6EnterMenuCallback(void) {
 		this_module.clearRGB();
 		this_module.setLEDs(LOOP_MODE);
 	}
-	resetTimerMenu();
+
 }
 void ViaMeta::ViaMetaUI::aux1EnterMenuCallback(void) {
 	this_module.clearLEDs();
 	this_module.setLEDs(DRUM_AUX_MODE);
-	resetTimerMenu();
+
 }
 void ViaMeta::ViaMetaUI::aux2EnterMenuCallback(void) {
 	this_module.clearLEDs();
 	this_module.setLEDs(LOGIC_A_MODE);
-	resetTimerMenu();
+
 }
 
 void ViaMeta::ViaMetaUI::aux2AltEnterMenuCallback(void) {
@@ -224,7 +225,7 @@ void ViaMeta::ViaMetaUI::aux2AltEnterMenuCallback(void) {
 void ViaMeta::ViaMetaUI::aux3EnterMenuCallback(void) {
 	this_module.clearLEDs();
 	this_module.setLEDs(DRUM_MODE);
-	resetTimerMenu();
+
 }
 void ViaMeta::ViaMetaUI::aux4EnterMenuCallback(void) {
 	this_module.clearLEDs();
@@ -232,7 +233,7 @@ void ViaMeta::ViaMetaUI::aux4EnterMenuCallback(void) {
 		this->transition(&ViaMeta::ViaMetaUI::aux1Menu);
 	} else {
 		this_module.setLEDs(DAC_3_MODE);
-		resetTimerMenu();
+
 	}
 }
 
