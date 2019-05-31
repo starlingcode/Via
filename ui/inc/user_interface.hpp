@@ -147,9 +147,9 @@ public:
 	int32_t tapped = 0;
 	int32_t blink = 0;
 
-	int32_t restoreRed = 0;
-	int32_t restoreGreen = 0;
-	int32_t restoreBlue = 0;
+	uint32_t restoreRed = 0;
+	uint32_t restoreGreen = 0;
+	uint32_t restoreBlue = 0;
 
 	int32_t aux1Enabled = 1;
 	int32_t aux2Enabled = 1;

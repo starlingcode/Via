@@ -4,8 +4,6 @@
  *  A module implementing a simple testing/calibration helper program that serves as a template.
  */
 
-#ifdef BUILD_F373
-
 /// Macro used to specify the number of samples to per DAC transfer.
 #define OSC_BUFFER_SIZE 32
 
@@ -18,15 +16,6 @@ void oscTouchLink (void *);
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
 #include <oscillators.hpp>
-
-#ifdef BUILD_F373
-
-/// Macro used to specify the number of samples to per DAC transfer.
-#define TEMPLATE_BUFFER_SIZE 32
-
-/// Callback to link to the C code in the STM32 Touch Sense Library.
-void templateTouchLink (void *);
-
 
 /// Calibration/template module class.
 
@@ -333,7 +322,7 @@ public:
 	}
 	void transferCompleteCallback(void) {
 		setLogicOut(0, runtimeDisplay);
-		(this->*render)(TEMPLATE_BUFFER_SIZE);
+		(this->*render)(OSC_BUFFER_SIZE);
 	}
 	void slowConversionCallback(void) {
 		controls.updateExtra();
@@ -375,7 +364,7 @@ public:
 			bBasePitch = fix16_mul(bBasePitch, 65762);
 			bBasePitch = fix16_mul(bBasePitch, fineTune) << chordTranspose;
 
-			detuneBase = 2000;
+			detuneBase = 1;
 
 		} else {
 			cBasePitch = fix16_mul(expo.convert(knob1Index) >> 3,
@@ -420,11 +409,11 @@ public:
 		initializeAuxOutputs();
 
 		/// Initialize the input stream buffers.
-		inputs.init(TEMPLATE_BUFFER_SIZE);
+		inputs.init(OSC_BUFFER_SIZE);
 		/// Initialize the output stream buffers.
-		outputs.init(TEMPLATE_BUFFER_SIZE);
+		outputs.init(OSC_BUFFER_SIZE);
 		/// Set the data members that will be used to determine DMA stream initialization in the hardware executable.
-		outputBufferSize = TEMPLATE_BUFFER_SIZE;
+		outputBufferSize = OSC_BUFFER_SIZE;
 		inputBufferSize = 1;
 
 		render = &ViaOsc::renderTri;
@@ -437,9 +426,5 @@ public:
 	}
 
 };
-
-#endif
-
-#endif
 
 #endif /* INC_Calib_HPP_ */

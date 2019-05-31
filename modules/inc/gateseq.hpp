@@ -297,6 +297,8 @@ public:
 
 	uint32_t blueLED;
 
+#ifdef BUILD_F373
+
 	void initializeAuxOutputsGateseq(void) {
 
 		/// Tie the output pointers of the module to GPIO control registers.
@@ -319,6 +321,18 @@ public:
 		blueLevel = (volatile uint32_t *) &blueLED;
 
 	}
+
+#endif
+
+#ifdef BUILD_VIRTUAL
+
+	void initializeAuxOutputsGateseq(void) {
+
+		initializeAuxOutputs();
+
+	}
+
+#endif
 
 	/*
 	 *

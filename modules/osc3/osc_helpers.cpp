@@ -25,7 +25,7 @@ void ViaOsc::renderSaw(int32_t writePosition) {
 	uint32_t bLevel;
 	uint32_t cLevel;
 
-	int32_t samplesRemaining = TEMPLATE_BUFFER_SIZE;
+	int32_t samplesRemaining = OSC_BUFFER_SIZE;
 
 	while (samplesRemaining) {
 
@@ -67,7 +67,7 @@ void ViaOsc::renderSquare(int32_t writePosition) {
 	uint32_t bLevel;
 	uint32_t cLevel;
 
-	int32_t samplesRemaining = TEMPLATE_BUFFER_SIZE;
+	int32_t samplesRemaining = OSC_BUFFER_SIZE;
 
 	while (samplesRemaining) {
 
@@ -109,7 +109,7 @@ void ViaOsc::renderTri(int32_t writePosition) {
 	uint32_t bLevel;
 	uint32_t cLevel;
 
-	int32_t samplesRemaining = TEMPLATE_BUFFER_SIZE;
+	int32_t samplesRemaining = OSC_BUFFER_SIZE;
 
 	while (samplesRemaining) {
 
@@ -152,7 +152,7 @@ void ViaOsc::renderTrap(int32_t writePosition) {
 	uint32_t bLevel;
 	uint32_t cLevel;
 
-	int32_t samplesRemaining = TEMPLATE_BUFFER_SIZE >> 1;
+	int32_t samplesRemaining = OSC_BUFFER_SIZE >> 1;
 
 	while (samplesRemaining) {
 

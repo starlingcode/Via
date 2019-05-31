@@ -30,9 +30,13 @@ public:
 
 	//@{
 	/// Variable to represent the brightness of each of the RGB LEDs. Valid range 0 - 4095.
-	uint32_t redLevel = 0;
-	uint32_t greenLevel = 0;
-	uint32_t blueLevel = 0;
+	uint32_t * redLevel;
+	uint32_t * greenLevel;
+	uint32_t * blueLevel;
+
+	uint32_t redLevelWrite = 0;
+	uint32_t greenLevelWrite = 0;
+	uint32_t blueLevelWrite = 0;
 	//}
 
 	//@{
@@ -79,11 +83,16 @@ public:
 	/// Unused; currently the VCVRack plugin just reads values from the virtual GPIO output variables.
 	void initializeAuxOutputs(void) {
 
+		redLevel = &redLevelWrite;
+		blueLevel = &blueLevelWrite;
+		greenLevel = &greenLevelWrite;
 
 	}
 
 	/// 16 samples from the hue space as RGB values with 12 bits per color channel.
 	rgb hueSpace[16] = {{4095, 0, 0}, {4095, 1228, 0}, {4095, 2457, 0}, {4095, 3685, 0}, {2047, 4095, 0}, {819, 4095, 0}, {0, 4095, 409}, {0, 4095, 1638}, {0, 4095, 4095}, {0, 2866, 4095}, {0, 1638, 4095}, {0, 409, 4095}, {2047, 0, 4095}, {3276, 0, 4095}, {4095, 0, 3685}, {4095, 0, 2456}};
+
+	rgb presetHues[6] = {{4095, 0, 0}, {0, 4095, 0}, {0, 0, 4095}, {2048, 2048, 0}, {0, 2048, 2048}, {2048, 0, 2048}};
 
 
 	/*
@@ -125,7 +134,7 @@ public:
 	}
 	/// Needs to be rewritten
 	void SET_BLUE_LED_ONOFF(int32_t X) {
-		blueLevel = X * 4095;
+		blueLevelWrite = X * 4095;
 	} 
 	/// Needs to be rewritten
 	enum ViaVirtualGPIO {
@@ -246,15 +255,15 @@ public:
 
 	/// Update red LED, 4095 fully on, 0 off.
 	inline void setRedLED(int32_t level) {
-		redLevel = level;
+		*redLevel = level;
 	}
 	/// Update green LED, 4095 fully on, 0 off.
 	inline void setGreenLED(int32_t level) {
-		greenLevel = level;
+		*greenLevel = level;
 	}
 	/// Update blue LED, 4095 fully on, 0 off.
 	inline void setBlueLED(int32_t level) {
-		blueLevel = level;
+		*blueLevel = level;
 	}
 
 	/// Update rbg with values 4095 fully on, 0 off. Only update if runtimeDisplay != 0.
@@ -348,6 +357,53 @@ public:
 		setLEDC(0);
 		setLEDD(0);
 	}
+
+	void updateRGBPreset(int32_t uiTimer, int32_t presetNumber) {
+
+		int32_t hue = presetNumber;
+
+		int32_t fade = __USAT((7000 - uiTimer), 12);
+
+		if (hue) {
+			updateRGBDisplay((fade * presetHues[hue - 1].r) >> 12,
+					(fade * presetHues[hue - 1].g) >> 12,
+					(fade * presetHues[hue - 1].b) >> 12,
+					1);
+		}
+
+	}
+
+		/// Handle a rising edge at the main logic input
+	virtual void mainRisingEdgeCallback(void) {};
+	/// Handle a falling edge at the main logic input
+	virtual void mainFallingEdgeCallback(void) {};
+
+	/// Handle a rising edge at the expander logic input
+	virtual void auxRisingEdgeCallback(void) {};
+	/// Handle a falling edge at the expander logic input
+	virtual void auxFallingEdgeCallback(void) {};
+
+	/// Handle a press event on the expander control button
+	virtual void buttonPressedCallback(void) {};
+	/// Handle a release event on the expander control button
+	virtual void buttonReleasedCallback(void) {};
+
+	/// unused
+	virtual void ioProcessCallback(void) {};
+
+	/// Fill the first half of the dac buffers
+	virtual void halfTransferCallback(void) {};
+	/// Fill the second half of the dac buffers
+	virtual void transferCompleteCallback(void) {};
+	/// Handle an end of conversion event for the 12 bit control rate ADCs
+	virtual void slowConversionCallback(void) {};
+
+	/// Handle an overflow interrupt from aux timer 1
+	virtual void auxTimer1InterruptCallback(void) {};
+	/// Handle an overflow interrupt from aux timer 2
+	virtual void auxTimer2InterruptCallback(void) {};
+	/// Handle an overflow interrupt from aux timer 3
+	virtual void auxTimer3InterruptCallback(void) {};
 
 };
 
