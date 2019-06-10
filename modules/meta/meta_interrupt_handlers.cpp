@@ -109,6 +109,7 @@ void ViaMeta::buttonPressedCallback(void) {
 }
 void ViaMeta::buttonReleasedCallback(void) {
 
+
 	metaController.gateSignal = 0;
 
 	updateRGB = currentRGBBehavior;

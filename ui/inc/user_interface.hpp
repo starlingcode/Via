@@ -252,16 +252,16 @@ public:
 	//@}
 
 	/// Virtual method used in subclasses to access module display drivers.
-	virtual void uiSetLEDs(int) = 0;
+	virtual void uiSetLEDs(int) {};
 
 	/// Virtual method to represent state recall, implemented in subclasses.
-	virtual void recallModuleState(void) = 0;
+	virtual void recallModuleState(void) {};
 
 	/// Virtual method used to represent writing the factory presets, implemented in subclasses.
-	virtual void writeStockPresets(void) = 0;
+	virtual void writeStockPresets(void) {};
 
 	/// Initial setup of UI
-	virtual void initialize(void) = 0;
+	virtual void initialize(void);
 
 	virtual ~ViaUI(void) {};
 

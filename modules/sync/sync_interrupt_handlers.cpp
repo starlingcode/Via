@@ -88,10 +88,10 @@ void ViaSync::buttonPressedCallback(void) {
 		pllController.virtualTimer = 0;
 #endif
 
-		tapSum += tap - readBuffer(&tapStore, 3);
+		tapSum += tap - readBuffer(&tapStore, 1);
 		writeBuffer(&tapStore, tap);
 
-		pllController.periodCount = tapSum >> 2;
+		pllController.periodCount = tapSum >> 1;
 
 		lastTap = tap;
 
