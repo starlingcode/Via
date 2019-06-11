@@ -123,6 +123,10 @@ public:
 		HAL_FLASH_OB_Launch();
 		HAL_FLASH_Lock();
 
+		if (obStatus) {
+
+		}
+
 
 	}
 

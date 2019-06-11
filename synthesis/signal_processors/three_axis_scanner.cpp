@@ -37,19 +37,23 @@ void ThreeAxisScanner::scanSetup() {
 	lastXInput = xInput;
 	lastYInput = yInput;
 
-	int32_t xIndex = lastXIndex * hardSync;
-	int32_t yIndex = lastYIndex * hardSync;
+	uint32_t xIndex = lastXIndex * hardSync;
+	uint32_t yIndex = lastYIndex * hardSync;
 
-	int32_t samplesRemaining = bufferSize;
-	int32_t writeIndex = 0;
+	int32_t thisXOffset = xOffset;
+	int32_t thisYOffset = yOffset;
+
+	uint32_t samplesRemaining = bufferSize;
+	uint32_t writeIndex = 0;
 
 	while (samplesRemaining) {
 
 		xIndex += xIncrement;
 		yIndex += yIncrement;
 
-		xIndexBuffer[writeIndex] = foldSignal25Bit((xIndex << 8) + xOffset);
-		yIndexBuffer[writeIndex] = foldSignal25Bit((yIndex << 8) + yOffset);
+		xIndexBuffer[writeIndex] = foldSignal25Bit((xIndex << 8) + thisXOffset);
+		yIndexBuffer[writeIndex] = foldSignal25Bit((yIndex << 8) + thisYOffset);
+
 
 		samplesRemaining --;
 		writeIndex ++;
@@ -114,7 +118,8 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 	int32_t * yTableRead = (int32_t *) yTable + (517 * (zIndex >> 16)) + 2;
 
 	int32_t leftSample;
-	int32_t morphFrac;
+	int32_t morphFrac =  zIndex & 0xFFFF;
+
 	int32_t phaseFrac;
 
 	int32_t samplesRemaining = bufferSize - 1;
@@ -166,7 +171,6 @@ inline void ThreeAxisScanner::scanTerrainSum(void) {
 
 			leftSample = xIndexBuffer[writeIndex] >> 16;
 			phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
-			morphFrac =  zIndex & 0xFFFF;
 
 			xSample = fast_15_16_bilerp_prediff(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac);
 
@@ -230,7 +234,8 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 	int32_t * yTableRead = (int32_t *) yTable + (517 * (zIndex >> 16)) + 2;
 
 	int32_t leftSample;
-	int32_t morphFrac;
+	int32_t morphFrac =  zIndex & 0xFFFF;
+
 	int32_t phaseFrac;
 
 	int32_t xIndexAtLogic;
@@ -280,7 +285,6 @@ inline void ThreeAxisScanner::scanTerrainMultiply(void) {
 
 			leftSample = xIndexBuffer[writeIndex]>> 16;
 			phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
-			morphFrac =  zIndex & 0xFFFF;
 
 			xSample = fast_15_16_bilerp_prediff(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac);
 
@@ -346,7 +350,8 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 	int32_t * yTableRead = (int32_t *) yTable + (517 * (zIndex >> 16)) + 2;
 
 	int32_t leftSample;
-	int32_t morphFrac;
+	int32_t morphFrac =  zIndex & 0xFFFF;
+
 	int32_t phaseFrac;
 
 	int32_t xIndexAtLogic;
@@ -397,7 +402,6 @@ inline void ThreeAxisScanner::scanTerrainDifference(void) {
 
 			leftSample = xIndexBuffer[writeIndex]>> 16;
 			phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
-			morphFrac =  zIndex & 0xFFFF;
 
 			xSample = fast_15_16_bilerp_prediff(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac);
 
@@ -462,7 +466,8 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 	int32_t * yTableRead = (int32_t *) yTable + (517 * (zIndex >> 16)) + 2;
 
 	int32_t leftSample;
-	int32_t morphFrac;
+	int32_t morphFrac =  zIndex & 0xFFFF;
+
 	int32_t phaseFrac;
 
 	int32_t xIndexAtLogic;
@@ -513,7 +518,6 @@ inline void ThreeAxisScanner::scanTerrainLighten(void) {
 
 			leftSample = xIndexBuffer[writeIndex]>> 16;
 			phaseFrac = (xIndexBuffer[writeIndex]) & 0xFFFF;
-			morphFrac =  zIndex & 0xFFFF;
 
 			xSample = fast_15_16_bilerp_prediff(xTableRead[leftSample], xTableRead[leftSample + 1], morphFrac, phaseFrac);
 

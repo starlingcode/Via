@@ -15,6 +15,9 @@
 
 #include "meta.hpp"
 
+#define EXPAND_LOGIC_HIGH GPIOA->BRR = (uint32_t)GPIO_PIN_12;
+#define EXPAND_LOGIC_LOW GPIOA->BSRR = (uint32_t)GPIO_PIN_12;
+
 const uint32_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, phaseModPWM_3, phaseModPWM_4, phaseModPWM_5, phaseModPWM_6, phaseModPWM_7, phaseModPWM_8, phaseModPWM_9, phaseModPWM_10, phaseModPWM_11, phaseModPWM_12, phaseModPWM_13, phaseModPWM_14, phaseModPWM_15, phaseModPWM_16, phaseModPWM_17, phaseModPWM_18, phaseModPWM_19, phaseModPWM_20, phaseModPWM_21, phaseModPWM_22, phaseModPWM_23, phaseModPWM_24, phaseModPWM_25, phaseModPWM_26, phaseModPWM_27, phaseModPWM_28, phaseModPWM_29, phaseModPWM_30, phaseModPWM_31, phaseModPWM_32};
 
 void ViaMeta::mainRisingEdgeCallback(void) {
@@ -140,6 +143,7 @@ void ViaMeta::halfTransferCallback(void) {
 	(this->*calculateSH)(0);
 	metaController.triggerSignal = 1;
 
+
 }
 
 void ViaMeta::transferCompleteCallback(void) {
@@ -157,7 +161,6 @@ void ViaMeta::transferCompleteCallback(void) {
 	(this->*calculateLogicA)(1);
 	(this->*calculateSH)(1);
 	metaController.triggerSignal = 1;
-
 }
 
 void ViaMeta::slowConversionCallback(void) {

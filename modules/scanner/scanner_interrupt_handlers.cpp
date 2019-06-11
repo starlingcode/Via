@@ -144,6 +144,7 @@ void ViaScanner::transferCompleteCallback(void) {
 	outputs.logicA[0] = GET_ALOGIC_MASK(scanner.hemisphereBlend);
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(scanner.deltaBlend);
 
+
 }
 
 

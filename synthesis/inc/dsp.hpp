@@ -1,6 +1,7 @@
 
 #ifndef INC_VIA_DSP_H_
 #define INC_VIA_DSP_H_
+#include <stdlib.h>
 
 #include <stdint.h>
 
@@ -533,14 +534,16 @@ static inline int32_t foldSignal16Bit(int32_t phaseIn) {
 
 }
 
-static inline int32_t foldSignal25Bit(int32_t phaseIn) {
+static inline uint32_t foldSignal25Bit(uint32_t phaseIn) {
 
 	// fold into the space [0, 2^25)
 	// check the lsb of abs(input) >> 15 (is phaseIn / 2^15 even or odd)
 	// mathematical conditional that adds the modulo 2^15 for odd and the inversion of that in 15 bit space for even
 
-	return ((phaseIn >> 25) & 1) ?
-			(0x1FFFFFF - (phaseIn & 0x1FFFFFF)) : (phaseIn & 0x1FFFFFF);
+//	return ((phaseIn >> 25) & 1) ?
+//			(0x1FFFFFF - (phaseIn & 0x1FFFFFF)) : (phaseIn & 0x1FFFFFF);
+
+	return __USAT((abs((int32_t) phaseIn << 6) - 1) >> 6, 25);
 
 }
 

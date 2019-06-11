@@ -418,12 +418,14 @@ void ViaMeta::ViaMetaUI::specialMenuCallback(void) {
 		recallModuleState();
 		this_module.clearRGB();
 		this_module.clearLEDs();
+		this_module.presetOverride = 0;
 	} else {
 		this_module.presetSequenceMode = 1;
 		this_module.clearRGB();
 		this_module.clearLEDs();
 		this_module.updateRGB = &ViaMeta::updateRGBPreset;
 		this_module.currentRGBBehavior = &ViaMeta::updateRGBPreset;
+		this_module.presetOverride = 0;
 	}
 
 	transition(&ViaMeta::ViaMetaUI::switchPreset);
