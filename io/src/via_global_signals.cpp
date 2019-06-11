@@ -112,16 +112,13 @@ void ViaControls::updateSlowExtra(void) {
 		knob3Average += controlRateInputs[i + 1];
 	}
 
-	cv1Average = 4095 - (cv1Average >> 2);
-	knob1Average = knob1Average >> 2;
-	knob2Average = knob2Average >> 2;
-	knob3Average = knob3Average >> 2;
+	cv1Average = (4095 << 2) - cv1Average;
 #endif
 #ifdef BUILD_VIRTUAL
-	cv1Average = cv1;
-	knob1Average = knob1;
-	knob2Average = knob2;
-	knob3Average = knob3;
+	cv1Average = cv1 << 2;
+	knob1Average = knob1 << 2;
+	knob2Average = knob2 << 2;
+	knob3Average = knob3 << 2;
 #endif
 
 
@@ -132,10 +129,10 @@ void ViaControls::updateSlowExtra(void) {
 	knob3Sum = knob3Average + knob3Sum - readLongBuffer(&knob3Buffer, 255);
 
 	/// Write the averaged controls to the output variables.
-	cv1Value = cv1Sum >> 8;
-	knob1Value = knob1Sum >> 8;
-	knob2Value = knob2Sum >> 8;
-	knob3Value = knob3Sum >> 8;
+	cv1Value = cv1Sum >> 10;
+	knob1Value = knob1Sum >> 10;
+	knob2Value = knob2Sum >> 10;
+	knob3Value = knob3Sum >> 10;
 
 	/// Store the newest value in the circular buffer.
 	writeLongBuffer(&cv1Buffer, cv1Average);

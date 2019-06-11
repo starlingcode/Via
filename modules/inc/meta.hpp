@@ -432,6 +432,8 @@ public:
 	int32_t transientScale = 1 << 3;
 	uint32_t minTransientLength = 14;
 
+	int32_t buttonHigh = 0;
+
 	/*
 	 *
 	 * Event meta_handlers

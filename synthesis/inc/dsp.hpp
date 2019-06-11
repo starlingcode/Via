@@ -1,6 +1,7 @@
 
 #ifndef INC_VIA_DSP_H_
 #define INC_VIA_DSP_H_
+#include <stdlib.h>
 
 #include <stdint.h>
 
@@ -54,6 +55,16 @@ extern "C" {
  */
 
 ///
+/// Circular buffer, max length 8.
+///
+typedef struct {
+	/// Data buffer
+	int32_t buff[8];
+	/// Write head position
+	int32_t writeIndex;
+} lilBuffer;
+
+///
 /// Circular buffer, max length 32.
 ///
 typedef struct {
@@ -72,6 +83,20 @@ typedef struct {
 	/// Write head position
 	int32_t writeIndex;
 } longBuffer;
+
+///
+/// Write to value buffer at current write index and increment index.
+///
+static inline void writeLilBuffer(lilBuffer* buffer, int32_t value) {
+	buffer->buff[(buffer->writeIndex++) & 7] = value;
+}
+
+///
+/// Read value at index in buffer relative to write position.
+///
+static inline int32_t readLilBuffer(lilBuffer* buffer, int32_t Xn) {
+	return buffer->buff[(buffer->writeIndex + (~Xn)) & 7];
+}
 
 ///
 /// Write to value buffer at current write index and increment index.
@@ -344,6 +369,19 @@ static inline int32_t fast_15_16_bilerp_prediff_deltaValue(int32_t in0, int32_t 
 	return in0;
 }
 
+static inline int32_t fix32_mul_signed(int32_t in0, int32_t in1) {
+	__asm ("SMMUL %[result_1], %[input_1], %[input_2]"
+			: [result_1] "=r" (in0)
+			: [input_1] "r" (in0), [input_2] "r" (in1)
+	);
+
+	return in0;
+}
+
+//static inline int32_t fix32_mul_unsigned(int32_t in0, int32_t in1) {
+//	return
+//}
+
 // overkill probably, assumes 9 tables and 517 samples padded with two at the start and end of each waveform
 // this is fortunately the default table load
 // morph should have a max value of the table size
@@ -496,14 +534,16 @@ static inline int32_t foldSignal16Bit(int32_t phaseIn) {
 
 }
 
-static inline int32_t foldSignal25Bit(int32_t phaseIn) {
+static inline uint32_t foldSignal25Bit(uint32_t phaseIn) {
 
 	// fold into the space [0, 2^25)
 	// check the lsb of abs(input) >> 15 (is phaseIn / 2^15 even or odd)
 	// mathematical conditional that adds the modulo 2^15 for odd and the inversion of that in 15 bit space for even
 
-	return ((phaseIn >> 25) & 1) ?
-			(0x1FFFFFF - (phaseIn & 0x1FFFFFF)) : (phaseIn & 0x1FFFFFF);
+//	return ((phaseIn >> 25) & 1) ?
+//			(0x1FFFFFF - (phaseIn & 0x1FFFFFF)) : (phaseIn & 0x1FFFFFF);
+
+	return __USAT((abs((int32_t) phaseIn << 6) - 1) >> 6, 25);
 
 }
 
