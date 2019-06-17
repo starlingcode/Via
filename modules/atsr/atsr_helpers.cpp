@@ -31,6 +31,7 @@ void ViaAtsr::render(int32_t writePosition) {
 	gateLowCountdown += ((lastLoop > loopGate) & gateOn) * 8;
 	lastLoop = loopGate;
 	loopGate |= (gateLowCountdown > 0);
+	loopGate &= !startup;
 	int32_t loopGateOut = 2048 - loopGate * 2048;
 
 	outputs.logicA[0] = GET_ALOGIC_MASK(*assignableLogic);

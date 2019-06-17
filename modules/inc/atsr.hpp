@@ -537,6 +537,8 @@ public:
 	int32_t transitioning = 0;
 	int32_t sustaining = 0;
 
+	int32_t startup = 8;
+
 	// random module utilities
 
 	/// Instance of the exponential converter class.
@@ -632,6 +634,8 @@ public:
 		gateLowCountdown = __USAT(gateLowCountdown - 1, 16);
 	}
 	void slowConversionCallback(void) {
+
+		startup = __USAT(startup - 1, 16);
 
 		controls.updateExtra();
 
