@@ -72,12 +72,13 @@ void ViaMeta::ViaMetaUI::recallModuleState(void) {
 	this_module.metaUI.aux4Mode %= numAux4Modes;
 
 
+
 	this_module.handleAux2ModeChange(this_module.metaUI.aux2Mode);
 	this_module.handleButton1ModeChange(this_module.metaUI.button1Mode);
 	this_module.handleButton2ModeChange(this_module.metaUI.button2Mode);
 	this_module.handleButton3ModeChange(this_module.metaUI.button3Mode);
 	this_module.handleButton4ModeChange(this_module.metaUI.button4Mode);
-	this_module.handleButton5ModeChange(this_module.metaUI.button5Mode);
+//	this_module.handleButton5ModeChange(this_module.metaUI.button5Mode);
 	this_module.handleButton6ModeChange(this_module.metaUI.button6Mode);
 
 }
@@ -288,8 +289,8 @@ void ViaMeta::ViaMetaUI::button4TapCallback(void) {
 }
 void ViaMeta::ViaMetaUI::button5TapCallback(void) {
 	if (!this_module.presetSequenceMode) {
-		TABLE = decrementModeAndStore(TABLE, BUTTON5_MASK, numButton5Modes, BUTTON5_SHIFT);
-		this_module.handleButton5ModeChange(TABLE);
+		TABLE = decrementModeAndStore(TABLE, BUTTON2_MASK, numButton2Modes, BUTTON2_SHIFT);
+		this_module.handleButton2ModeChange(TABLE);
 		this_module.clearLEDs();
 		this_module.setLEDs(TABLE);
 		transition(&ViaMeta::ViaMetaUI::newModeMenu);
