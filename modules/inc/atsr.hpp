@@ -523,14 +523,14 @@ public:
 
 	};
 
-	Resting resting;
 	Attack attack;
 	Transition transition;
 	Sustain sustain;
-	ReleaseFromS releaseFromS;
 	ReleaseFromA releaseFromA;
 	ReleaseFromT releaseFromT;
+	ReleaseFromS releaseFromS;
 	Retrigger retrigger;
+	Resting resting;
 
 	int32_t releasing = 0;
 	int32_t attacking = 0;

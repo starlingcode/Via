@@ -20,8 +20,10 @@ void ViaAtsr::render(int32_t writePosition) {
 
 	uint32_t aLevel = atsrState->aLevel;
 	uint32_t bLevel = atsrState->bLevel;
+#ifdef BUILD_F373
 	int32_t aPulseWidth = (aLevel & 15) >> 1;
 	int32_t bPulseWidth = (bLevel & 15) >> 1;
+#endif
 	aLevel >>= 4;
 	bLevel >>= 4;
 
