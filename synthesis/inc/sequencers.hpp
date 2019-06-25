@@ -11,6 +11,10 @@
 #include "via_platform_binding.hpp"
 #include "boolean_sequences.hpp"
 
+// #ifdef BUILD_VIRTUAL
+// #include <iostream>
+// #endif
+
 enum {
 	// Dual soft gate (use crossfader as dual and gate with followed by mixing "or" stage)
 	SOFT_GATE_EXECUTE,
@@ -26,6 +30,8 @@ enum {
 
 class DualEuclidean {
 
+#ifdef BUILD_F373
+
 	uint32_t aLength = 1;
 	uint32_t bLength = 1;
 	uint32_t aPatternMorph = 0;
@@ -33,9 +39,19 @@ class DualEuclidean {
 	uint32_t aPatternIndex = 0;
 	uint32_t bPatternIndex = 0;
 
+#endif
+
 public:
 
 #ifdef BUILD_VIRTUAL
+
+	uint32_t aLength = 1;
+	uint32_t bLength = 1;
+	uint32_t aPatternMorph = 0;
+	uint32_t bPatternMorph = 0;
+	uint32_t aPatternIndex = 0;
+	uint32_t bPatternIndex = 0;
+
 	int32_t virtualTimer1Count = 0;
 	int32_t virtualTimer1Overflow = 0; //not used
 	int32_t virtualTimer1Enable = 1; //not used
@@ -51,6 +67,8 @@ public:
 	int32_t virtualTimer4Count = 0;
 	int32_t virtualTimer4Overflow = 48; // 1ms at 48k
 	int32_t virtualTimer4Enable = 0;
+
+
 #endif
 
 	uint32_t offset = 0;
