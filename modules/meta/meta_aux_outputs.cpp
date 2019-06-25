@@ -268,7 +268,7 @@ void ViaMeta::calculateSHMode1(int32_t writeIndex) {
 
 void ViaMeta::calculateSHMode2(int32_t writeIndex) {
 
-	uint32_t switcher = abs(metaController.phaseEvent);
+	int32_t switcher = abs(metaController.phaseEvent);
 
 	if (!switcher) {
 		outputs.shA[writeIndex] = GPIO_NOP;
