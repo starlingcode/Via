@@ -282,7 +282,9 @@ class PllController {
 	int32_t lastMultiplier = 1;
 	int32_t lastYIndex = 0;
 
+#ifdef BUILD_F373
 	int32_t lastRatioX = 1;
+#endif
 	int32_t ratioXTransitionPoint = 0;
 	int32_t ratioXStable = 1;
 
@@ -301,7 +303,9 @@ class PllController {
 
 	}
 
+#ifdef BUILD_F373
 	int32_t lastRatioY = 1;
+#endif
 	int32_t ratioYTransitionPoint = 0;
 	int32_t ratioYStable = 1;
 
@@ -323,6 +327,11 @@ class PllController {
 	}
 
 public:
+
+#ifdef BUILD_VIRTUAL
+	int32_t lastRatioX = 1;
+	int32_t lastRatioY = 1;
+#endif
 
 	uint32_t virtualTimer;
 

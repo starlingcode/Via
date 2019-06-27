@@ -152,7 +152,7 @@ public:
 		// looping AR
 		uint32_t stockPreset4 = ENCODE_PRESET(3, 3, 1, 1, 3, 1, 0, 1, 0, 0);
 		// complex sequence
-		uint32_t stockPreset5 = ENCODE_PRESET(4, 2, 2, 5, 2, 0, 0, 0, 1, 0);
+		uint32_t stockPreset5 = ENCODE_PRESET(4, 3, 2, 5, 3, 0, 0, 0, 1, 0);
 		// complex LFO
 		uint32_t stockPreset6 = ENCODE_PRESET(0, 0, 2, 1, 0, 1, 0, 1, 0, 0);
 
