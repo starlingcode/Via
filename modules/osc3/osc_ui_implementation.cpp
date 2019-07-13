@@ -130,7 +130,7 @@ void ViaOsc::ViaOscUI::button4EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
-	this_module.setLEDs(button4Mode);
+	this_module.setLEDs(button1Mode);
 	resetTimerMenu();
 
 }
@@ -194,7 +194,8 @@ void ViaOsc::ViaOscUI::aux4EnterMenuCallback(void) {
 
 void ViaOsc::ViaOscUI::button1TapCallback(void) {
 
-	button1Mode = incrementModeAndStore(button1Mode, BUTTON1_MASK, this_module.numButton1Modes, BUTTON1_SHIFT);
+	button1Mode = __USAT(button1Mode + 1, 2);
+	storeMode(button1Mode, BUTTON1_MASK, BUTTON1_SHIFT);
 	this_module.handleButton1ModeChange(button1Mode);
 	this_module.clearLEDs();
 	this_module.setLEDs(button1Mode);
@@ -221,10 +222,11 @@ void ViaOsc::ViaOscUI::button3TapCallback(void) {
 }
 void ViaOsc::ViaOscUI::button4TapCallback(void) {
 
-	button4Mode = incrementModeAndStore(button4Mode, BUTTON4_MASK, this_module.numButton4Modes, BUTTON4_SHIFT);
-	this_module.handleButton4ModeChange(button4Mode);
+	button1Mode = __USAT(button1Mode - 1, 2);
+	storeMode(button1Mode, BUTTON1_MASK, BUTTON1_SHIFT);
+	this_module.handleButton1ModeChange(button1Mode);
 	this_module.clearLEDs();
-	this_module.setLEDs(button4Mode);
+	this_module.setLEDs(button1Mode);
 	transition(&ViaOsc::ViaOscUI::newModeMenu);
 
 }

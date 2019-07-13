@@ -184,9 +184,11 @@ public:
 	int32_t aBasePitch = 0;
 	int32_t bBasePitch = 0;
 	int32_t cBasePitch = 0;
+	int32_t chordTranspose = 0;
 
 	int32_t octave = 0;
 	int32_t octaveRange = 0;
+	int32_t octaveMult = 1;
 	int32_t unity = 0;
 
 	int32_t lastLogicA = 0;
@@ -219,26 +221,26 @@ public:
 
 	void linearDetune(int32_t detuneMod) {
 
-		detune = (detuneBase + detuneMod) * (detuneBase != 0);
+		detune = (detuneBase + (detuneMod << 3)) * (detuneBase != 0);
 
-		aFreq = (cBasePitch << (octave * octaveRange)) + (detune >> 2) * !unity;
-		bFreq = (cBasePitch << (octave * octaveRange)) - (detune >> 2) * !unity;
+		aFreq = (cBasePitch * octaveMult) + (detune >> 2) * !unity;
+		bFreq = (cBasePitch * octaveMult) - (detune >> 2) * !unity;
 
 	}
 
 	void scaledDetune(int32_t detuneMod) {
 
-		detune = (detuneBase + detuneMod) * (detuneBase != 0);
+		detune = (detuneBase + (detuneMod << 3)) * (detuneBase != 0);
 
-		aFreq = fix16_mul(cBasePitch << (octave * octaveRange), 65536 - (detune >> 5) * !unity);
-		bFreq = fix16_mul(cBasePitch << (octave * octaveRange), 65536 + (detune >> 5) * !unity);
+		aFreq = fix16_mul(cBasePitch * octaveMult, 65536 - (detune >> 5) * !unity);
+		bFreq = fix16_mul(cBasePitch * octaveMult, 65536 + (detune >> 5) * !unity);
 
 	}
 
 	void chordalDetune(int32_t detuneMod) {
 
-		aFreq = aBasePitch << (octave * octaveRange);
-		bFreq = bBasePitch << (octave * octaveRange);
+		aFreq = (!unity) ? aBasePitch * octaveMult : cBasePitch * octaveMult << chordTranspose;
+		bFreq = (!unity) ? bBasePitch * octaveMult : cBasePitch * octaveMult << chordTranspose;
 
 	}
 
@@ -246,9 +248,11 @@ public:
 
 	inline void updateFrequencies(void) {
 
+		octaveMult = 1 << (!octave * (octaveRange));
+
 		(this->*doDetune)((int32_t) -inputs.cv3Samples[0]);
 
-		cFreq = cBasePitch << (octave * octaveRange);
+		cFreq = cBasePitch * octaveMult;
 
 		int32_t pmInput = inputs.cv2Samples[0];
 
@@ -349,19 +353,19 @@ public:
 
 			cBasePitch = fix16_mul(coarseTune,
 					expo.convert(cv1Index) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 65762);
+			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
 			cBasePitch = fix16_mul(cBasePitch, fineTune);
 
 			int32_t chordMultiplier = scale[__USAT((controls.cv1Value >> 5) + chord, 8)] << 5;
 
 			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			aBasePitch = fix16_mul(aBasePitch, 65762);
+			aBasePitch = fix16_mul(aBasePitch, 65762) >> 1;
 			aBasePitch = fix16_mul(aBasePitch, fineTune) << chordTranspose;
 
 			chordMultiplier = scale[__USAT((controls.cv1Value >> 5) - chord, 8)] << 5;
 
 			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			bBasePitch = fix16_mul(bBasePitch, 65762);
+			bBasePitch = fix16_mul(bBasePitch, 65762) >> 1;
 			bBasePitch = fix16_mul(bBasePitch, fineTune) << chordTranspose;
 
 			detuneBase = 1;
@@ -369,7 +373,7 @@ public:
 		} else {
 			cBasePitch = fix16_mul(expo.convert(knob1Index) >> 3,
 					expo.convert(cv1Index) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 65762);
+			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
 			detuneBase = controls.knob3Value << 4;
 		}
@@ -388,12 +392,12 @@ public:
 
 	}
 
-	int32_t numButton1Modes = 2;
+	int32_t numButton1Modes = 4;
 	int32_t numButton2Modes = 4;
-	int32_t numButton3Modes = 2;
+	int32_t numButton3Modes = 3;
 	int32_t numButton4Modes = 4;
-	int32_t numButton5Modes = 4;
-	int32_t numButton6Modes = 2;
+	int32_t numButton5Modes = 2;
+	int32_t numButton6Modes = 4;
 
 	void handleButton1ModeChange(int32_t);
 	void handleButton2ModeChange(int32_t);
