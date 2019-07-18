@@ -22,6 +22,8 @@ class ViaSync3 : public ViaModule {
 
 public:
 
+	typedef void (ViaSync3::*renderPointer)(int32_t writePosition);
+
 	class ViaSync3UI: public ViaUI {
 
 	public:
@@ -35,12 +37,12 @@ public:
 
 //		//@{
 //		/// Functions to handle a tap event on a sync3 sensor or shift combo.
-//		void button1TapCallback(void) override;
+		void button1TapCallback(void) override;
 		void button2TapCallback(void) override;
-//		void button3TapCallback(void) override;
-//		void button4TapCallback(void) override;
+		void button3TapCallback(void) override;
+		void button4TapCallback(void) override;
 		void button5TapCallback(void) override;
-//		void button6TapCallback(void) override;
+		void button6TapCallback(void) override;
 //
 //		void aux1TapCallback(void) override;
 //		void aux2TapCallback(void) override;
@@ -51,12 +53,12 @@ public:
 //
 //		//@{
 //		/// Functions to handle a hold event on a sync3 sensor or shift combo.
-//		void button1HoldCallback(void) override;
+		void button1HoldCallback(void) override;
 		void button2HoldCallback(void) override;
-//		void button3HoldCallback(void) override;
-//		void button4HoldCallback(void) override;
+		void button3HoldCallback(void) override;
+		void button4HoldCallback(void) override;
 		void button5HoldCallback(void) override;
-//		void button6HoldCallback(void) override;
+		void button6HoldCallback(void) override;
 //
 //		void aux1HoldCallback(void) override;
 //		void aux2HoldCallback(void) override;
@@ -75,12 +77,12 @@ public:
 //
 //		//@{
 //		/// Methods to handle entry transitions into sync3 sensor menu states.
-//		void button1EnterMenuCallback(void) override;
+		void button1EnterMenuCallback(void) override;
 		void button2EnterMenuCallback(void) override;
-//		void button3EnterMenuCallback(void) override;
-//		void button4EnterMenuCallback(void) override;
+		void button3EnterMenuCallback(void) override;
+		void button4EnterMenuCallback(void) override;
 		void button5EnterMenuCallback(void) override;
-//		void button6EnterMenuCallback(void) override;
+		void button6EnterMenuCallback(void) override;
 //
 //		void aux1EnterMenuCallback(void) override;
 //		void aux2EnterMenuCallback(void) override;
@@ -183,6 +185,11 @@ public:
 	int32_t increment3 = 1000;
 	int32_t increment4 = 1000;
 
+	uint32_t phaseModOn = 0;
+	int32_t phaseModTracker = 0;
+	int32_t lastPhaseMod = 0;
+	int32_t phaseModIncrement = 0;
+
 	int32_t sync1Mult = 0;
 	int32_t sync2Mult = 0;
 	int32_t sync3Mult = 0;
@@ -221,26 +228,111 @@ public:
 	uint32_t * multipliers = multipliersInt;
 
 	void (ViaSync3::*updateOutputs)(int32_t writePosition);
-	void updateOutputsTriangle(int32_t writePosition);
-	void updateOutputsSaw(int32_t writePosition);
-	void updateOutputsSquare(int32_t writePosition);
+
+	void updateOutputsSawSawSaw(int32_t writePosition);
+	void updateOutputsSawSawSq(int32_t writePosition);
+	void updateOutputsSawSawTri(int32_t writePosition);
+
+	void updateOutputsSawSqSaw(int32_t writePosition);
+	void updateOutputsSawSqSq(int32_t writePosition);
+	void updateOutputsSawSqTri(int32_t writePosition);
+
+	void updateOutputsSawTriSaw(int32_t writePosition);
+	void updateOutputsSawTriSq(int32_t writePosition);
+	void updateOutputsSawTriTri(int32_t writePosition);
+
+	void updateOutputsSqSawSaw(int32_t writePosition);
+	void updateOutputsSqSawSq(int32_t writePosition);
+	void updateOutputsSqSawTri(int32_t writePosition);
+
+	void updateOutputsSqSqSaw(int32_t writePosition);
+	void updateOutputsSqSqSq(int32_t writePosition);
+	void updateOutputsSqSqTri(int32_t writePosition);
+
+	void updateOutputsSqTriSaw(int32_t writePosition);
+	void updateOutputsSqTriSq(int32_t writePosition);
+	void updateOutputsSqTriTri(int32_t writePosition);
+
+	void updateOutputsTriSawSaw(int32_t writePosition);
+	void updateOutputsTriSawSq(int32_t writePosition);
+	void updateOutputsTriSawTri(int32_t writePosition);
+
+	void updateOutputsTriSqSaw(int32_t writePosition);
+	void updateOutputsTriSqSq(int32_t writePosition);
+	void updateOutputsTriSqTri(int32_t writePosition);
+
+	void updateOutputsTriTriSaw(int32_t writePosition);
+	void updateOutputsTriTriSq(int32_t writePosition);
+	void updateOutputsTriTriTri(int32_t writePosition);
+
+	renderPointer oscCombos[3][3][3] = {
+			{
+					{
+							&ViaSync3::updateOutputsSawSawSaw,
+							&ViaSync3::updateOutputsSawSawSq,
+							&ViaSync3::updateOutputsSawSawTri,
+					},
+					{
+							&ViaSync3::updateOutputsSawSqSaw,
+							&ViaSync3::updateOutputsSawSqSq,
+							&ViaSync3::updateOutputsSawSqTri,
+					},
+					{
+							&ViaSync3::updateOutputsSawTriSaw,
+							&ViaSync3::updateOutputsSawTriSq,
+							&ViaSync3::updateOutputsSawTriTri,
+					}
+			},
+			{
+					{
+							&ViaSync3::updateOutputsSqSawSaw,
+							&ViaSync3::updateOutputsSqSawSq,
+							&ViaSync3::updateOutputsSqSawTri,
+					},
+					{
+							&ViaSync3::updateOutputsSqSqSaw,
+							&ViaSync3::updateOutputsSqSqSq,
+							&ViaSync3::updateOutputsSqSqTri,
+					},
+					{
+							&ViaSync3::updateOutputsSqTriSaw,
+							&ViaSync3::updateOutputsSqTriSq,
+							&ViaSync3::updateOutputsSqTriTri,
+					}
+			},
+			{
+					{
+							&ViaSync3::updateOutputsTriSawSaw,
+							&ViaSync3::updateOutputsTriSawSq,
+							&ViaSync3::updateOutputsTriSawTri,
+					},
+					{
+							&ViaSync3::updateOutputsTriSqSaw,
+							&ViaSync3::updateOutputsTriSqSq,
+							&ViaSync3::updateOutputsTriSqTri,
+					},
+					{
+							&ViaSync3::updateOutputsTriTriSaw,
+							&ViaSync3::updateOutputsTriTriSq,
+							&ViaSync3::updateOutputsTriTriTri,
+					}
+			},
+	};
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
 
 		int32_t reading = TIM2->CNT;
+		divCounter = divCounter < (denominator - 1) ? divCounter + 1 : 0;
 
 		if (reading < (1440 * 25)) {
 			errorPileup ++;
-			divCounter = divCounter < (denominator - 1) ? divCounter + 1 : 0;
 		} else {
 			periodCount = reading;
 			TIM2->CNT = 0;
 
 			int32_t playbackPosition = (64 - DMA1_Channel5->CNDTR) & 31;
-
-			divCounter = divCounter < (denominator - 1) ? divCounter + 1 : 0;
 
 			uint32_t targetPhase = dividedPhase * divCounter;
 			int32_t error = phases[playbackPosition] - targetPhase;
@@ -261,8 +353,12 @@ public:
 	}
 	void auxRisingEdgeCallback(void) {
 
+		setSH(1, 1);
+
 	}
 	void auxFallingEdgeCallback(void) {
+
+		setSH(0, 0);
 
 	}
 	void buttonPressedCallback(void) {
@@ -273,10 +369,26 @@ public:
 	}
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
+
+		int32_t phaseMod = -inputs.cv3Samples[0];
+		phaseModIncrement = (phaseMod - lastPhaseMod) << 13;
+		phaseModIncrement *= phaseModOn;
+		phaseModTracker += phaseModIncrement;
+		lastPhaseMod = phaseMod;
+
 		(this->*updateOutputs)(0);
+
 	}
 	void transferCompleteCallback(void) {
+
+		int32_t phaseMod = -inputs.cv3Samples[0];
+		phaseModIncrement = (phaseMod - lastPhaseMod) << 13;
+		phaseModIncrement *= phaseModOn;
+		phaseModTracker += phaseModIncrement;
+		lastPhaseMod = phaseMod;
+
 		(this->*updateOutputs)(VIA_SYNC3_BUFFER_SIZE);
+
 	}
 	void slowConversionCallback(void) {
 
@@ -287,7 +399,7 @@ public:
 //		dividedPhase = dividedPhases[index];
 
 		int32_t ratio2Mod = -inputs.cv2Samples[0];
-		int32_t ratio3Mod = -inputs.cv3Samples[0];
+		int32_t ratio3Mod = phaseModOn ? ratio2Mod : -inputs.cv3Samples[0];
 
 		ratio2Mod >>= 4;
 		ratio3Mod >>= 4;
@@ -307,19 +419,21 @@ public:
 
 	}
 
-	int32_t numButton1Modes = 0;
-	int32_t numButton2Modes = 3;
-	int32_t numButton3Modes = 0;
-	int32_t numButton4Modes = 0;
+	int32_t numButton1Modes = 3;
+	int32_t numButton2Modes = 0;
+	int32_t numButton3Modes = 3;
+	int32_t numButton4Modes = 2;
 	int32_t numButton5Modes = 4;
-	int32_t numButton6Modes = 0;
+	int32_t numButton6Modes = 3;
 
-	void handleButton1ModeChange(int32_t) {};
+	void handleButton1ModeChange(int32_t);
 	void handleButton2ModeChange(int32_t);
-	void handleButton3ModeChange(int32_t) {};
-	void handleButton4ModeChange(int32_t) {};
+	void handleButton3ModeChange(int32_t);
+	void handleButton4ModeChange(int32_t);
 	void handleButton5ModeChange(int32_t);
-	void handleButton6ModeChange(int32_t) {};
+	void handleButton6ModeChange(int32_t);
+
+	void handleTableSwitch(int32_t op1, int32_t op2, int32_t op3);
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
 	ViaSync3() : sync3UI(*this) {

@@ -41,6 +41,32 @@ void ViaSync3::ViaSync3UI::defaultEnterMenuCallback(void) {
 
 }
 
+void ViaSync3::ViaSync3UI::button1EnterMenuCallback(void) {
+
+	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
+	this_module.setLEDs(button1Mode);
+	resetTimerMenu();
+
+}
+
+void ViaSync3::ViaSync3UI::button1TapCallback(void) {
+
+	button1Mode = incrementModeAndStore(button1Mode, BUTTON1_MASK, this_module.numButton1Modes, BUTTON1_SHIFT);
+	this_module.handleButton1ModeChange(button1Mode);
+	this_module.clearLEDs();
+	this_module.setLEDs(button1Mode);
+	transition(&ViaSync3::ViaSync3UI::newModeMenu);
+
+}
+
+void ViaSync3::ViaSync3UI::button1HoldCallback(void) {
+
+	transition(&ViaSync3::ViaSync3UI::defaultMenu);
+
+}
+
 void ViaSync3::ViaSync3UI::button2EnterMenuCallback(void) {
 
 	this_module.runtimeDisplay = 0;
@@ -62,6 +88,58 @@ void ViaSync3::ViaSync3UI::button2TapCallback(void) {
 }
 
 void ViaSync3::ViaSync3UI::button2HoldCallback(void) {
+
+	transition(&ViaSync3::ViaSync3UI::defaultMenu);
+
+}
+
+void ViaSync3::ViaSync3UI::button3EnterMenuCallback(void) {
+
+	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
+	this_module.setLEDs(button3Mode);
+	resetTimerMenu();
+
+}
+
+void ViaSync3::ViaSync3UI::button3TapCallback(void) {
+
+	button3Mode = incrementModeAndStore(button3Mode, BUTTON3_MASK, this_module.numButton3Modes, BUTTON3_SHIFT);
+	this_module.handleButton3ModeChange(button3Mode);
+	this_module.clearLEDs();
+	this_module.setLEDs(button3Mode);
+	transition(&ViaSync3::ViaSync3UI::newModeMenu);
+
+}
+
+void ViaSync3::ViaSync3UI::button3HoldCallback(void) {
+
+	transition(&ViaSync3::ViaSync3UI::defaultMenu);
+
+}
+
+void ViaSync3::ViaSync3UI::button4EnterMenuCallback(void) {
+
+	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
+	this_module.setLEDs(button4Mode);
+	resetTimerMenu();
+
+}
+
+void ViaSync3::ViaSync3UI::button4TapCallback(void) {
+
+	button4Mode = incrementModeAndStore(button4Mode, BUTTON4_MASK, this_module.numButton4Modes, BUTTON4_SHIFT);
+	this_module.handleButton4ModeChange(button4Mode);
+	this_module.clearLEDs();
+	this_module.setLEDs(button4Mode);
+	transition(&ViaSync3::ViaSync3UI::newModeMenu);
+
+}
+
+void ViaSync3::ViaSync3UI::button4HoldCallback(void) {
 
 	transition(&ViaSync3::ViaSync3UI::defaultMenu);
 
@@ -93,3 +171,28 @@ void ViaSync3::ViaSync3UI::button5HoldCallback(void) {
 
 }
 
+void ViaSync3::ViaSync3UI::button6EnterMenuCallback(void) {
+
+	this_module.runtimeDisplay = 0;
+	this_module.clearLEDs();
+	this_module.clearRGB();
+	this_module.setLEDs(button6Mode);
+	resetTimerMenu();
+
+}
+
+void ViaSync3::ViaSync3UI::button6TapCallback(void) {
+
+	button6Mode = incrementModeAndStore(button6Mode, BUTTON6_MASK, this_module.numButton6Modes, BUTTON6_SHIFT);
+	this_module.handleButton6ModeChange(button6Mode);
+	this_module.clearLEDs();
+	this_module.setLEDs(button6Mode);
+	transition(&ViaSync3::ViaSync3UI::newModeMenu);
+
+}
+
+void ViaSync3::ViaSync3UI::button6HoldCallback(void) {
+
+	transition(&ViaSync3::ViaSync3UI::defaultMenu);
+
+}

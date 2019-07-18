@@ -7,18 +7,28 @@
 
 #include "sync3.hpp"
 
-void ViaSync3::handleButton2ModeChange(int32_t mode) {
+void ViaSync3::handleButton1ModeChange(int32_t mode) {
 
-	if (mode == 0) {
-		updateOutputs = &ViaSync3::updateOutputsSaw;
-	} else if (mode == 1) {
-		updateOutputs = &ViaSync3::updateOutputsSquare;
-	} else if (mode == 2) {
-		updateOutputs = &ViaSync3::updateOutputsTriangle;
-	}
+	updateOutputs = oscCombos[sync3UI.button1Mode][sync3UI.button3Mode][sync3UI.button6Mode];
 
 }
 
+void ViaSync3::handleButton2ModeChange(int32_t mode) {
+
+
+}
+
+void ViaSync3::handleButton3ModeChange(int32_t mode) {
+
+	updateOutputs = oscCombos[sync3UI.button1Mode][sync3UI.button3Mode][sync3UI.button6Mode];
+
+}
+
+void ViaSync3::handleButton4ModeChange(int32_t mode) {
+
+	phaseModOn = mode;
+
+}
 
 void ViaSync3::handleButton5ModeChange(int32_t mode) {
 
@@ -31,5 +41,11 @@ void ViaSync3::handleButton5ModeChange(int32_t mode) {
 	} else if (mode == 3) {
 		multipliers = multipliersMinorPent;
 	}
+
+}
+
+void ViaSync3::handleButton6ModeChange(int32_t mode) {
+
+	updateOutputs = oscCombos[sync3UI.button1Mode][sync3UI.button3Mode][sync3UI.button6Mode];
 
 }
