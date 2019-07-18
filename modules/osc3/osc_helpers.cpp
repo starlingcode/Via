@@ -168,8 +168,8 @@ void ViaOsc::renderTrap(int32_t writePosition) {
 		outputs.dac1Samples[writePosition + 1] = aLevel + 2048;
 		outputs.dac2Samples[writePosition] = bLevel + 2048;
 		outputs.dac2Samples[writePosition + 1] = bLevel + 2048;
-		outputs.dac3Samples[writePosition] = 2048 - cLevel;
-		outputs.dac3Samples[writePosition + 1] = 2048 - cLevel;
+		outputs.dac3Samples[writePosition] = 2047 - cLevel;
+		outputs.dac3Samples[writePosition + 1] = 2047 - cLevel;
 
 		samplesRemaining --;
 		writePosition += 2;

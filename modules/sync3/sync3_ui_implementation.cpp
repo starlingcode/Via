@@ -36,6 +36,7 @@ void ViaSync3::ViaSync3UI::recallModuleState(void) {
 
 void ViaSync3::ViaSync3UI::defaultEnterMenuCallback(void) {
 
+	this_module.clearLEDs();
 	/// Executed when the module returns to an idle state, waiting for a touch event
 	this_module.runtimeDisplay = 1;
 

@@ -420,7 +420,7 @@ public:
 	}
 
 	int32_t numButton1Modes = 3;
-	int32_t numButton2Modes = 0;
+	int32_t numButton2Modes = 1;
 	int32_t numButton3Modes = 3;
 	int32_t numButton4Modes = 2;
 	int32_t numButton5Modes = 4;
@@ -432,8 +432,6 @@ public:
 	void handleButton4ModeChange(int32_t);
 	void handleButton5ModeChange(int32_t);
 	void handleButton6ModeChange(int32_t);
-
-	void handleTableSwitch(int32_t op1, int32_t op2, int32_t op3);
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
 	ViaSync3() : sync3UI(*this) {
