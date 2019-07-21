@@ -171,7 +171,6 @@ public:
 		this->sync3UI.dispatch(sig);
 	};
 
-	// Good stuff
 
 	PllController pll;
 
@@ -208,9 +207,13 @@ public:
 
 	int32_t dividedPhase = 0;
 
-	uint32_t numerators[16] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8};
-	uint32_t denominators[16] = {8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-	uint32_t dividedPhases[16] = {536870912, 613566756, 715827882, 858993459, 1073741824, 1431655765, 2147483648, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	uint32_t numerator1 = 1;
+	uint32_t numerator2 = 1;
+	uint32_t numerator3 = 1;
+
+	uint32_t numerators[16] = {1, 9, 3, 2, 3, 4, 9, 1, 2, 9, 12, 8, 3, 16, 18, 4};
+	uint32_t dividedPhases[16] = {2147483647, 268435455, 858993459, 1431655765, 1073741823, 858993459, 429496729, 4294967295, 4294967295, 1073741823, 858993459, 1431655765, 4294967295, 858993459, 858993459, 4294967295};
+	uint32_t denominators[16] = {2, 16, 5, 3, 4, 5, 10, 1, 1, 4, 5, 3, 1, 5, 5, 1};
 
 #define UNITY 65536
 	uint32_t multipliersInt[16] = {UNITY/8, UNITY/7, UNITY/6, UNITY/5, UNITY/4, UNITY/3, UNITY/2, UNITY/1,
@@ -226,6 +229,11 @@ public:
 									UNITY/1, (UNITY*6)/5, (UNITY*4)/3, (UNITY*3)/2, (UNITY*9)/5, UNITY*2, (UNITY*9)/4, (UNITY*12)/5};
 
 	uint32_t * multipliers = multipliersInt;
+
+	inline uint32_t fix32Mul(int32_t in, uint32_t frac) {
+		return ((int64_t) frac * (int64_t) in) >> 32;
+	}
+
 
 	void (ViaSync3::*updateOutputs)(int32_t writePosition);
 
@@ -342,9 +350,9 @@ public:
 			increment1 = __USAT((45 * ((int64_t) phaseSpan << 32) - error)/(periodCount * denominator), 30);
 			errorPileup = 0;
 
-			increment2 = fix16_mul(increment1, sync1Mult);
-			increment3 = fix16_mul(increment1, sync2Mult);
-			increment4 = fix16_mul(increment1, sync3Mult);
+			increment2 = fix32Mul(increment1, sync1Mult);
+			increment3 = fix32Mul(increment1, sync2Mult);
+			increment4 = fix32Mul(increment1, sync3Mult);
 		}
 
 	}
@@ -394,10 +402,6 @@ public:
 
 		controls.updateSlowExtra();
 
-//		numerator = numerators[index];
-//		denominator = denominators[index];
-//		dividedPhase = dividedPhases[index];
-
 		int32_t ratio2Mod = -inputs.cv2Samples[0];
 		int32_t ratio3Mod = phaseModOn ? ratio2Mod : -inputs.cv3Samples[0];
 
@@ -407,9 +411,16 @@ public:
 		uint32_t index1 = __USAT(controls.knob1Value + controls.cv1Value - 2048, 12) >> 8;
 		uint32_t index2 = __USAT(controls.knob2Value + ratio2Mod, 12) >> 8;
 		uint32_t index3 = __USAT(controls.knob3Value + ratio3Mod, 12) >> 8;
-		sync1Mult = multipliers[index1];
-		sync2Mult = multipliers[index2];
-		sync3Mult = multipliers[index3];
+		sync1Mult = dividedPhases[index1];
+		sync2Mult = dividedPhases[index2];
+		sync3Mult = dividedPhases[index3];
+		numerator1 = numerators[index1];
+		numerator2 = numerators[index2];
+		numerator3 = numerators[index3];
+
+		phase2 += fix32Mul((phase1 - (phase2 * denominators[index1])), dividedPhases[index1]);
+		phase3 += fix32Mul(((phase1 + (1<<30)) - (phase3 * denominators[index2])), dividedPhases[index2]);
+		phase4 += fix32Mul((phase1 - (phase4 * denominators[index3])), dividedPhases[index3]);
 
 	}
 	void auxTimer1InterruptCallback(void) {
