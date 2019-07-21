@@ -185,35 +185,53 @@ public:
 	int32_t increment4 = 1000;
 
 	uint32_t phaseModOn = 0;
-	int32_t phaseModTracker = 0;
 	int32_t lastPhaseMod = 0;
-	int32_t phaseModIncrement = 0;
-
-	int32_t sync1Mult = 0;
-	int32_t sync2Mult = 0;
-	int32_t sync3Mult = 0;
+	int32_t phaseModIncrement2 = 0;
+	int32_t phaseModIncrement3 = 0;
+	uint32_t phaseModTracker2 = 0;
+	uint32_t phaseModTracker3 = 0;
 
 	uint32_t periodCount = 0;
 
 	int32_t errorPileup = 0;
 
-	lilBuffer errorBuffer;
-	int32_t errorSum = 0;
+	int32_t phaseLockOn;
 
-	uint32_t numerator = 1;
-	uint32_t denominator = 1;
+	struct Sync3Scale {
+		uint32_t numerators[16];
+		uint32_t denominators[16];
+		uint32_t dividedPhases[16];
+	};
 
-	uint32_t divCounter = 0;
+	static const struct Sync3Scale minor;
+	static const struct Sync3Scale minorArp;
+	static const struct Sync3Scale ints;
+	static const struct Sync3Scale rhythms;
 
-	int32_t dividedPhase = 0;
+	static const struct Sync3Scale * scales[4];
+
+	const uint32_t * numerators = minor.numerators;
+	const uint32_t * denominators = minor.denominators;
+	const uint32_t * dividedPhases = minor.dividedPhases;
+
+	int32_t sync1Mult = 0;
+	int32_t sync2Mult = 0;
+	int32_t sync3Mult = 0;
 
 	uint32_t numerator1 = 1;
 	uint32_t numerator2 = 1;
 	uint32_t numerator3 = 1;
 
-	uint32_t numerators[16] = {1, 9, 3, 2, 3, 4, 9, 1, 2, 9, 12, 8, 3, 16, 18, 4};
-	uint32_t dividedPhases[16] = {2147483647, 268435455, 858993459, 1431655765, 1073741823, 858993459, 429496729, 4294967295, 4294967295, 1073741823, 858993459, 1431655765, 4294967295, 858993459, 858993459, 4294967295};
-	uint32_t denominators[16] = {2, 16, 5, 3, 4, 5, 10, 1, 1, 4, 5, 3, 1, 5, 5, 1};
+	uint32_t numerator1Alt = 1;
+	uint32_t numerator2Alt = 1;
+	uint32_t numerator3Alt = 1;
+
+	uint32_t index1;
+	uint32_t lastIndex1;
+	uint32_t index2;
+	uint32_t lastIndex2;
+	uint32_t index3;
+	uint32_t lastIndex3;
 
 #define UNITY 65536
 	uint32_t multipliersInt[16] = {UNITY/8, UNITY/7, UNITY/6, UNITY/5, UNITY/4, UNITY/3, UNITY/2, UNITY/1,
@@ -234,6 +252,16 @@ public:
 		return ((int64_t) frac * (int64_t) in) >> 32;
 	}
 
+	inline void phaseMod() {
+
+		int32_t phaseMod = -inputs.cv3Samples[0];
+		int32_t phaseModIncrement = (phaseMod - lastPhaseMod) << 11;
+		lastPhaseMod = phaseMod;
+		phaseModIncrement *= phaseModOn;
+		phaseModIncrement2 = phaseModIncrement;
+		phaseModTracker2 += (phaseModIncrement2 << 5);
+
+	}
 
 	void (ViaSync3::*updateOutputs)(int32_t writePosition);
 
@@ -332,7 +360,6 @@ public:
 	void mainRisingEdgeCallback(void) {
 
 		int32_t reading = TIM2->CNT;
-		divCounter = divCounter < (denominator - 1) ? divCounter + 1 : 0;
 
 		if (reading < (1440 * 25)) {
 			errorPileup ++;
@@ -342,23 +369,35 @@ public:
 
 			int32_t playbackPosition = (64 - DMA1_Channel5->CNDTR) & 31;
 
-			uint32_t targetPhase = dividedPhase * divCounter;
-			int32_t error = phases[playbackPosition] - targetPhase;
+			int32_t error = phases[playbackPosition];
 
-			int32_t phaseSpan = numerator * (errorPileup + 1);
+			int32_t phaseSpan = (errorPileup + 1);
 
-			increment1 = __USAT((45 * ((int64_t) phaseSpan << 32) - error)/(periodCount * denominator), 30);
+			increment1 = __USAT((45 * ((int64_t) phaseSpan << 32) - error)/(periodCount), 28);
 			errorPileup = 0;
 
-			increment2 = fix32Mul(increment1, sync1Mult);
-			increment3 = fix32Mul(increment1, sync2Mult);
-			increment4 = fix32Mul(increment1, sync3Mult);
+			increment2 = fix32Mul(increment1, sync1Mult) * numerator1Alt;
+			increment3 = fix32Mul(increment1, sync2Mult) * numerator2Alt;
+			increment4 = fix32Mul(increment1, sync3Mult) * numerator3Alt;
+
+			setLogicA((index1 != lastIndex1) ||
+						(index2 != lastIndex2) ||
+							(index3 != lastIndex3));
+
+			lastIndex1 = index1;
+			lastIndex2 = index2;
+			lastIndex3 = index3;
+
+
 		}
 
 	}
 	void mainFallingEdgeCallback(void) {
 
+		setLogicA(0);
+
 	}
+
 	void auxRisingEdgeCallback(void) {
 
 		setSH(1, 1);
@@ -378,22 +417,14 @@ public:
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
 
-		int32_t phaseMod = -inputs.cv3Samples[0];
-		phaseModIncrement = (phaseMod - lastPhaseMod) << 13;
-		phaseModIncrement *= phaseModOn;
-		phaseModTracker += phaseModIncrement;
-		lastPhaseMod = phaseMod;
+		phaseMod();
 
 		(this->*updateOutputs)(0);
 
 	}
 	void transferCompleteCallback(void) {
 
-		int32_t phaseMod = -inputs.cv3Samples[0];
-		phaseModIncrement = (phaseMod - lastPhaseMod) << 13;
-		phaseModIncrement *= phaseModOn;
-		phaseModTracker += phaseModIncrement;
-		lastPhaseMod = phaseMod;
+		phaseMod();
 
 		(this->*updateOutputs)(VIA_SYNC3_BUFFER_SIZE);
 
@@ -408,19 +439,30 @@ public:
 		ratio2Mod >>= 4;
 		ratio3Mod >>= 4;
 
-		uint32_t index1 = __USAT(controls.knob1Value + controls.cv1Value - 2048, 12) >> 8;
-		uint32_t index2 = __USAT(controls.knob2Value + ratio2Mod, 12) >> 8;
-		uint32_t index3 = __USAT(controls.knob3Value + ratio3Mod, 12) >> 8;
-		sync1Mult = dividedPhases[index1];
-		sync2Mult = dividedPhases[index2];
-		sync3Mult = dividedPhases[index3];
-		numerator1 = numerators[index1];
-		numerator2 = numerators[index2];
-		numerator3 = numerators[index3];
+		uint32_t thisIndex1 = __USAT(controls.knob1Value + controls.cv1Value - 2048, 12) >> 8;
+		uint32_t thisIndex2 = __USAT(controls.knob2Value + ratio2Mod, 12) >> 8;
+		uint32_t thisIndex3 = __USAT(controls.knob3Value + ratio3Mod, 12) >> 8;
+		sync1Mult = dividedPhases[thisIndex1];
+		sync2Mult = dividedPhases[thisIndex2];
+		sync3Mult = dividedPhases[thisIndex3];
 
-		phase2 += fix32Mul((phase1 - (phase2 * denominators[index1])), dividedPhases[index1]);
-		phase3 += fix32Mul(((phase1 + (1<<30)) - (phase3 * denominators[index2])), dividedPhases[index2]);
-		phase4 += fix32Mul((phase1 - (phase4 * denominators[index3])), dividedPhases[index3]);
+		if (phaseLockOn) {
+			numerator1 = numerators[thisIndex1];
+			numerator2 = numerators[thisIndex2];
+			numerator3 = numerators[thisIndex3];
+
+			phase2 += fix32Mul((phase1 - (phase2 * denominators[thisIndex1])), dividedPhases[thisIndex1]);
+			phase3 += fix32Mul(((phase1 + (1<<30)) + phaseModTracker2 - (phase3 * denominators[thisIndex2])), 1);
+			phase4 += fix32Mul((phase1 + phaseModTracker2 - (phase4 * denominators[thisIndex3])), 1);
+		} else {
+			numerator1Alt = numerators[thisIndex1];
+			numerator2Alt = numerators[thisIndex2];
+			numerator3Alt = numerators[thisIndex3];
+		}
+
+		index1= thisIndex1;
+		index2= thisIndex2;
+		index3= thisIndex3;
 
 	}
 	void auxTimer1InterruptCallback(void) {
@@ -431,7 +473,7 @@ public:
 	}
 
 	int32_t numButton1Modes = 3;
-	int32_t numButton2Modes = 1;
+	int32_t numButton2Modes = 2;
 	int32_t numButton3Modes = 3;
 	int32_t numButton4Modes = 2;
 	int32_t numButton5Modes = 4;
@@ -457,10 +499,6 @@ public:
 		/// Set the data members that will be used to determine DMA stream initialization in the hardware executable.
 		outputBufferSize = VIA_SYNC3_BUFFER_SIZE;
 		inputBufferSize = 1;
-
-		for (int i = 0; i < 8; i++) {
-			writeLilBuffer(&errorBuffer, 0);
-		}
 
 		/// Call the UI initialization that needs to happen after outer class construction.
 		sync3UI.initialize();

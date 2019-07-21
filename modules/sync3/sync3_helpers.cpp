@@ -5,9 +5,9 @@
 					uint32_t phaseAccumulator2 = phase2; \
 					int32_t thisIncrement2 = increment2; \
 					uint32_t phaseAccumulator3 = phase3; \
-					int32_t thisIncrement3 = increment3 + phaseModIncrement; \
+					int32_t thisIncrement3 = increment3 + phaseModIncrement2; \
 					uint32_t phaseAccumulator4 = phase4; \
-					int32_t thisIncrement4 = increment4 + phaseModIncrement; \
+					int32_t thisIncrement4 = increment4 + phaseModIncrement2; \
 					uint32_t thisNumerator1 = numerator1; \
 					uint32_t thisNumerator2 = numerator2; \
 					uint32_t thisNumerator3 = numerator3; \
