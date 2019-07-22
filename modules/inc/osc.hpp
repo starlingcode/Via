@@ -291,10 +291,17 @@ public:
 
 	}
 
-//	int32_t tableRead[4095];
+	inline void showQuant(void) {
+		setRedLED(hueSpace[scaleMode * 4].r);
+		setGreenLED(hueSpace[scaleMode * 4].g);
+		setBlueLED(hueSpace[scaleMode * 4].b);
+	}
 
 	/// Instance of the exponential converter class.
 	ExpoConverter expo;
+
+	uint32_t buttonPressed = 0;
+	uint32_t auxLogicHigh = 0;
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
@@ -310,22 +317,43 @@ public:
 	}
 	void auxRisingEdgeCallback(void) {
 
-		unity = 1;
+		if (!buttonPressed) {
+			unity = 1;
+		}
+		auxLogicHigh = 1;
 
 	}
 	void auxFallingEdgeCallback(void) {
-		unity = 0;
+
+		if (!buttonPressed) {
+			unity = 0;
+		}
+		auxLogicHigh = 0;
+
 	}
 	void buttonPressedCallback(void) {
+
+		if (!auxLogicHigh) {
+			unity = 1;
+		}
+		buttonPressed = 1;
+
 	}
-	void buttonReleasedCallback(void) {}
+	void buttonReleasedCallback(void) {
+
+		if (!auxLogicHigh) {
+			unity = 0;
+		}
+		buttonPressed = 0;
+
+	}
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
-		setLogicOut(0, runtimeDisplay);
+		setLogicOutNoA(0, runtimeDisplay);
 		(this->*render)(0);
 	}
 	void transferCompleteCallback(void) {
-		setLogicOut(0, runtimeDisplay);
+		setLogicOutNoA(0, runtimeDisplay);
 		(this->*render)(OSC_BUFFER_SIZE);
 	}
 	void slowConversionCallback(void) {
@@ -379,9 +407,7 @@ public:
 		}
 
 		if (runtimeDisplay) {
-			setRedLED(hueSpace[scaleMode * 4].r);
-			setGreenLED(hueSpace[scaleMode * 4].g);
-			setBlueLED(hueSpace[scaleMode * 4].b);
+			showQuant();
 		}
 
 	}
@@ -392,12 +418,12 @@ public:
 
 	}
 
-	int32_t numButton1Modes = 4;
+	int32_t numButton1Modes = 5;
 	int32_t numButton2Modes = 4;
-	int32_t numButton3Modes = 3;
-	int32_t numButton4Modes = 4;
-	int32_t numButton5Modes = 2;
-	int32_t numButton6Modes = 4;
+	int32_t numButton3Modes = 2;
+	int32_t numButton4Modes = 5;
+	int32_t numButton5Modes = 4;
+	int32_t numButton6Modes = 3;
 
 	void handleButton1ModeChange(int32_t);
 	void handleButton2ModeChange(int32_t);

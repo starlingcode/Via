@@ -29,17 +29,8 @@ void ViaOsc::handleButton2ModeChange(int32_t mode) {
 
 void ViaOsc::handleButton3ModeChange(int32_t mode) {
 
-	if (mode == 0) {
-		doDetune = &ViaOsc::linearDetune;
-		chordMode = 0;
-	} else if (mode == 1) {
-		doDetune = &ViaOsc::scaledDetune;
-		chordMode = 0;
-	} else {
-		chordMode = 1;
-		doDetune = &ViaOsc::chordalDetune;
-
-	}
+	shAOn = mode;
+	shBOn = mode;
 
 }
 
@@ -50,13 +41,6 @@ void ViaOsc::handleButton4ModeChange(int32_t mode) {
 }
 
 void ViaOsc::handleButton5ModeChange(int32_t mode) {
-
-	shAOn = mode;
-	shBOn = mode;
-
-}
-
-void ViaOsc::handleButton6ModeChange(int32_t mode) {
 
 	scaleMode = mode;
 
@@ -72,4 +56,18 @@ void ViaOsc::handleButton6ModeChange(int32_t mode) {
 
 }
 
+void ViaOsc::handleButton6ModeChange(int32_t mode) {
 
+	if (mode == 0) {
+		doDetune = &ViaOsc::linearDetune;
+		chordMode = 0;
+	} else if (mode == 1) {
+		doDetune = &ViaOsc::scaledDetune;
+		chordMode = 0;
+	} else {
+		chordMode = 1;
+		doDetune = &ViaOsc::chordalDetune;
+
+	}
+
+}

@@ -192,10 +192,14 @@ public:
 	uint32_t phaseModTracker3 = 0;
 
 	uint32_t periodCount = 0;
-
 	int32_t errorPileup = 0;
-
 	int32_t phaseLockOn;
+	uint32_t subharm = 0;
+
+	inline void advanceSubharm(void) {
+		subharm = (subharm + 1) & 1;
+		setAuxLogic(subharm);
+	}
 
 	struct Sync3Scale {
 		uint32_t numerators[16];
@@ -363,11 +367,13 @@ public:
 
 		if (reading < (1440 * 25)) {
 			errorPileup ++;
+			advanceSubharm();
 		} else {
 			periodCount = reading;
 			TIM2->CNT = 0;
-
 			int32_t playbackPosition = (64 - DMA1_Channel5->CNDTR) & 31;
+
+			advanceSubharm();
 
 			int32_t error = phases[playbackPosition];
 

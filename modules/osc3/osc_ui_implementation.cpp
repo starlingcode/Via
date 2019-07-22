@@ -61,7 +61,7 @@ void ViaOsc::ViaOscUI::recallModuleState(void) {
 	this_module.handleButton1ModeChange(button1Mode);
 	this_module.handleButton2ModeChange(button2Mode);
 	this_module.handleButton3ModeChange(button3Mode);
-	this_module.handleButton4ModeChange(button4Mode);
+//	this_module.handleButton4ModeChange(button4Mode);
 	this_module.handleButton5ModeChange(button5Mode);
 	this_module.handleButton6ModeChange(button6Mode);
 
@@ -80,6 +80,8 @@ void ViaOsc::ViaOscUI::defaultEnterMenuCallback(void) {
 
 	/// Executed when the module returns to an idle state, waiting for a touch event
 	this_module.runtimeDisplay = 1;
+	this_module.clearLEDs();
+	this_module.setLEDD(this_module.chordMode);
 
 }
 void ViaOsc::ViaOscUI::newModeEnterMenuCallback(void) {
@@ -139,6 +141,7 @@ void ViaOsc::ViaOscUI::button5EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
+	this_module.showQuant();
 	this_module.setLEDs(button5Mode);
 	resetTimerMenu();
 
@@ -194,7 +197,7 @@ void ViaOsc::ViaOscUI::aux4EnterMenuCallback(void) {
 
 void ViaOsc::ViaOscUI::button1TapCallback(void) {
 
-	button1Mode = __USAT(button1Mode + 1, 2);
+	button1Mode = button1Mode > 4 ? 5 : button1Mode + 1;
 	storeMode(button1Mode, BUTTON1_MASK, BUTTON1_SHIFT);
 	this_module.handleButton1ModeChange(button1Mode);
 	this_module.clearLEDs();
@@ -222,7 +225,7 @@ void ViaOsc::ViaOscUI::button3TapCallback(void) {
 }
 void ViaOsc::ViaOscUI::button4TapCallback(void) {
 
-	button1Mode = __USAT(button1Mode - 1, 2);
+	button1Mode = button1Mode <= 0 ? 0 : button1Mode - 1;
 	storeMode(button1Mode, BUTTON1_MASK, BUTTON1_SHIFT);
 	this_module.handleButton1ModeChange(button1Mode);
 	this_module.clearLEDs();
@@ -236,6 +239,7 @@ void ViaOsc::ViaOscUI::button5TapCallback(void) {
 	this_module.handleButton5ModeChange(button5Mode);
 	this_module.clearLEDs();
 	this_module.setLEDs(button5Mode);
+	this_module.showQuant();
 	transition(&ViaOsc::ViaOscUI::newModeMenu);
 
 }
