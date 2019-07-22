@@ -15,7 +15,11 @@ void ViaSync3::handleButton1ModeChange(int32_t mode) {
 
 void ViaSync3::handleButton2ModeChange(int32_t mode) {
 
-	phaseLockOn = mode;
+	numerators = scales[mode]->numerators;
+	denominators = scales[mode]->denominators;
+	dividedPhases = scales[mode]->dividedPhases;
+
+	phaseLockOn = scales[mode]->pllStyle;
 
 	numerator1 = 1;
 	numerator2 = 1;
@@ -42,10 +46,6 @@ void ViaSync3::handleButton4ModeChange(int32_t mode) {
 }
 
 void ViaSync3::handleButton5ModeChange(int32_t mode) {
-
-	numerators = scales[mode]->numerators;
-	denominators = scales[mode]->denominators;
-	dividedPhases = scales[mode]->dividedPhases;
 
 }
 

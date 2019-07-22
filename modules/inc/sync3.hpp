@@ -205,18 +205,27 @@ public:
 		uint32_t numerators[16];
 		uint32_t denominators[16];
 		uint32_t dividedPhases[16];
+		uint32_t pllStyle;
 	};
 
 	static const struct Sync3Scale minor;
 	static const struct Sync3Scale minorArp;
 	static const struct Sync3Scale ints;
 	static const struct Sync3Scale rhythms;
+	static const struct Sync3Scale minorLock;
+	static const struct Sync3Scale minorArpLock;
+	static const struct Sync3Scale intsLock;
+	static const struct Sync3Scale rhythmsLock;
 
-	static const struct Sync3Scale * scales[4];
+	static const struct Sync3Scale * scales[8];
 
 	const uint32_t * numerators = minor.numerators;
 	const uint32_t * denominators = minor.denominators;
 	const uint32_t * dividedPhases = minor.dividedPhases;
+
+	inline void displayRatio(void) {
+		setRGB(hueSpace[sync3UI.button2Mode * 2]);
+	}
 
 	int32_t sync1Mult = 0;
 	int32_t sync2Mult = 0;
@@ -236,21 +245,6 @@ public:
 	uint32_t lastIndex2;
 	uint32_t index3;
 	uint32_t lastIndex3;
-
-#define UNITY 65536
-	uint32_t multipliersInt[16] = {UNITY/8, UNITY/7, UNITY/6, UNITY/5, UNITY/4, UNITY/3, UNITY/2, UNITY/1,
-								UNITY/1, UNITY*2, UNITY*3, UNITY*4, UNITY*5, UNITY*6, UNITY*7, UNITY*8};
-
-	uint32_t multipliersMinor[16] = {UNITY/2, (UNITY*9)/16, (UNITY*3)/5, (UNITY*2)/3, (UNITY*3)/4, (UNITY*4)/5, (UNITY*9)/10, UNITY/1,
-									UNITY/1, (UNITY*9)/8, (UNITY*6)/5, (UNITY*4)/3, (UNITY*3)/2, (UNITY*8)/5, (UNITY*9)/5, UNITY*2};
-
-	uint32_t multipliersRhythms[16] = {UNITY/16, UNITY/12, UNITY/8, UNITY/6, UNITY/4, UNITY/3, UNITY/2, UNITY/1,
-										UNITY/1, UNITY*2, UNITY*3, UNITY*4, UNITY*6, UNITY*8, UNITY*12, UNITY*16};
-
-	uint32_t multipliersMinorPent[16] = {(UNITY*3)/8, (UNITY*9)/20, UNITY/2, (UNITY*3)/5, (UNITY*2)/3, (UNITY*3)/4, (UNITY*9)/10, UNITY/1,
-									UNITY/1, (UNITY*6)/5, (UNITY*4)/3, (UNITY*3)/2, (UNITY*9)/5, UNITY*2, (UNITY*9)/4, (UNITY*12)/5};
-
-	uint32_t * multipliers = multipliersInt;
 
 	inline uint32_t fix32Mul(int32_t in, uint32_t frac) {
 		return ((int64_t) frac * (int64_t) in) >> 32;
@@ -386,9 +380,14 @@ public:
 			increment3 = fix32Mul(increment1, sync2Mult) * numerator2Alt;
 			increment4 = fix32Mul(increment1, sync3Mult) * numerator3Alt;
 
-			setLogicA((index1 != lastIndex1) ||
-						(index2 != lastIndex2) ||
-							(index3 != lastIndex3));
+			uint32_t ratioDelta = (index1 != lastIndex1) | (index2 != lastIndex2) | (index3 != lastIndex3);
+
+			setLogicA(ratioDelta);
+
+			if (runtimeDisplay) {
+				setLEDC(ratioDelta);
+				setLEDB(1);
+			}
 
 			lastIndex1 = index1;
 			lastIndex2 = index2;
@@ -401,17 +400,27 @@ public:
 	void mainFallingEdgeCallback(void) {
 
 		setLogicA(0);
+		if (runtimeDisplay) {
+			setLEDC(0);
+			setLEDB(0);
+		}
 
 	}
 
 	void auxRisingEdgeCallback(void) {
 
 		setSH(1, 1);
+		if (runtimeDisplay) {
+			setLEDA(1);
+		}
 
 	}
 	void auxFallingEdgeCallback(void) {
 
 		setSH(0, 0);
+		if (runtimeDisplay) {
+			setLEDA(0);
+		}
 
 	}
 	void buttonPressedCallback(void) {
@@ -466,9 +475,9 @@ public:
 			numerator3Alt = numerators[thisIndex3];
 		}
 
-		index1= thisIndex1;
-		index2= thisIndex2;
-		index3= thisIndex3;
+		index1 = thisIndex1;
+		index2 = thisIndex2;
+		index3 = thisIndex3;
 
 	}
 	void auxTimer1InterruptCallback(void) {
@@ -479,10 +488,10 @@ public:
 	}
 
 	int32_t numButton1Modes = 3;
-	int32_t numButton2Modes = 2;
+	int32_t numButton2Modes = 8;
 	int32_t numButton3Modes = 3;
 	int32_t numButton4Modes = 2;
-	int32_t numButton5Modes = 4;
+	int32_t numButton5Modes = 0;
 	int32_t numButton6Modes = 3;
 
 	void handleButton1ModeChange(int32_t);

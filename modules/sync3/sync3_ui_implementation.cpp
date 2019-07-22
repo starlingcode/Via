@@ -38,6 +38,8 @@ void ViaSync3::ViaSync3UI::defaultEnterMenuCallback(void) {
 
 	this_module.clearLEDs();
 	/// Executed when the module returns to an idle state, waiting for a touch event
+	this_module.setLEDD(this_module.phaseModOn);
+	this_module.displayRatio();
 	this_module.runtimeDisplay = 1;
 
 }
@@ -73,6 +75,7 @@ void ViaSync3::ViaSync3UI::button2EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
+	this_module.displayRatio();
 	this_module.setLEDs(button2Mode);
 	resetTimerMenu();
 
@@ -84,6 +87,7 @@ void ViaSync3::ViaSync3UI::button2TapCallback(void) {
 	this_module.handleButton2ModeChange(button2Mode);
 	this_module.clearLEDs();
 	this_module.setLEDs(button2Mode);
+	this_module.displayRatio();
 	transition(&ViaSync3::ViaSync3UI::newModeMenu);
 
 }
@@ -151,17 +155,19 @@ void ViaSync3::ViaSync3UI::button5EnterMenuCallback(void) {
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
-	this_module.setLEDs(button5Mode);
+	this_module.displayRatio();
+	this_module.setLEDs(button2Mode);
 	resetTimerMenu();
 
 }
 
 void ViaSync3::ViaSync3UI::button5TapCallback(void) {
 
-	button5Mode = incrementModeAndStore(button5Mode, BUTTON5_MASK, this_module.numButton5Modes, BUTTON5_SHIFT);
-	this_module.handleButton5ModeChange(button5Mode);
+	button2Mode = decrementModeAndStore(button2Mode, BUTTON2_MASK, this_module.numButton2Modes, BUTTON2_SHIFT);
+	this_module.handleButton2ModeChange(button2Mode);
 	this_module.clearLEDs();
-	this_module.setLEDs(button5Mode);
+	this_module.setLEDs(button2Mode);
+	this_module.displayRatio();
 	transition(&ViaSync3::ViaSync3UI::newModeMenu);
 
 }
