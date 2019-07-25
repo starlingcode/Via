@@ -50,8 +50,10 @@ void ViaOsc::handleButton5ModeChange(int32_t mode) {
 		scale = chromatic;
 	} else if (mode == 2) {
 		scale = major;
+		intervals = majorIntervals;
 	} else if (mode == 3) {
 		scale = minor;
+		intervals = minorIntervals;
 	}
 
 }

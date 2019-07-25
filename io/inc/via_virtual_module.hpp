@@ -164,6 +164,29 @@ public:
 		shBOutput = (shB);
 
 	}
+
+	inline void setLogicOutputsLEDOnNoA(uint32_t logicA, uint32_t auxLogic,
+			uint32_t shA, uint32_t shB) {
+
+		logicA = GET_ALOGIC_VIRTUAL_MASK(logicA);
+		auxLogic = GET_EXPAND_LOGIC_VIRTUAL_MASK(auxLogic);
+		shA = GET_SH_A_VIRTUAL_MASK(shA);
+		shB = GET_SH_B_VIRTUAL_MASK(shB);
+
+		setLEDA(shA - 1);
+		setLEDB(shB - 1);
+		setLEDC(logicA - 1);
+
+		aLogicOutput = (logicA);
+
+		auxLogicOutput = (auxLogic);
+
+		shAOutput = (shA);
+
+		shBOutput = (shB);
+
+	}
+
 	/// Needs to be rewritten
 	inline void setLogicOutputsLEDOff(uint32_t logicA, uint32_t auxLogic,
 			uint32_t shA, uint32_t shB) {
@@ -198,6 +221,22 @@ public:
 		}
 
 	}
+
+	inline void setLogicOutNoA(int32_t writeIndex, int32_t runtimeDisplay) {
+
+		int32_t logicA = outputs.logicA[writeIndex];
+		int32_t auxLogic = outputs.auxLogic[writeIndex];
+		int32_t shA = outputs.shA[writeIndex];
+		int32_t shB = outputs.shB[writeIndex];
+
+		if (runtimeDisplay) {
+			setLogicOutputsLEDOn(logicA, auxLogic, shA, shB);
+		} else {
+			setLogicOutputsLEDOff(logicA, auxLogic, shA, shB);
+		}
+
+	}
+
 	/// Needs to be rewritten
 	inline void setLogicOutNoLED(int32_t writeIndex) {
 

@@ -200,9 +200,28 @@ public:
 
 	int32_t chromatic[128] = {0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122};
 	int32_t major[128] = {0, 0, 0, 0, 0, 0, 2, 2, 4, 5, 5, 7, 7, 9, 9, 11, 12, 12, 14, 14, 16, 17, 17, 19, 19, 21, 21, 23, 24, 24, 26, 26, 28, 29, 29, 31, 31, 33, 33, 35, 36, 36, 38, 38, 40, 41, 41, 43, 43, 45, 45, 47, 48, 48, 50, 50, 52, 53, 53, 55, 55, 57, 57, 59, 60, 60, 62, 62, 64, 65, 65, 67, 67, 69, 69, 71, 72, 72, 74, 74, 76, 77, 77, 79, 79, 81, 81, 83, 84, 84, 86, 86, 88, 89, 89, 91, 91, 93, 93, 95, 96, 96, 98, 98, 100, 101, 101, 103, 103, 105, 105, 107, 108, 108, 110, 110, 112, 113, 113, 115, 115, 117, 117, 119, 120, 120, 122};
-	int32_t minor[128] = {0, 0, 0, 0, 0, 0, 2, 2, 3, 5, 5, 7, 7, 8, 8, 10, 12, 12, 14, 14, 15, 17, 17, 19, 19, 20, 20, 22, 24, 24, 26, 26, 27, 29, 29, 31, 31, 32, 32, 34, 36, 36, 38, 38, 39, 41, 41, 43, 43, 44, 44, 46, 48, 48, 50, 50, 51, 53, 53, 55, 55, 56, 56, 58, 60, 60, 62, 62, 63, 65, 65, 67, 67, 68, 68, 70, 72, 72, 74, 74, 75, 77, 77, 79, 79, 80, 80, 82, 84, 84, 86, 86, 87, 89, 89, 91, 91, 92, 92, 94, 96, 96, 98, 98, 99, 101, 101, 103, 103, 104, 104, 106, 108, 108, 110, 110, 111, 113, 113, 115, 115, 116, 116, 118, 120, 120, 122};
+	int32_t minor[128] = {0, 0, 0, 0, 0, 0, 2, 3, 3, 5, 5, 7, 8, 8, 10, 10, 12, 12, 14, 15, 15, 17, 17, 19, 20, 20, 22, 22, 24, 24, 26, 27, 27, 29, 29, 31, 32, 32, 34, 34, 36, 36, 38, 39, 39, 41, 41, 43, 44, 44, 46, 46, 48, 48, 50, 51, 51, 53, 53, 55, 56, 56, 58, 58, 60, 60, 62, 63, 63, 65, 65, 67, 68, 68, 70, 70, 72, 72, 74, 75, 75, 77, 77, 79, 80, 80, 82, 82, 84, 84, 86, 87, 87, 89, 89, 91, 92, 92, 94, 94, 96, 96, 98, 99, 99, 101, 101, 103, 104, 104, 106, 106, 108, 108, 110, 111, 111, 113, 113, 115, 116, 116, 118, 118, 120, 120, 122};
+
+	int32_t minorIntervals[40] = {-24, -22, -21, -19, -17, -16, -14, -12, -10, -9, -7, -5, -4, -2, 0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 24};
+	int32_t majorIntervals[40] = {-24, -22, -20, -19, -17, -15, -13, -12, -10, -8, -7, -5, -3, -1, 0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24};
+	int32_t scaleDegrees[12] = {0, 1, 1, 2, 2, 3, 3, 4, 5, 5, 6, 6};
+
+	// quantize the CV:
+	// returns semitone lookup
+
+	// determine the scale degree of the CV:
+	// semitone lookup less 64 modulo 12, lookup in table of size 12
+
+	// get chord notes as scale degree offsets from the CV
+	// scale
+
+	int32_t chords[16][2] = {
+		{0, 0}, {-1, 0}, {-1, 1},{-1, 2}, {-2, 2}, {-3, 2}, {-3, 3}, {-2, 3},
+          {-4, 2}, {-5, 4}, {-5, 5}, {-4, 5}, {-6, 5}, {-6, 6}, {-6, 7}, {-7, 7}
+	};
 
 	int32_t * scale = chromatic;
+	int32_t * intervals = majorIntervals;
 	int32_t scaleMode = 0;
 
 	int32_t chordMode = 0;
@@ -358,43 +377,70 @@ public:
 	}
 	void slowConversionCallback(void) {
 		controls.updateExtra();
-		int32_t cv1Index;
-		int32_t knob1Index;
+		
+		int32_t cv1Index = controls.cv1Value;
+		// coarse range in octaves is 4
+		int32_t knob1Index = (controls.knob1Value * 3) >> 3;
+
+		int32_t root;
+		int32_t offset;
+
 		if (scaleMode) {
-			cv1Index = scale[controls.cv1Value >> 5] << 5;
-			knob1Index = ((controls.knob1Value * 3) >> 2) & 0b111111100000;
+
+			// add hysterisis
+			root = knob1Index & 0b111111100000;
+
+			// quanitzied
+			offset = scale[cv1Index >> 5];
+			int32_t next = scale[__USAT((cv1Index >> 5) + 1, 7)];
+			int32_t distance = offset - next;
+			int32_t remainder = cv1Index & 0b10000;
+
+			if (distance == 2) {
+				offset = next; 
+			} else if (remainder >= 15) {
+				offset = next;
+			}
+
+			offset <<= 5;
+
 		} else {
-			cv1Index = __USAT((controls.cv1Value - (4 << 5)), 12);
-			knob1Index = ((controls.knob1Value * 3) >> 2);
+			
+			root = knob1Index;
+			offset = __USAT((cv1Index - (4 << 5)), 12);
+
 		}
+
+		cv1Index = offset;
+		knob1Index = root;
+
 		if (chordMode) {
 
 			int32_t fineTune = 65535 + (controls.knob2Value << 3);
-			int32_t coarseTune = expo.convert(knob1Index) >> 3;
+			int32_t coarseTune = expo.convert(root) >> 3;
+
+			int32_t pitchClass = ((offset >> 5) - 60) % 12;
+			int32_t scaleDegree = scaleDegrees[pitchClass];
+
 			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16) >> 12;
-
 			int32_t chordTranspose = 0;
-
-			if ((knob1Index >> 5) < 52) {
-				chordTranspose = (52 - (knob1Index >> 5)) / 12;
-			}
 
 			cBasePitch = fix16_mul(coarseTune,
 					expo.convert(cv1Index) >> 2);
 			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
 			cBasePitch = fix16_mul(cBasePitch, fineTune);
 
-			int32_t chordMultiplier = scale[__USAT((controls.cv1Value >> 5) + chord, 8)] << 5;
+			int32_t chordMultiplier = scale[64 + intervals[14 + scaleDegree + chords[chord][1]]] << 5;
 
 			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
 			aBasePitch = fix16_mul(aBasePitch, 65762) >> 1;
-			aBasePitch = fix16_mul(aBasePitch, fineTune) << chordTranspose;
+			aBasePitch = fix16_mul(aBasePitch, fineTune);
 
-			chordMultiplier = scale[__USAT((controls.cv1Value >> 5) - chord, 8)] << 5;
+			chordMultiplier = scale[64 + intervals[14 + scaleDegree + chords[chord][0]]] << 5;
 
 			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
 			bBasePitch = fix16_mul(bBasePitch, 65762) >> 1;
-			bBasePitch = fix16_mul(bBasePitch, fineTune) << chordTranspose;
+			bBasePitch = fix16_mul(bBasePitch, fineTune);
 
 			detuneBase = 1;
 
