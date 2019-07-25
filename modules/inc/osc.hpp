@@ -228,6 +228,84 @@ public:
 
 	int32_t beat = 1;
 
+	inline void updateBaseFreqs(void) {
+
+		int32_t cv1Index = controls.cv1Value;
+		// coarse range in octaves is 4
+		int32_t knob1Index = (controls.knob1Value * 3) >> 3;
+
+		int32_t root;
+		int32_t offset;
+
+		if (scaleMode) {
+
+			// add hysterisis
+			root = knob1Index & 0b111111100000;
+
+			// quanitzied
+			offset = scale[cv1Index >> 5];
+			int32_t next = scale[__USAT((cv1Index >> 5) + 1, 7)];
+			int32_t distance = offset - next;
+			int32_t remainder = cv1Index & 0b10000;
+
+			if (distance == 2) {
+				offset = next; 
+			} else if (remainder >= 15) {
+				offset = next;
+			}
+
+			offset <<= 5;
+
+		} else {
+			
+			root = knob1Index;
+			offset = __USAT((cv1Index - (4 << 5)), 12);
+
+		}
+
+		cv1Index = offset;
+		knob1Index = root;
+
+		if (chordMode) {
+
+			int32_t fineTune = 65535 + (controls.knob2Value << 3);
+			int32_t coarseTune = expo.convert(root) >> 3;
+
+			int32_t pitchClass = ((offset >> 5) - 60) % 12;
+			int32_t scaleDegree = scaleDegrees[pitchClass];
+
+			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16) >> 12;
+			int32_t chordTranspose = 0;
+
+			cBasePitch = fix16_mul(coarseTune,
+					expo.convert(cv1Index) >> 2);
+			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
+			cBasePitch = fix16_mul(cBasePitch, fineTune);
+
+			int32_t chordMultiplier = scale[64 + intervals[14 + scaleDegree + chords[chord][1]]] << 5;
+
+			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
+			aBasePitch = fix16_mul(aBasePitch, 65762) >> 1;
+			aBasePitch = fix16_mul(aBasePitch, fineTune);
+
+			chordMultiplier = scale[64 + intervals[14 + scaleDegree + chords[chord][0]]] << 5;
+
+			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
+			bBasePitch = fix16_mul(bBasePitch, 65762) >> 1;
+			bBasePitch = fix16_mul(bBasePitch, fineTune);
+
+			detuneBase = 1;
+
+		} else {
+			cBasePitch = fix16_mul(expo.convert(knob1Index) >> 3,
+					expo.convert(cv1Index) >> 2);
+			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
+			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
+			detuneBase = controls.knob3Value << 4;
+		}
+
+	}
+
 	inline void beatDetect(uint32_t aPhase, uint32_t bPhase) {
 		int32_t aQuadrant = aPhase >> 30;
 		int32_t bQuadrant = bPhase >> 30;
@@ -258,8 +336,8 @@ public:
 
 	void chordalDetune(int32_t detuneMod) {
 
-		aFreq = (!unity) ? aBasePitch * octaveMult : cBasePitch * octaveMult << chordTranspose;
-		bFreq = (!unity) ? bBasePitch * octaveMult : cBasePitch * octaveMult << chordTranspose;
+		aFreq = (!unity) ? aBasePitch << (octaveRange - octave): cBasePitch * octaveMult << chordTranspose;
+		bFreq = (!unity) ? bBasePitch << (octaveRange - octave): cBasePitch * octaveMult << chordTranspose;
 
 	}
 
@@ -378,79 +456,7 @@ public:
 	void slowConversionCallback(void) {
 		controls.updateExtra();
 		
-		int32_t cv1Index = controls.cv1Value;
-		// coarse range in octaves is 4
-		int32_t knob1Index = (controls.knob1Value * 3) >> 3;
-
-		int32_t root;
-		int32_t offset;
-
-		if (scaleMode) {
-
-			// add hysterisis
-			root = knob1Index & 0b111111100000;
-
-			// quanitzied
-			offset = scale[cv1Index >> 5];
-			int32_t next = scale[__USAT((cv1Index >> 5) + 1, 7)];
-			int32_t distance = offset - next;
-			int32_t remainder = cv1Index & 0b10000;
-
-			if (distance == 2) {
-				offset = next; 
-			} else if (remainder >= 15) {
-				offset = next;
-			}
-
-			offset <<= 5;
-
-		} else {
-			
-			root = knob1Index;
-			offset = __USAT((cv1Index - (4 << 5)), 12);
-
-		}
-
-		cv1Index = offset;
-		knob1Index = root;
-
-		if (chordMode) {
-
-			int32_t fineTune = 65535 + (controls.knob2Value << 3);
-			int32_t coarseTune = expo.convert(root) >> 3;
-
-			int32_t pitchClass = ((offset >> 5) - 60) % 12;
-			int32_t scaleDegree = scaleDegrees[pitchClass];
-
-			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16) >> 12;
-			int32_t chordTranspose = 0;
-
-			cBasePitch = fix16_mul(coarseTune,
-					expo.convert(cv1Index) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
-			cBasePitch = fix16_mul(cBasePitch, fineTune);
-
-			int32_t chordMultiplier = scale[64 + intervals[14 + scaleDegree + chords[chord][1]]] << 5;
-
-			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			aBasePitch = fix16_mul(aBasePitch, 65762) >> 1;
-			aBasePitch = fix16_mul(aBasePitch, fineTune);
-
-			chordMultiplier = scale[64 + intervals[14 + scaleDegree + chords[chord][0]]] << 5;
-
-			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			bBasePitch = fix16_mul(bBasePitch, 65762) >> 1;
-			bBasePitch = fix16_mul(bBasePitch, fineTune);
-
-			detuneBase = 1;
-
-		} else {
-			cBasePitch = fix16_mul(expo.convert(knob1Index) >> 3,
-					expo.convert(cv1Index) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
-			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
-			detuneBase = controls.knob3Value << 4;
-		}
+		updateBaseFreqs();
 
 		if (runtimeDisplay) {
 			showQuant();
