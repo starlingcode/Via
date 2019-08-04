@@ -234,7 +234,7 @@ public:
 
 	int32_t beat = 1;
 
-	void (ViaOsc::*updateBaseFreqs)(void);
+	void (ViaOsc::*updateBaseFreqs)(void) = &ViaOsc::updateBaseFreqsSmooth;
 
 	void updateBaseFreqsScale(void) {
 
@@ -306,8 +306,8 @@ public:
 
 		} else {
 			
-			cBasePitch = fix16_mul(expo.convert(knob1Index) >> 3,
-					expo.convert(cv1Index) >> 2);
+			cBasePitch = fix16_mul(expo.convert(root << 5) >> 3,
+					expo.convert(offset << 5) >> 2);
 			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
 			detuneBase = controls.knob3Value << 4;
@@ -393,8 +393,8 @@ public:
 
 		} else {
 
-			cBasePitch = fix16_mul(expo.convert(knob1Index) >> 3,
-					expo.convert(cv1Index) >> 2);
+			cBasePitch = fix16_mul(expo.convert(root << 5) >> 3,
+					expo.convert(offset << 5) >> 2);
 			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
 			detuneBase = controls.knob3Value << 4;
@@ -432,8 +432,6 @@ public:
 			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16);
 			int32_t chordFrac = chord & 0xFFF;
 			chord >>= 12;
-
-			int32_t chordTranspose = 0;
 
 			cBasePitch = fix16_mul(coarseTune,
 					expo.convert(offset) >> 2);

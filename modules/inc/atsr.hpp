@@ -651,7 +651,7 @@ public:
 		int32_t cycleMod;
 
 		if (cycleTime) {
-			cycleMod = expo.convert(controls.cv1Value) >> 5;
+			cycleMod = expo.convert(4095 - controls.cv1Value) >> 5;
 			tMod = fix16_mul(cycleMod, tMod);
 			rMod = fix16_mul(cycleMod, rMod);
 		} else {

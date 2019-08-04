@@ -14,8 +14,6 @@ constexpr int32_t ViaAtsr::sigmoidSlope[4097];
 
 void ViaAtsr::render(int32_t writePosition) {
 
-	setLogicOut(0, 0);
-
 	atsrState->step();
 
 	uint32_t aLevel = atsrState->aLevel;
@@ -77,6 +75,8 @@ void ViaAtsr::render(int32_t writePosition) {
 	outputs.dac3Samples[0] = loopGateOut;
 
 #endif
+
+	setLogicOut(0, 0);
 
 }
 
