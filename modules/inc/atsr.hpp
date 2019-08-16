@@ -204,7 +204,7 @@ public:
 	public:
 
 		int32_t attackIncrement = 0;
-		int32_t transitionIncrement = 0;
+		int32_t tIncrement = 0;
 		int32_t releaseIncrement = 0;
 
 		int32_t aLevel = 0;
@@ -256,12 +256,12 @@ public:
 			phase += attackIncrement;
 			if (phase >= 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
-				module.atsrState = &module.transition;
+				module.atsrState = &module.t;
 				module.atsrState->phase = 0;
 				module.atsrState->aLevel = 65535;
 				module.atsrState->bLevel = 0;
 				module.attacking = 0;
-				module.transitioning = 1;
+				module.ting = 1;
 			} else {
 				aLevel = module.evaluateA(phase);
 				bLevel = 0;
@@ -287,21 +287,21 @@ public:
 
 	};
 
-	class Transition: public AtsrState {
+	class T: public AtsrState {
 
 	public:
 
 		ViaAtsr& module;
 
 		void step(void) override {
-			phase += transitionIncrement;
+			phase += tIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
 				module.atsrState = &module.sustain;
 				module.atsrState->phase = 0;
 				module.atsrState->aLevel = 0;
 				module.atsrState->bLevel = 65535;
-				module.transitioning = 0;
+				module.ting = 0;
 				module.sustaining = 1;
 			} else {
 				aLevel = module.evaluateD(MAX_PHASE - phase);
@@ -317,7 +317,7 @@ public:
 			module.atsrState->bLevel = bLevel;
 			module.atsrState->aScale = aLevel;
 			module.atsrState->bScale = bLevel;
-			module.transitioning = 0;
+			module.ting = 0;
 			module.attacking = 1;
 		}
 
@@ -332,12 +332,12 @@ public:
 				module.gateDelayActive = 1;
 				module.gateDelayPhase = phase + (1 << 28);
 			}
-			module.transitioning = 0;
+			module.ting = 0;
 			module.releasing = 1;
 		}
 
 		/// Define the pointer to the outer class.
-		Transition(ViaAtsr& x): module(x) {}
+		T(ViaAtsr& x): module(x) {}
 
 	};
 
@@ -495,12 +495,12 @@ public:
 			phase += attackIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
-				module.atsrState = &module.transition;
+				module.atsrState = &module.t;
 				module.atsrState->phase = 0;
 				module.atsrState->aLevel = 65535;
 				module.atsrState->bLevel = 0;
 				module.attacking = 0;
-				module.transitioning = 1;
+				module.ting = 1;
 			} else {
 				int32_t position = module.evaluateA(phase);
 				aLevel = aScale + fix16_mul(65535 - aScale, module.evaluateA(phase));
@@ -524,7 +524,7 @@ public:
 	};
 
 	Attack attack;
-	Transition transition;
+	T t;
 	Sustain sustain;
 	ReleaseFromA releaseFromA;
 	ReleaseFromT releaseFromT;
@@ -534,7 +534,7 @@ public:
 
 	int32_t releasing = 0;
 	int32_t attacking = 0;
-	int32_t transitioning = 0;
+	int32_t ting = 0;
 	int32_t sustaining = 0;
 
 	int32_t startup = 8;
@@ -557,7 +557,7 @@ public:
 	int32_t cvSH = 1;
 
 	int32_t attackTimeSample = 0;
-	int32_t transitionTimeSample = 0;
+	int32_t tTimeSample = 0;
 	int32_t releaseTimeSample = 0;
 
 	// aux logic min trigger length
@@ -579,7 +579,7 @@ public:
 
 	void gateDelayProcess(void) {
 		if (gateDelayActive) {
-			gateDelayPhase += (gateDelayPhase > 0xFFFFFFF) ? atsrState->attackIncrement : atsrState->transitionIncrement;
+			gateDelayPhase += (gateDelayPhase > 0xFFFFFFF) ? atsrState->attackIncrement : atsrState->tIncrement;
 			if (gateDelayPhase > 0xFFFFFFF) {
 				gateDelayPhase = 0;
 				gateDelayActive = 0;
@@ -663,10 +663,10 @@ public:
 		} else {
 			attackTimeSample = cycleMod;
 		}
-		if (transitioning) {
-			tMod = transitionTimeSample;
+		if (ting) {
+			tMod = tTimeSample;
 		} else {
-			transitionTimeSample = tMod;
+			tTimeSample = tMod;
 		}
 		if (releasing) {
 			rMod = releaseTimeSample;
@@ -676,7 +676,7 @@ public:
 
 		atsrState->attackIncrement = __USAT(fix16_mul(cycleMod,
 				expo.convert(4095 - controls.knob1Value) >> 6), 25);
-		atsrState->transitionIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob2Value) >> 6,
+		atsrState->tIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob2Value) >> 6,
 				tMod), 25);
 		atsrState->releaseIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob3Value) >> 6,
 				rMod), 25);
@@ -687,7 +687,7 @@ public:
 #ifdef BUILD_VIRTUAL
 
 		atsrState->attackIncrement = fix16_mul(atsrState->attackIncrement, incScale);
-		atsrState->transitionIncrement = fix16_mul(atsrState->transitionIncrement, incScale);
+		atsrState->tIncrement = fix16_mul(atsrState->tIncrement, incScale);
 		atsrState->releaseIncrement = fix16_mul(atsrState->releaseIncrement, incScale);
 
 #endif
@@ -716,7 +716,7 @@ public:
 	void handleButton6ModeChange(int32_t);
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
-	ViaAtsr() : atsrUI(*this), attack(*this), transition(*this), sustain(*this), releaseFromA(*this),
+	ViaAtsr() : atsrUI(*this), attack(*this), t(*this), sustain(*this), releaseFromA(*this),
 			releaseFromT(*this), releaseFromS(*this), retrigger(*this), resting(*this) {
 
 		/// Link the module GPIO registers.

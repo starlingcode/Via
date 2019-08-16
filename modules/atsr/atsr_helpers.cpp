@@ -43,8 +43,8 @@ void ViaAtsr::render(int32_t writePosition) {
 	pwmCounter &= 255;
 
 	if (runtimeDisplay) {
-		setLEDA((pwmCounter < (aLevel >> 4)) * !shOn);
-		setLEDB((pwmCounter < (bLevel >> 4)) * !shOn);
+		setLEDA((pwmCounter < (aLevel >> 4)) | shOn);
+		setLEDB((pwmCounter < (bLevel >> 4)) | shOn);
 		setLEDD(loopGate);
 		setLEDC(*assignableLogic);
 	}
