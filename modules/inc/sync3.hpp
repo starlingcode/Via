@@ -227,13 +227,17 @@ public:
 		setRGB(hueSpace[sync3UI.button2Mode * 2]);
 	}
 
-	int32_t sync1Mult = 0;
-	int32_t sync2Mult = 0;
-	int32_t sync3Mult = 0;
+	int32_t sync1Div = 0;
+	int32_t sync2Div = 0;
+	int32_t sync3Div = 0;
 
 	uint32_t numerator1 = 1;
 	uint32_t numerator2 = 1;
 	uint32_t numerator3 = 1;
+
+	uint32_t numerator1Select = 1;
+	uint32_t numerator2Select = 1;
+	uint32_t numerator3Select = 1;
 
 	uint32_t numerator1Alt = 1;
 	uint32_t numerator2Alt = 1;
@@ -376,13 +380,17 @@ public:
 			increment1 = __USAT((45 * ((int64_t) phaseSpan << 32) - error)/(periodCount), 28);
 			errorPileup = 0;
 
-			increment2 = fix32Mul(increment1, sync1Mult) * numerator1Alt;
-			increment3 = fix32Mul(increment1, sync2Mult) * numerator2Alt;
-			increment4 = fix32Mul(increment1, sync3Mult) * numerator3Alt;
+			increment2 = fix32Mul(increment1, sync1Div) * numerator1Alt;
+			increment3 = fix32Mul(increment1, sync2Div) * numerator2Alt;
+			increment4 = fix32Mul(increment1, sync3Div) * numerator3Alt;
 
 			uint32_t ratioDelta = (index1 != lastIndex1) | (index2 != lastIndex2) | (index3 != lastIndex3);
 
 			setLogicA(ratioDelta);
+
+			numerator1 = numerator1Select;
+			numerator2 = numerator2Select;
+			numerator3 = numerator3Select;
 
 			if (runtimeDisplay) {
 				setLEDC(ratioDelta);
@@ -392,7 +400,6 @@ public:
 			lastIndex1 = index1;
 			lastIndex2 = index2;
 			lastIndex3 = index3;
-
 
 		}
 
@@ -457,14 +464,14 @@ public:
 		uint32_t thisIndex1 = __USAT(controls.knob1Value + controls.cv1Value - 2048, 12) >> 8;
 		uint32_t thisIndex2 = __USAT(controls.knob2Value + ratio2Mod, 12) >> 8;
 		uint32_t thisIndex3 = __USAT(controls.knob3Value + ratio3Mod, 12) >> 8;
-		sync1Mult = dividedPhases[thisIndex1];
-		sync2Mult = dividedPhases[thisIndex2];
-		sync3Mult = dividedPhases[thisIndex3];
+		sync1Div = dividedPhases[thisIndex1];
+		sync2Div = dividedPhases[thisIndex2];
+		sync3Div = dividedPhases[thisIndex3];
 
 		if (phaseLockOn) {
-			numerator1 = numerators[thisIndex1];
-			numerator2 = numerators[thisIndex2];
-			numerator3 = numerators[thisIndex3];
+			numerator1Select = numerators[thisIndex1];
+			numerator2Select = numerators[thisIndex2];
+			numerator3Select = numerators[thisIndex3];
 
 			phase2 += fix32Mul((phase1 - (phase2 * denominators[thisIndex1])), dividedPhases[thisIndex1]);
 			phase3 += fix32Mul(((phase1 + (1<<30)) + phaseModTracker2 - (phase3 * denominators[thisIndex2])), 1);

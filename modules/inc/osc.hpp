@@ -198,9 +198,9 @@ public:
 	int32_t shAOn = 1;
 	int32_t shBOn = 1;
 
-	int32_t chromatic[128] = {0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122};
-	int32_t major[128] = {0, 0, 0, 0, 0, 0, 2, 2, 4, 5, 5, 7, 7, 9, 9, 11, 12, 12, 14, 14, 16, 17, 17, 19, 19, 21, 21, 23, 24, 24, 26, 26, 28, 29, 29, 31, 31, 33, 33, 35, 36, 36, 38, 38, 40, 41, 41, 43, 43, 45, 45, 47, 48, 48, 50, 50, 52, 53, 53, 55, 55, 57, 57, 59, 60, 60, 62, 62, 64, 65, 65, 67, 67, 69, 69, 71, 72, 72, 74, 74, 76, 77, 77, 79, 79, 81, 81, 83, 84, 84, 86, 86, 88, 89, 89, 91, 91, 93, 93, 95, 96, 96, 98, 98, 100, 101, 101, 103, 103, 105, 105, 107, 108, 108, 110, 110, 112, 113, 113, 115, 115, 117, 117, 119, 120, 120, 122};
-	int32_t minor[128] = {0, 0, 0, 0, 0, 0, 2, 3, 3, 5, 5, 7, 8, 8, 10, 10, 12, 12, 14, 15, 15, 17, 17, 19, 20, 20, 22, 22, 24, 24, 26, 27, 27, 29, 29, 31, 32, 32, 34, 34, 36, 36, 38, 39, 39, 41, 41, 43, 44, 44, 46, 46, 48, 48, 50, 51, 51, 53, 53, 55, 56, 56, 58, 58, 60, 60, 62, 63, 63, 65, 65, 67, 68, 68, 70, 70, 72, 72, 74, 75, 75, 77, 77, 79, 80, 80, 82, 82, 84, 84, 86, 87, 87, 89, 89, 91, 92, 92, 94, 94, 96, 96, 98, 99, 99, 101, 101, 103, 104, 104, 106, 106, 108, 108, 110, 111, 111, 113, 113, 115, 116, 116, 118, 118, 120, 120, 122};
+	int32_t chromatic[128] = {0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123};
+	int32_t major[128] = {0, 0, 0, 0, 0, 0, 2, 2, 4, 5, 5, 7, 7, 9, 9, 11, 12, 12, 14, 14, 16, 17, 17, 19, 19, 21, 21, 23, 24, 24, 26, 26, 28, 29, 29, 31, 31, 33, 33, 35, 36, 36, 38, 38, 40, 41, 41, 43, 43, 45, 45, 47, 48, 48, 50, 50, 52, 53, 53, 55, 55, 57, 57, 59, 60, 60, 62, 62, 64, 65, 65, 67, 67, 69, 69, 71, 72, 72, 74, 74, 76, 77, 77, 79, 79, 81, 81, 83, 84, 84, 86, 86, 88, 89, 89, 91, 91, 93, 93, 95, 96, 96, 98, 98, 100, 101, 101, 103, 103, 105, 105, 107, 108, 108, 110, 110, 112, 113, 113, 115, 115, 117, 117, 119, 120, 120, 122, 123};
+	int32_t minor[128] = {0, 0, 0, 0, 0, 0, 2, 3, 3, 5, 5, 7, 8, 8, 10, 10, 12, 12, 14, 15, 15, 17, 17, 19, 20, 20, 22, 22, 24, 24, 26, 27, 27, 29, 29, 31, 32, 32, 34, 34, 36, 36, 38, 39, 39, 41, 41, 43, 44, 44, 46, 46, 48, 48, 50, 51, 51, 53, 53, 55, 56, 56, 58, 58, 60, 60, 62, 63, 63, 65, 65, 67, 68, 68, 70, 70, 72, 72, 74, 75, 75, 77, 77, 79, 80, 80, 82, 82, 84, 84, 86, 87, 87, 89, 89, 91, 92, 92, 94, 94, 96, 96, 98, 99, 99, 101, 101, 103, 104, 104, 106, 106, 108, 108, 110, 111, 111, 113, 113, 115, 116, 116, 118, 118, 120, 120, 122, 123};
 
 	int32_t minorIntervals[40] = {-24, -22, -21, -19, -17, -16, -14, -12, -10, -9, -7, -5, -4, -2, 0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 24};
 	int32_t majorIntervals[40] = {-24, -22, -20, -19, -17, -15, -13, -12, -10, -8, -7, -5, -3, -1, 0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24};
@@ -234,6 +234,79 @@ public:
 
 	int32_t beat = 1;
 
+	int32_t chordStable = 0;
+	int32_t chordTransitionPoint = 0;
+	int32_t lastStableChord = 0;
+
+	int32_t chordHysterisis(int32_t chord, int32_t control) {
+
+		if (chordStable) {
+			chordStable = ((chord - lastStableChord) == 0);
+			chordTransitionPoint = (chord > lastStableChord) ? control & 0xF000 : lastStableChord << 12;
+			lastStableChord = chord;
+			return chord;
+		} else {
+			chordStable = abs(control - chordTransitionPoint) > 1024;
+			lastStableChord = chordStable ? chord : lastStableChord;
+			return lastStableChord;
+		}
+
+	}
+
+	int32_t rootStable = 0;
+	int32_t rootTransitionPoint = 0;
+	int32_t lastStableRoot = 0;
+
+	int32_t rootHysterisis(int32_t root, int32_t control) {
+
+		if (rootStable) {
+			rootStable = ((root - lastStableRoot) == 0);
+			rootTransitionPoint = (root > lastStableRoot) ? control & 0b1111111111100000 : lastStableRoot << 5;
+			lastStableRoot = root;
+			return root;
+		} else {
+			rootStable = abs(control - rootTransitionPoint) > 8;
+			lastStableRoot = rootStable ? root : lastStableRoot;
+			return lastStableRoot;
+		}
+
+	}
+
+
+	int32_t vOctStable = 0;
+	int32_t vOctTransitionPoint = 0;
+	int32_t lastStableVOct = 0;
+
+	int32_t vOctHysterisisSemi(int32_t offset, int32_t control) {
+
+		if (vOctStable) {
+			vOctStable = ((offset - lastStableVOct) == 0);
+			vOctTransitionPoint = (offset > lastStableVOct) ? control & 0b1111111111100000 : lastStableVOct << 5;
+			lastStableVOct = offset;
+			return offset;
+		} else {
+			vOctStable = abs(control - vOctTransitionPoint) > 8;
+			lastStableVOct = vOctStable ? offset : lastStableVOct;
+			return lastStableVOct;
+		}
+
+	}
+
+	int32_t vOctHysterisisScale(int32_t offset, int32_t control) {
+
+		if (vOctStable) {
+			vOctStable = ((offset - lastStableVOct) == 0);
+			vOctTransitionPoint = (offset > lastStableVOct) ? control & 0b1111111111110000 : lastStableVOct << 4;
+			lastStableVOct = offset;
+			return offset;
+		} else {
+			vOctStable = abs(control - vOctTransitionPoint) > 8;
+			lastStableVOct = vOctStable ? offset : lastStableVOct;
+			return lastStableVOct;
+		}
+
+	}
+
 	void (ViaOsc::*updateBaseFreqs)(void) = &ViaOsc::updateBaseFreqsSmooth;
 
 	void updateBaseFreqsScale(void) {
@@ -245,19 +318,20 @@ public:
 		int32_t root;
 		int32_t offset;
 
-		// add hysterisis
 		root = knob1Index >> 5;
+		root = rootHysterisis(root, knob1Index);
 		// quanitzied
-		offset = scale[cv1Index >> 5];
-		int32_t next = scale[__USAT((cv1Index >> 5) + 1, 7)];
+		int32_t offsetIndex = vOctHysterisisScale(cv1Index >> 4, cv1Index);
+		offset = scale[offsetIndex >> 1];
+		int32_t next = scale[__USAT((offsetIndex >> 1) + 1, 7)];
 		int32_t distance = offset - next;
-		int32_t remainder = cv1Index & 0b10000;
+		int32_t remainder = offsetIndex & 1;
 
 		if (distance == 2) {
 			offset = next; 
-		} else if (remainder >= 15) {
+		} else if (remainder) {
 			offset = next;
-		}
+		} // else truncate
 
 		if (chordMode) {
 
@@ -268,7 +342,8 @@ public:
 			int32_t octaveOffset = offset - 60 - pitchClass;
 			int32_t scaleDegree = scaleDegrees[pitchClass];
 
-			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16) >> 12;
+			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16);
+			chord = chordHysterisis(chord >> 12, chord);
 			
 			int32_t chordTranspose = 0;
 			int32_t fundamentalPitch = root + 12 * octaveRange;
@@ -304,6 +379,8 @@ public:
 
 			lastChord = chord;
 
+			detuneBase = 0;
+
 		} else {
 			
 			cBasePitch = fix16_mul(expo.convert(root << 5) >> 3,
@@ -327,26 +404,17 @@ public:
 
 	void updateBaseFreqsSemi(void) {
 
-		int32_t cv1Index = controls.cv1Value;
+		int32_t cv1Index = __USAT(controls.cv1Value + 16, 12);
 		// coarse range in octaves is 4
 		int32_t knob1Index = (controls.knob1Value * 3) >> 3;
 
 		int32_t root;
 		int32_t offset;
 
-		// add hysterisis
 		root = knob1Index >> 5;
+		root = rootHysterisis(root, knob1Index);
 		// quanitzied
-		offset = scale[cv1Index >> 5];
-		int32_t next = scale[__USAT((cv1Index >> 5) + 1, 7)];
-		int32_t distance = offset - next;
-		int32_t remainder = cv1Index & 0b10000;
-
-		if (distance == 2) {
-			offset = next; 
-		} else if (remainder >= 15) {
-			offset = next;
-		}
+		offset = scale[vOctHysterisisSemi(cv1Index >> 5, cv1Index)];
 
 		if (chordMode) {
 
@@ -355,7 +423,8 @@ public:
 
 			int32_t octaveOffset = offset - 60;
 
-			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16) >> 12;
+			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16);
+			chord = chordHysterisis(chord >> 12, chord);
 			
 			int32_t chordTranspose = 0;
 			int32_t fundamentalPitch = root + 12 * octaveRange;
@@ -390,6 +459,8 @@ public:
 			}
 
 			lastChord = chord;
+
+			detuneBase = 0;
 
 		} else {
 
@@ -484,7 +555,7 @@ public:
 
 	inline void beatDetect(uint32_t aPhase, uint32_t bPhase) {
 		int32_t aQuadrant = aPhase >> 30;
-		int32_t bQuadrant = bPhase >> 30;
+		int32_t bQuadrant = (bPhase + (1 << 30)) >> 30;
 		if (beat) {
 			beat = (abs(aQuadrant - bQuadrant) != 2);
 		} else {
@@ -557,7 +628,7 @@ public:
 		bPhase = bPhaseWorker;
 		cPhase = cPhaseWorker;
 
-		outputs.logicA[0] = GET_ALOGIC_MASK(beat * (detuneBase != 0) * (unity == 0));
+		outputs.logicA[0] = GET_ALOGIC_MASK(beat /* (detuneBase != 0) */ * (unity == 0));
 		outputs.auxLogic[0] = 0;
 		outputs.shA[0] = GET_SH_A_MASK(resample * shAOn);
 		outputs.shB[0] = GET_SH_B_MASK(resample * shBOn);
