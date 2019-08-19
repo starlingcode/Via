@@ -193,7 +193,8 @@ public:
 
 	uint32_t periodCount = 0;
 	int32_t errorPileup = 0;
-	int32_t phaseLockOn;
+	int32_t phaseLockOn = 0;
+	int32_t hardSync = 0;
 	uint32_t subharm = 0;
 
 	inline void advanceSubharm(void) {
@@ -239,16 +240,114 @@ public:
 	uint32_t numerator2Select = 1;
 	uint32_t numerator3Select = 1;
 
+	uint32_t denominator1 = 1;
+	uint32_t denominator2 = 1;
+	uint32_t denominator3 = 1;
+
+	uint32_t denominator1Select = 1;
+	uint32_t denominator2Select = 1;
+	uint32_t denominator3Select = 1;
+
 	uint32_t numerator1Alt = 1;
 	uint32_t numerator2Alt = 1;
 	uint32_t numerator3Alt = 1;
 
-	uint32_t index1;
-	uint32_t lastIndex1;
-	uint32_t index2;
-	uint32_t lastIndex2;
-	uint32_t index3;
-	uint32_t lastIndex3;
+	uint32_t index1 = 0;
+	uint32_t lastIndex1 = 0;
+	uint32_t index2 = 0;
+	uint32_t lastIndex2 = 0;
+	uint32_t index3 = 0;
+	uint32_t lastIndex3 = 0;
+
+	int32_t index1Stable = 0;
+	int32_t lastStableIndex1 = 0;
+	int32_t index1Transition = 0;
+
+	int32_t index1Hysterisis(int32_t index, int32_t control) {
+
+		if (index1Stable) {
+			index1Stable = (index - lastStableIndex1) == 0;
+			index1Transition = (index > lastStableIndex1) ? control & 0b1111111110000000 : lastStableIndex1 << 7;
+			lastStableIndex1 = index;
+			return index;
+		} else {
+			index1Stable = abs(control - index1Transition) > 32;
+			lastStableIndex1 = index1Stable ? index : lastStableIndex1;
+			return lastStableIndex1;
+		}
+	}
+
+	int32_t index2Stable = 0;
+	int32_t lastStableIndex2 = 0;
+	int32_t index2Transition = 0;
+
+	int32_t index2Hysterisis(int32_t index, int32_t control) {
+
+		if (index2Stable) {
+			index2Stable = (index - lastStableIndex2) == 0;
+			index2Transition = (index > lastStableIndex2) ? control & 0b1111111110000000 : lastStableIndex2 << 7;
+			lastStableIndex2 = index;
+			return index;
+		} else {
+			index2Stable = abs(control - index2Transition) > 32;
+			lastStableIndex2 = index2Stable ? index : lastStableIndex2;
+			return lastStableIndex2;
+		}
+	}
+
+	int32_t index2CVStable = 0;
+	int32_t lastStableIndex2CV = 0;
+	int32_t index2CVTransition = 0;
+
+	int32_t index2CVHysterisis(int32_t index, int32_t control) {
+
+		if (index2CVStable) {
+			index2CVStable = (index - lastStableIndex2CV) == 0;
+			index2CVTransition = (index > lastStableIndex2CV) ? control & 0b1111111110000000 : lastStableIndex2CV << 7;
+			lastStableIndex2CV = index;
+			return index;
+		} else {
+			index2CVStable = abs(control - index2CVTransition) > 32;
+			lastStableIndex2CV = index2CVStable ? index : lastStableIndex2CV;
+			return lastStableIndex2CV;
+		}
+	}
+
+	int32_t index3Stable = 0;
+	int32_t lastStableIndex3 = 0;
+	int32_t index3Transition = 0;
+
+	int32_t index3Hysterisis(int32_t index, int32_t control) {
+
+		if (index3Stable) {
+			index3Stable = (index - lastStableIndex3) == 0;
+			index3Transition = (index > lastStableIndex3) ? control & 0b1111111110000000 : lastStableIndex3 << 7;
+			lastStableIndex3 = index;
+			return index;
+		} else {
+			index3Stable = abs(control - index3Transition) > 32;
+			lastStableIndex3 = index3Stable ? index : lastStableIndex3;
+			return lastStableIndex3;
+		}
+	}
+
+	int32_t index3CVStable = 0;
+	int32_t lastStableIndex3CV = 0;
+	int32_t index3CVTransition = 0;
+
+	int32_t index3CVHysterisis(int32_t index, int32_t control) {
+
+		if (index3CVStable) {
+			index3CVStable = (index - lastStableIndex3CV) == 0;
+			index3CVTransition = (index > lastStableIndex3CV) ? control & 0b1111111110000000 : lastStableIndex3CV << 7;
+			lastStableIndex3CV = index;
+			return index;
+		} else {
+			index3CVStable = abs(control - index3CVTransition) > 32;
+			lastStableIndex3CV = index3CVStable ? index : lastStableIndex3CV;
+			return lastStableIndex3CV;
+		}
+	}
 
 	inline uint32_t fix32Mul(int32_t in, uint32_t frac) {
 		return ((int64_t) frac * (int64_t) in) >> 32;
@@ -262,7 +361,6 @@ public:
 		phaseModIncrement *= phaseModOn;
 		phaseModIncrement2 = phaseModIncrement;
 		phaseModTracker2 += (phaseModIncrement2 << 5);
-
 	}
 
 	void (ViaSync3::*updateOutputs)(int32_t writePosition);
@@ -377,12 +475,14 @@ public:
 
 			int32_t phaseSpan = (errorPileup + 1);
 
-			increment1 = __USAT((45 * ((int64_t) phaseSpan << 32) - error)/(periodCount), 28);
+			increment1 = (45 * ((int64_t) phaseSpan << 32) - error)/(periodCount);
 			errorPileup = 0;
 
 			increment2 = fix32Mul(increment1, sync1Div) * numerator1Alt;
 			increment3 = fix32Mul(increment1, sync2Div) * numerator2Alt;
 			increment4 = fix32Mul(increment1, sync3Div) * numerator3Alt;
+
+//			phase1 *= hardSync;
 
 			uint32_t ratioDelta = (index1 != lastIndex1) | (index2 != lastIndex2) | (index3 != lastIndex3);
 
@@ -391,6 +491,10 @@ public:
 			numerator1 = numerator1Select;
 			numerator2 = numerator2Select;
 			numerator3 = numerator3Select;
+
+			denominator1 = denominator1Select;
+			denominator2 = denominator2Select;
+			denominator3 = denominator3Select;
 
 			if (runtimeDisplay) {
 				setLEDC(ratioDelta);
@@ -461,9 +565,19 @@ public:
 		ratio2Mod >>= 4;
 		ratio3Mod >>= 4;
 
-		uint32_t thisIndex1 = __USAT(controls.knob1Value + controls.cv1Value - 2048, 12) >> 8;
-		uint32_t thisIndex2 = __USAT(controls.knob2Value + ratio2Mod, 12) >> 8;
-		uint32_t thisIndex3 = __USAT(controls.knob3Value + ratio3Mod, 12) >> 8;
+		ratio2Mod += 2048;
+		ratio3Mod += 2048;
+
+		// need to synchronize change
+
+		uint32_t thisIndex1 = controls.knob1Value + controls.cv1Value;
+		uint32_t thisIndex2 = controls.knob2Value;
+		uint32_t thisIndex3 = controls.knob3Value;
+		thisIndex1 = index1Hysterisis(thisIndex1 >> 8, thisIndex1) >> 1;
+		thisIndex2 = index2Hysterisis(thisIndex2 >> 8, thisIndex2) >> 1;
+		thisIndex3 = index3Hysterisis(thisIndex3 >> 8, thisIndex3) >> 1;
+		thisIndex2 += index2CVHysterisis(ratio2Mod >> 8, ratio2Mod) >> 1;
+		thisIndex3 += index3CVHysterisis(ratio3Mod >> 8, ratio3Mod) >> 1;
 		sync1Div = dividedPhases[thisIndex1];
 		sync2Div = dividedPhases[thisIndex2];
 		sync3Div = dividedPhases[thisIndex3];
@@ -473,9 +587,14 @@ public:
 			numerator2Select = numerators[thisIndex2];
 			numerator3Select = numerators[thisIndex3];
 
-			phase2 += fix32Mul((phase1 - (phase2 * denominators[thisIndex1])), dividedPhases[thisIndex1]);
-			phase3 += fix32Mul(((phase1 + (1<<30)) + phaseModTracker2 - (phase3 * denominators[thisIndex2])), 1);
-			phase4 += fix32Mul((phase1 + phaseModTracker2 - (phase4 * denominators[thisIndex3])), 1);
+			denominator1Select = denominators[thisIndex1];
+			denominator2Select = denominators[thisIndex2];
+			denominator3Select = denominators[thisIndex3];
+
+
+			phase2 += __SSAT(fix32Mul((phase1 - (phase2 * denominator1)), dividedPhases[thisIndex1]), 20);
+			phase3 += __SSAT(fix32Mul(((phase1 + (1<<30)) - ((phase3 - phaseModTracker2) * denominator2)), dividedPhases[thisIndex2]), 20);
+			phase4 += __SSAT(fix32Mul((phase1 - ((phase4 - phaseModTracker2) * denominator3)), dividedPhases[thisIndex3]), 20);
 		} else {
 			numerator1Alt = numerators[thisIndex1];
 			numerator2Alt = numerators[thisIndex2];
