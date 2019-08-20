@@ -171,9 +171,6 @@ public:
 		this->sync3UI.dispatch(sig);
 	};
 
-
-	PllController pll;
-
 	uint32_t phase1 = 0;
 	uint32_t phase2 = 0;
 	uint32_t phase3 = 0;
@@ -197,24 +194,26 @@ public:
 	int32_t hardSync = 0;
 	uint32_t subharm = 0;
 
+	int32_t error = 0;
+
 	inline void advanceSubharm(void) {
 		subharm = (subharm + 1) & 1;
 		setAuxLogic(subharm);
 	}
 
 	struct Sync3Scale {
-		uint32_t numerators[16];
-		uint32_t denominators[16];
-		uint32_t dividedPhases[16];
+		uint32_t numerators[32];
+		uint32_t denominators[32];
+		uint32_t dividedPhases[32];
 		uint32_t pllStyle;
 	};
 
 	static const struct Sync3Scale minor;
-	static const struct Sync3Scale minorArp;
+	static const struct Sync3Scale major;
 	static const struct Sync3Scale ints;
 	static const struct Sync3Scale rhythms;
 	static const struct Sync3Scale minorLock;
-	static const struct Sync3Scale minorArpLock;
+	static const struct Sync3Scale majorLock;
 	static const struct Sync3Scale intsLock;
 	static const struct Sync3Scale rhythmsLock;
 
@@ -471,11 +470,11 @@ public:
 
 			advanceSubharm();
 
-			int32_t error = phases[playbackPosition];
+			error = phaseLockOn ? phases[playbackPosition] : 0;
 
 			int32_t phaseSpan = (errorPileup + 1);
 
-			increment1 = (45 * ((int64_t) phaseSpan << 32) - error)/(periodCount);
+			increment1 = (45 * (((int64_t) phaseSpan << 32) - error))/(periodCount);
 			errorPileup = 0;
 
 			increment2 = fix32Mul(increment1, sync1Div) * numerator1Alt;
@@ -543,16 +542,16 @@ public:
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
 
-		phaseMod();
-
 		(this->*updateOutputs)(0);
+
+		phaseMod();
 
 	}
 	void transferCompleteCallback(void) {
 
-		phaseMod();
-
 		(this->*updateOutputs)(VIA_SYNC3_BUFFER_SIZE);
+
+		phaseMod();
 
 	}
 	void slowConversionCallback(void) {
@@ -573,11 +572,11 @@ public:
 		uint32_t thisIndex1 = controls.knob1Value + controls.cv1Value;
 		uint32_t thisIndex2 = controls.knob2Value;
 		uint32_t thisIndex3 = controls.knob3Value;
-		thisIndex1 = index1Hysterisis(thisIndex1 >> 8, thisIndex1) >> 1;
-		thisIndex2 = index2Hysterisis(thisIndex2 >> 8, thisIndex2) >> 1;
-		thisIndex3 = index3Hysterisis(thisIndex3 >> 8, thisIndex3) >> 1;
-		thisIndex2 += index2CVHysterisis(ratio2Mod >> 8, ratio2Mod) >> 1;
-		thisIndex3 += index3CVHysterisis(ratio3Mod >> 8, ratio3Mod) >> 1;
+		thisIndex1 = index1Hysterisis(thisIndex1 >> 8, thisIndex1);
+		thisIndex2 = index2Hysterisis(thisIndex2 >> 8, thisIndex2);
+		thisIndex3 = index3Hysterisis(thisIndex3 >> 8, thisIndex3);
+		thisIndex2 += index2CVHysterisis(ratio2Mod >> 8, ratio2Mod);
+		thisIndex3 += index3CVHysterisis(ratio3Mod >> 8, ratio3Mod);
 		sync1Div = dividedPhases[thisIndex1];
 		sync2Div = dividedPhases[thisIndex2];
 		sync3Div = dividedPhases[thisIndex3];
@@ -592,18 +591,33 @@ public:
 			denominator3Select = denominators[thisIndex3];
 
 
-			phase2 += __SSAT(fix32Mul((phase1 - (phase2 * denominator1)), dividedPhases[thisIndex1]), 20);
-			phase3 += __SSAT(fix32Mul(((phase1 + (1<<30)) - ((phase3 - phaseModTracker2) * denominator2)), dividedPhases[thisIndex2]), 20);
-			phase4 += __SSAT(fix32Mul((phase1 - ((phase4 - phaseModTracker2) * denominator3)), dividedPhases[thisIndex3]), 20);
+//			phase2 += __SSAT(fix32Mul((phase1 - (phase2 * denominator1)), dividedPhases[thisIndex1]), 20);
+//			phase3 += __SSAT(fix32Mul(((phase1 + (1<<30)) - ((phase3 - phaseModTracker2) * denominator2)), dividedPhases[thisIndex2]), 20);
+//			phase4 += __SSAT(fix32Mul((phase1 - ((phase4 - phaseModTracker2) * denominator3)), dividedPhases[thisIndex3]), 20);
+
+			phase2 += __SSAT((phase1 - (phase2 * denominator1)), 20);
+			phase3 += __SSAT(((phase1 + fix32Mul((1<<30), dividedPhases[thisIndex2])) - ((phase3 - phaseModTracker2) * denominator2)), 20);
+			phase4 += __SSAT((phase1 - ((phase4 - phaseModTracker2) * denominator3)), 20);
 		} else {
 			numerator1Alt = numerators[thisIndex1];
 			numerator2Alt = numerators[thisIndex2];
 			numerator3Alt = numerators[thisIndex3];
+
+
+
 		}
 
 		index1 = thisIndex1;
 		index2 = thisIndex2;
 		index3 = thisIndex3;
+
+//		int32_t errorCorrect;
+//
+//		if (error) {
+//			errorCorrect = __USAT(error - (1 << 24), 31);
+//			phase1 += error - errorCorrect;
+//			error = errorCorrect;
+//		}
 
 	}
 	void auxTimer1InterruptCallback(void) {
