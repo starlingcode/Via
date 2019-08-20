@@ -21,6 +21,8 @@ void ViaSync3::handleButton2ModeChange(int32_t mode) {
 
 	phaseLockOn = scales[mode]->pllStyle;
 
+	phaseModTracker2 = 0;
+
 	numerator1Select = 1;
 	numerator2Select = 1;
 	numerator3Select = 1;
@@ -40,8 +42,7 @@ void ViaSync3::handleButton3ModeChange(int32_t mode) {
 void ViaSync3::handleButton4ModeChange(int32_t mode) {
 
 	phaseModOn = mode;
-	phaseModTracker2 *= mode;
-	phaseModTracker3 *= mode;
+	phaseModTracker2 = 0;
 
 }
 
