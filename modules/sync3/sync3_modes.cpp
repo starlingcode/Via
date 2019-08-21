@@ -18,6 +18,7 @@ void ViaSync3::handleButton2ModeChange(int32_t mode) {
 	numerators = scales[mode]->numerators;
 	denominators = scales[mode]->denominators;
 	dividedPhases = scales[mode]->dividedPhases;
+	keys = scales[mode]->keys;
 
 	phaseLockOn = scales[mode]->pllStyle;
 

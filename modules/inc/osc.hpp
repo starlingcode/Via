@@ -191,6 +191,9 @@ public:
 	int32_t octaveMult = 1;
 	int32_t unity = 0;
 
+	int32_t beatTimer = 1;
+	int32_t clockedBeat = 1;
+
 	int32_t lastLogicA = 0;
 	int32_t lastLogicB = 0;
 	int32_t lastPM = 0;
@@ -342,7 +345,7 @@ public:
 			int32_t octaveOffset = offset - 60 - pitchClass;
 			int32_t scaleDegree = scaleDegrees[pitchClass];
 
-			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16);
+			int32_t chord = __USAT(((controls.knob3Value << 4)) + (int32_t) -inputs.cv3Samples[0], 16);
 			chord = chordHysterisis(chord >> 12, chord);
 			
 			int32_t chordTranspose = 0;
@@ -387,7 +390,7 @@ public:
 					expo.convert(offset << 5) >> 2);
 			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
-			detuneBase = controls.knob3Value << 4;
+			detuneBase = clockedBeat + (controls.knob3Value << 4);
 
 			if ((root != lastRoot) || (offset != lastOffset)) {
 				noteChange = 1;
@@ -423,7 +426,7 @@ public:
 
 			int32_t octaveOffset = offset - 60;
 
-			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16);
+			int32_t chord = __USAT(((controls.knob3Value << 4)) + (int32_t) -inputs.cv3Samples[0], 16);
 			chord = chordHysterisis(chord >> 12, chord);
 			
 			int32_t chordTranspose = 0;
@@ -468,7 +471,7 @@ public:
 					expo.convert(offset << 5) >> 2);
 			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
-			detuneBase = controls.knob3Value << 4;
+			detuneBase = clockedBeat + (controls.knob3Value << 4);
 
 			if ((root != lastRoot) || (offset != lastOffset)) {
 				noteChange = 1;
@@ -500,7 +503,7 @@ public:
 			int32_t fineTune = 65535 + (controls.knob2Value << 3);
 			int32_t coarseTune = expo.convert(root) >> 3;
 
-			int32_t chord = __USAT((controls.knob3Value << 4) + (int32_t) -inputs.cv3Samples[0], 16);
+			int32_t chord = __USAT(((controls.knob3Value << 4)) + (int32_t) -inputs.cv3Samples[0], 16);
 			int32_t chordFrac = chord & 0xFFF;
 			chord >>= 12;
 
@@ -532,7 +535,7 @@ public:
 					expo.convert(cv1Index) >> 2);
 			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
-			detuneBase = controls.knob3Value << 4;
+			detuneBase = clockedBeat + (controls.knob3Value << 4);
 		}
 
 		noteChangeCounter ++;
@@ -585,6 +588,13 @@ public:
 
 		aFreq = (!unity) ? aBasePitch << (octaveRange - octave): cBasePitch * octaveMult << chordTranspose;
 		bFreq = (!unity) ? bBasePitch << (octaveRange - octave): cBasePitch * octaveMult << chordTranspose;
+
+	}
+
+	void clockedDetune(int32_t detuneMod) {
+
+		aFreq = (cBasePitch * octaveMult) + (beatTimer >> 1);
+		bFreq = (cBasePitch * octaveMult) - (beatTimer >> 1);
 
 	}
 
@@ -661,10 +671,20 @@ public:
 	}
 	void auxRisingEdgeCallback(void) {
 
+		int32_t beatTime = TIM2->CNT;
+		TIM2->CNT = 0;
+
 		if (!buttonPressed) {
-			unity = 1;
+			unity = !clockedBeat;
 		}
 		auxLogicHigh = 1;
+
+		aPhase = bPhase;
+
+		// figure out a gradual phase locking function
+
+		beatTime = ((45 * ((int64_t)(0xFFFFFFFF)))/beatTime);
+		beatTimer =	((controls.knob3Value >> 9) + 1) * beatTime;
 
 	}
 	void auxFallingEdgeCallback(void) {
@@ -725,7 +745,7 @@ public:
 	int32_t numButton3Modes = 2;
 	int32_t numButton4Modes = 5;
 	int32_t numButton5Modes = 4;
-	int32_t numButton6Modes = 3;
+	int32_t numButton6Modes = 4;
 
 	void handleButton1ModeChange(int32_t);
 	void handleButton2ModeChange(int32_t);

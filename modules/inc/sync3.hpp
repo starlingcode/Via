@@ -205,23 +205,25 @@ public:
 		uint32_t numerators[32];
 		uint32_t denominators[32];
 		uint32_t dividedPhases[32];
+		uint32_t keys[32];
 		uint32_t pllStyle;
 	};
 
-	static const struct Sync3Scale minor;
-	static const struct Sync3Scale major;
+	static const struct Sync3Scale perfect;
+	static const struct Sync3Scale simpleRhythms;
 	static const struct Sync3Scale ints;
-	static const struct Sync3Scale rhythms;
-	static const struct Sync3Scale minorLock;
-	static const struct Sync3Scale majorLock;
-	static const struct Sync3Scale intsLock;
-	static const struct Sync3Scale rhythmsLock;
+	static const struct Sync3Scale circleFifths;
+	static const struct Sync3Scale fourthsFifths;
+	static const struct Sync3Scale minorArp;
+	static const struct Sync3Scale evenOdds;
+	static const struct Sync3Scale bP;
 
 	static const struct Sync3Scale * scales[8];
 
-	const uint32_t * numerators = minor.numerators;
-	const uint32_t * denominators = minor.denominators;
-	const uint32_t * dividedPhases = minor.dividedPhases;
+	const uint32_t * numerators = ints.numerators;
+	const uint32_t * denominators = ints.denominators;
+	const uint32_t * dividedPhases = ints.dividedPhases;
+	const uint32_t * keys = ints.keys;
 
 	inline void displayRatio(void) {
 		setRGB(hueSpace[sync3UI.button2Mode * 2]);
@@ -251,12 +253,12 @@ public:
 	uint32_t numerator2Alt = 1;
 	uint32_t numerator3Alt = 1;
 
-	uint32_t index1 = 0;
-	uint32_t lastIndex1 = 0;
-	uint32_t index2 = 0;
-	uint32_t lastIndex2 = 0;
-	uint32_t index3 = 0;
-	uint32_t lastIndex3 = 0;
+	uint32_t key1 = 0;
+	uint32_t lastKey1 = 0;
+	uint32_t key2 = 0;
+	uint32_t lastKey2 = 0;
+	uint32_t key3 = 0;
+	uint32_t lastKey3 = 0;
 
 	int32_t index1Stable = 0;
 	int32_t lastStableIndex1 = 0;
@@ -460,7 +462,7 @@ public:
 
 		int32_t reading = TIM2->CNT;
 
-		if (reading < (1440 * 25)) {
+		if (reading < (1440 * 32)) {
 			errorPileup ++;
 			advanceSubharm();
 		} else {
@@ -483,7 +485,7 @@ public:
 
 //			phase1 *= hardSync;
 
-			uint32_t ratioDelta = (index1 != lastIndex1) | (index2 != lastIndex2) | (index3 != lastIndex3);
+			uint32_t ratioDelta = (key1 != lastKey1) | (key2 != lastKey2) | (key3 != lastKey3);
 
 			setLogicA(ratioDelta);
 
@@ -500,9 +502,9 @@ public:
 				setLEDB(1);
 			}
 
-			lastIndex1 = index1;
-			lastIndex2 = index2;
-			lastIndex3 = index3;
+			lastKey1 = key1;
+			lastKey2 = key2;
+			lastKey3 = key3;
 
 		}
 
@@ -590,11 +592,6 @@ public:
 			denominator2Select = denominators[thisIndex2];
 			denominator3Select = denominators[thisIndex3];
 
-
-//			phase2 += __SSAT(fix32Mul((phase1 - (phase2 * denominator1)), dividedPhases[thisIndex1]), 20);
-//			phase3 += __SSAT(fix32Mul(((phase1 + (1<<30)) - ((phase3 - phaseModTracker2) * denominator2)), dividedPhases[thisIndex2]), 20);
-//			phase4 += __SSAT(fix32Mul((phase1 - ((phase4 - phaseModTracker2) * denominator3)), dividedPhases[thisIndex3]), 20);
-
 			phase2 += __SSAT((phase1 - (phase2 * denominator1)), 20);
 			phase3 += __SSAT(((phase1 + fix32Mul((1<<30), dividedPhases[thisIndex2])) - ((phase3 - phaseModTracker2) * denominator2)), 20);
 			phase4 += __SSAT((phase1 - ((phase4 - phaseModTracker2) * denominator3)), 20);
@@ -607,17 +604,9 @@ public:
 
 		}
 
-		index1 = thisIndex1;
-		index2 = thisIndex2;
-		index3 = thisIndex3;
-
-//		int32_t errorCorrect;
-//
-//		if (error) {
-//			errorCorrect = __USAT(error - (1 << 24), 31);
-//			phase1 += error - errorCorrect;
-//			error = errorCorrect;
-//		}
+		key1 = keys[thisIndex1];
+		key2 = keys[thisIndex2];
+		key3 = keys[thisIndex3];
 
 	}
 	void auxTimer1InterruptCallback(void) {

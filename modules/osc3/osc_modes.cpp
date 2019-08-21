@@ -68,13 +68,19 @@ void ViaOsc::handleButton6ModeChange(int32_t mode) {
 	if (mode == 0) {
 		doDetune = &ViaOsc::linearDetune;
 		chordMode = 0;
+		clockedBeat = 0;
 	} else if (mode == 1) {
 		doDetune = &ViaOsc::scaledDetune;
 		chordMode = 0;
-	} else {
+		clockedBeat = 0;
+	} else if (mode == 2) {
 		chordMode = 1;
+		clockedBeat = 0;
 		doDetune = &ViaOsc::chordalDetune;
-
+	} else {
+		chordMode = 0;
+		clockedBeat = 1;
+		doDetune = &ViaOsc::clockedDetune;
 	}
 
 }
