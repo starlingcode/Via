@@ -193,6 +193,8 @@ public:
 
 	int32_t beatTimer = 1;
 	int32_t clockedBeat = 1;
+	int32_t beatPhaseLock = 0;
+	int32_t pllPileup = 0;
 
 	int32_t lastLogicA = 0;
 	int32_t lastLogicB = 0;
@@ -594,7 +596,7 @@ public:
 	void clockedDetune(int32_t detuneMod) {
 
 		aFreq = (cBasePitch * octaveMult) + (beatTimer >> 1);
-		bFreq = (cBasePitch * octaveMult) - (beatTimer >> 1);
+		bFreq = (cBasePitch * octaveMult) - (beatTimer >> 1) + beatPhaseLock;
 
 	}
 
@@ -671,20 +673,27 @@ public:
 	}
 	void auxRisingEdgeCallback(void) {
 
-		int32_t beatTime = TIM2->CNT;
-		TIM2->CNT = 0;
-
 		if (!buttonPressed) {
 			unity = !clockedBeat;
 		}
 		auxLogicHigh = 1;
 
-		aPhase = bPhase;
+		int32_t beatTime = TIM2->CNT;
+		pllPileup += 1;
 
-		// figure out a gradual phase locking function
+		if (beatTime > (45 * 128)) {
 
-		beatTime = ((45 * ((int64_t)(0xFFFFFFFF)))/beatTime);
-		beatTimer =	((controls.knob3Value >> 9) + 1) * beatTime;
+			TIM2->CNT = 0;
+
+			int32_t error = aPhase - bPhase;
+
+			// figure out a gradual phase locking function
+			beatPhaseLock = ((45 * ((int64_t)(error)))/beatTime);
+			beatTime = (45 * (((uint64_t)pllPileup << 32)))/(beatTime);
+			beatTimer =	((controls.knob3Value >> 9) + 1) * beatTime;
+
+			pllPileup = 0;
+		}
 
 	}
 	void auxFallingEdgeCallback(void) {
