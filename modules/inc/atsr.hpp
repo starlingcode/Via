@@ -577,6 +577,11 @@ public:
 	int32_t gateDelayTransition;
 	int32_t gateDelayTrigger = 0;
 
+	int32_t cv1Offset = 0;
+	int32_t cv2Offset = 0;
+	int32_t cv3Offset = 0;
+	int32_t dac3Offset = 0;
+
 	void gateDelayProcess(void) {
 		if (gateDelayActive) {
 			gateDelayPhase += (gateDelayPhase > 0xFFFFFFF) ? atsrState->attackIncrement : atsrState->tIncrement;
@@ -641,8 +646,8 @@ public:
 
 		int32_t tMod = (int32_t) inputs.cv2Samples[0];
 		int32_t rMod = (int32_t) inputs.cv3Samples[0];
-		tMod += 32767;
-		rMod += 32767;
+		tMod += 32767 - cv2Calibration;
+		rMod += 32767 - cv3Calibration;
 		tMod >>= 4;
 		rMod >>= 4;
 		tMod = expo.convert(__USAT(tMod, 12)) >> 5;
@@ -651,11 +656,11 @@ public:
 		int32_t cycleMod;
 
 		if (cycleTime) {
-			cycleMod = expo.convert(4095 - controls.cv1Value) >> 5;
-			tMod = fix16_mul(cycleMod, tMod);
-			rMod = fix16_mul(cycleMod, rMod);
+			cycleMod = expo.convert(4095 - controls.cv1Value + cv1Calibration) >> 5;
+			tMod = __USAT(fix16_mul(cycleMod, tMod), 26);
+			rMod = __USAT(fix16_mul(cycleMod, rMod), 26);
 		} else {
-			cycleMod = expo.convert(4095 - controls.cv1Value) >> 5;
+			cycleMod = expo.convert(4095 - controls.cv1Value + cv1Calibration) >> 5;
 		}
 
 		if (attacking) {
@@ -715,6 +720,11 @@ public:
 	void handleButton5ModeChange(int32_t);
 	void handleButton6ModeChange(int32_t);
 
+	void readCalibrationPacket(void) {
+		calibrationPacket = atsrUI.loadFromMemory(7);
+		decodeCalibrationPacket();
+	}
+
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
 	ViaAtsr() : atsrUI(*this), attack(*this), t(*this), sustain(*this), releaseFromA(*this),
 			releaseFromT(*this), releaseFromS(*this), retrigger(*this), resting(*this) {
@@ -735,6 +745,19 @@ public:
 		/// Call the UI initialization that needs to happen after outer class construction.
 		atsrUI.initialize();
 
+		uint32_t optionBytes = readOptionBytes();
+		uint32_t ob1Data = optionBytes & 0xFFFF;
+		uint32_t ob2Data = optionBytes >> 16;
+
+		if (ob1Data == 254 && ob2Data == 255) {
+			readCalibrationPacket();
+			atsrUI.writeStockPresets();
+			writeOptionBytes(5, 1);
+		} else if (ob1Data == 5) {
+			readCalibrationPacket();
+		} else if (ob1Data != 0) {
+			writeOptionBytes(0, 0);
+		}
 
 	}
 

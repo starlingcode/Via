@@ -316,7 +316,7 @@ public:
 
 	void updateBaseFreqsScale(void) {
 
-		int32_t cv1Index = controls.cv1Value;
+		int32_t cv1Index = __USAT(controls.cv1Value - cv1Calibration, 12);
 		// coarse range in octaves is 4
 		int32_t knob1Index = (controls.knob1Value * 3) >> 3;
 
@@ -409,7 +409,7 @@ public:
 
 	void updateBaseFreqsSemi(void) {
 
-		int32_t cv1Index = __USAT(controls.cv1Value + 16, 12);
+		int32_t cv1Index = __USAT(controls.cv1Value - cv1Calibration, 12);
 		// coarse range in octaves is 4
 		int32_t knob1Index = (controls.knob1Value * 3) >> 3;
 
@@ -490,7 +490,7 @@ public:
 
 	void updateBaseFreqsSmooth(void) {
 
-		int32_t cv1Index = controls.cv1Value;
+		int32_t cv1Index = __USAT(controls.cv1Value - cv1Calibration, 12);
 		// coarse range in octaves is 4
 		int32_t knob1Index = (controls.knob1Value * 3) >> 3;
 
@@ -606,11 +606,15 @@ public:
 
 		octaveMult = 1 << (!octave * (octaveRange));
 
-		(this->*doDetune)((int32_t) -inputs.cv3Samples[0]);
+		int32_t detuneMod = -inputs.cv3Samples[0];
+		detuneMod += cv3Calibration;
+
+		(this->*doDetune)(detuneMod);
 
 		cFreq = cBasePitch * octaveMult;
 
 		int32_t pmInput = inputs.cv2Samples[0];
+		pmInput -= cv2Calibration;
 
 		// quadrature
 		int32_t aError = aPhase - (cPhase + pmTracker + (1 << 30));
@@ -763,6 +767,11 @@ public:
 	void handleButton5ModeChange(int32_t);
 	void handleButton6ModeChange(int32_t);
 
+	void readCalibrationPacket(void) {
+		calibrationPacket = oscUI.loadFromMemory(7);
+		decodeCalibrationPacket();
+	}
+
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
 	ViaOsc() : oscUI(*this) {
 
@@ -783,6 +792,19 @@ public:
 		/// Call the UI initialization that needs to happen after outer class construction.
 		oscUI.initialize();
 
+		uint32_t optionBytes = readOptionBytes();
+		uint32_t ob1Data = optionBytes & 0xFFFF;
+		uint32_t ob2Data = optionBytes >> 16;
+
+		if (ob1Data == 254 && ob2Data == 255) {
+			readCalibrationPacket();
+			oscUI.writeStockPresets();
+			writeOptionBytes(6, 1);
+		} else if (ob1Data == 6) {
+			readCalibrationPacket();
+		} else if (ob1Data != 0) {
+			writeOptionBytes(0, 0);
+		}
 
 	}
 

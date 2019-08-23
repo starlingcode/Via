@@ -260,6 +260,9 @@ public:
 	uint32_t key3 = 0;
 	uint32_t lastKey3 = 0;
 
+	int32_t tapTempo = 0;
+	int32_t lastTap = 0;
+
 	int32_t index1Stable = 0;
 	int32_t lastStableIndex1 = 0;
 	int32_t index1Transition = 0;
@@ -508,6 +511,8 @@ public:
 
 		}
 
+		tapTempo = 0;
+
 	}
 	void mainFallingEdgeCallback(void) {
 
@@ -537,8 +542,25 @@ public:
 	}
 	void buttonPressedCallback(void) {
 
+		int32_t reading = TIM2->CNT;
+		TIM2->CNT = 0;
+		tapTempo = 1;
+		periodCount = __USAT((reading + lastTap) >> 1, 28);
+		lastTap = reading;
+		TIM17->CNT = 0;
+		TIM17->CR1 |= TIM_CR1_CEN;
+		TIM17->ARR = periodCount >> 12;
+		if (runtimeDisplay) {
+			setLEDB(1);
+		}
+
 	}
 	void buttonReleasedCallback(void) {
+
+		if (runtimeDisplay) {
+			setLEDC(0);
+			setLEDB(0);
+		}
 
 	}
 	void ioProcessCallback(void) {}
@@ -562,6 +584,8 @@ public:
 
 		int32_t ratio2Mod = -inputs.cv2Samples[0];
 		int32_t ratio3Mod = phaseModOn ? ratio2Mod : -inputs.cv3Samples[0];
+		ratio2Mod += cv2Calibration;
+		ratio3Mod += cv3Calibration;
 
 		ratio2Mod >>= 4;
 		ratio3Mod >>= 4;
@@ -569,9 +593,12 @@ public:
 		ratio2Mod += 2048;
 		ratio3Mod += 2048;
 
+		ratio2Mod = __USAT(ratio2Mod, 12);
+		ratio3Mod = __USAT(ratio3Mod, 12);
+
 		// need to synchronize change
 
-		uint32_t thisIndex1 = controls.knob1Value + controls.cv1Value;
+		uint32_t thisIndex1 = controls.knob1Value + __USAT(controls.cv1Value - cv1Calibration, 12);
 		uint32_t thisIndex2 = controls.knob2Value;
 		uint32_t thisIndex3 = controls.knob3Value;
 		thisIndex1 = index1Hysterisis(thisIndex1 >> 8, thisIndex1);
@@ -611,6 +638,43 @@ public:
 	}
 	void auxTimer1InterruptCallback(void) {
 
+		if (tapTempo) {
+
+			advanceSubharm();
+
+			error = phaseLockOn ? phases[0] : 0;
+
+			int32_t phaseSpan = 1;
+
+			increment1 = (45 * (((int64_t) phaseSpan << 32) - error))/(periodCount);
+			errorPileup = 0;
+
+			increment2 = fix32Mul(increment1, sync1Div) * numerator1Alt;
+			increment3 = fix32Mul(increment1, sync2Div) * numerator2Alt;
+			increment4 = fix32Mul(increment1, sync3Div) * numerator3Alt;
+
+	//			phase1 *= hardSync;
+
+			uint32_t ratioDelta = (key1 != lastKey1) | (key2 != lastKey2) | (key3 != lastKey3);
+
+			setLogicA(ratioDelta);
+
+			numerator1 = numerator1Select;
+			numerator2 = numerator2Select;
+			numerator3 = numerator3Select;
+
+			denominator1 = denominator1Select;
+			denominator2 = denominator2Select;
+			denominator3 = denominator3Select;
+
+			lastKey1 = key1;
+			lastKey2 = key2;
+			lastKey3 = key3;
+
+		} else {
+			TIM17->CR1 &= TIM_CR1_CEN;
+		}
+
 	}
 	void auxTimer2InterruptCallback(void) {
 
@@ -630,6 +694,11 @@ public:
 	void handleButton5ModeChange(int32_t);
 	void handleButton6ModeChange(int32_t);
 
+	void readCalibrationPacket(void) {
+		calibrationPacket = sync3UI.loadFromMemory(7);
+		decodeCalibrationPacket();
+	}
+
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
 	ViaSync3() : sync3UI(*this) {
 
@@ -646,6 +715,20 @@ public:
 
 		/// Call the UI initialization that needs to happen after outer class construction.
 		sync3UI.initialize();
+
+		uint32_t optionBytes = readOptionBytes();
+		uint32_t ob1Data = optionBytes & 0xFFFF;
+		uint32_t ob2Data = optionBytes >> 16;
+
+		if (ob1Data == 254 && ob2Data == 255) {
+			readCalibrationPacket();
+			sync3UI.writeStockPresets();
+			writeOptionBytes(7, 1);
+		} else if (ob1Data == 7) {
+			readCalibrationPacket();
+		} else if (ob1Data != 0) {
+			writeOptionBytes(0, 0);
+		}
 
 	}
 

@@ -32,7 +32,7 @@ void ViaAtsr::render(int32_t writePosition) {
 	lastLoop = loopGate;
 	loopGate |= (gateLowCountdown > 0);
 	loopGate &= !startup;
-	int32_t loopGateOut = 2048 - loopGate * 2048;
+	int32_t loopGateOut = __USAT((2048 - dac3Calibration) - (loopGate * 2048), 12);
 
 	outputs.logicA[0] = GET_ALOGIC_MASK(*assignableLogic);
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(gateDelayOut);
