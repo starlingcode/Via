@@ -263,6 +263,8 @@ public:
 	int32_t tapTempo = 0;
 	int32_t lastTap = 0;
 
+	int32_t ratioRoundRobin = 0;
+
 	int32_t index1Stable = 0;
 	int32_t lastStableIndex1 = 0;
 	int32_t index1Transition = 0;
@@ -465,13 +467,16 @@ public:
 
 		int32_t reading = TIM2->CNT;
 
-		if (reading < (1440 * 32)) {
+		tapTempo = 0;
+
+		if (reading < (1440 * 64)) {
 			errorPileup ++;
 			advanceSubharm();
 		} else {
-			periodCount = reading;
 			TIM2->CNT = 0;
 			int32_t playbackPosition = (64 - DMA1_Channel5->CNDTR) & 31;
+
+			periodCount = reading;
 
 			advanceSubharm();
 
@@ -510,8 +515,6 @@ public:
 			lastKey3 = key3;
 
 		}
-
-		tapTempo = 0;
 
 	}
 	void mainFallingEdgeCallback(void) {
@@ -580,60 +583,65 @@ public:
 	}
 	void slowConversionCallback(void) {
 
-		controls.updateSlowExtra();
+		controls.updateExtraNoCV1();
 
-		int32_t ratio2Mod = -inputs.cv2Samples[0];
-		int32_t ratio3Mod = phaseModOn ? ratio2Mod : -inputs.cv3Samples[0];
-		ratio2Mod += cv2Calibration;
-		ratio3Mod += cv3Calibration;
+		if (ratioRoundRobin == 0) {
 
-		ratio2Mod >>= 4;
-		ratio3Mod >>= 4;
+			uint32_t thisIndex1 = controls.knob1Value + __USAT(controls.cv1Value - cv1Calibration, 12);
+			thisIndex1 = index1Hysterisis(thisIndex1 >> 8, thisIndex1);
+			sync1Div = dividedPhases[thisIndex1];
+			if (phaseLockOn) {
+				numerator1Select = numerators[thisIndex1];
+				denominator1Select = denominators[thisIndex1];
+				phase2 += __SSAT((phase1 - (phase2 * denominator1)), 20);
+			} else {
+				numerator1Alt = numerators[thisIndex1];
+			}
+			key1 = keys[thisIndex1];
 
-		ratio2Mod += 2048;
-		ratio3Mod += 2048;
+		} else if (ratioRoundRobin == 1) {
 
-		ratio2Mod = __USAT(ratio2Mod, 12);
-		ratio3Mod = __USAT(ratio3Mod, 12);
+			int32_t ratio2Mod = -inputs.cv2Samples[0];
+			ratio2Mod += cv2Calibration;
+			ratio2Mod >>= 4;
+			ratio2Mod += 2048;
+			ratio2Mod = __USAT(ratio2Mod, 12);
+			uint32_t thisIndex2 = controls.knob2Value;
+			thisIndex2 = index2Hysterisis(thisIndex2 >> 8, thisIndex2);
+			thisIndex2 += index2CVHysterisis(ratio2Mod >> 8, ratio2Mod);
+			sync2Div = dividedPhases[thisIndex2];
+			if (phaseLockOn) {
+				numerator2Select = numerators[thisIndex2];
+				denominator2Select = denominators[thisIndex2];
+				phase3 += __SSAT(((phase1 + fix32Mul((1<<30), dividedPhases[thisIndex2])) - ((phase3 - phaseModTracker2) * denominator2)), 20);
+			} else {
+				numerator2Alt = numerators[thisIndex2];
+			}
+			key2 = keys[thisIndex2];
 
-		// need to synchronize change
+		} else if (ratioRoundRobin == 2) {
 
-		uint32_t thisIndex1 = controls.knob1Value + __USAT(controls.cv1Value - cv1Calibration, 12);
-		uint32_t thisIndex2 = controls.knob2Value;
-		uint32_t thisIndex3 = controls.knob3Value;
-		thisIndex1 = index1Hysterisis(thisIndex1 >> 8, thisIndex1);
-		thisIndex2 = index2Hysterisis(thisIndex2 >> 8, thisIndex2);
-		thisIndex3 = index3Hysterisis(thisIndex3 >> 8, thisIndex3);
-		thisIndex2 += index2CVHysterisis(ratio2Mod >> 8, ratio2Mod);
-		thisIndex3 += index3CVHysterisis(ratio3Mod >> 8, ratio3Mod);
-		sync1Div = dividedPhases[thisIndex1];
-		sync2Div = dividedPhases[thisIndex2];
-		sync3Div = dividedPhases[thisIndex3];
-
-		if (phaseLockOn) {
-			numerator1Select = numerators[thisIndex1];
-			numerator2Select = numerators[thisIndex2];
-			numerator3Select = numerators[thisIndex3];
-
-			denominator1Select = denominators[thisIndex1];
-			denominator2Select = denominators[thisIndex2];
-			denominator3Select = denominators[thisIndex3];
-
-			phase2 += __SSAT((phase1 - (phase2 * denominator1)), 20);
-			phase3 += __SSAT(((phase1 + fix32Mul((1<<30), dividedPhases[thisIndex2])) - ((phase3 - phaseModTracker2) * denominator2)), 20);
-			phase4 += __SSAT((phase1 - ((phase4 - phaseModTracker2) * denominator3)), 20);
-		} else {
-			numerator1Alt = numerators[thisIndex1];
-			numerator2Alt = numerators[thisIndex2];
-			numerator3Alt = numerators[thisIndex3];
-
-
+			int32_t ratio3Mod = phaseModOn ? -inputs.cv2Samples[0] : -inputs.cv3Samples[0];
+			ratio3Mod += cv3Calibration;
+			ratio3Mod >>= 4;
+			ratio3Mod += 2048;
+			ratio3Mod = __USAT(ratio3Mod, 12);
+			uint32_t thisIndex3 = controls.knob3Value;
+			thisIndex3 = index3Hysterisis(thisIndex3 >> 8, thisIndex3);
+			thisIndex3 += index3CVHysterisis(ratio3Mod >> 8, ratio3Mod);
+			sync3Div = dividedPhases[thisIndex3];
+			if (phaseLockOn) {
+				numerator3Select = numerators[thisIndex3];
+				denominator3Select = denominators[thisIndex3];
+				phase4 += __SSAT((phase1 - ((phase4 - phaseModTracker2) * denominator3)), 20);
+			} else {
+				numerator3Alt = numerators[thisIndex3];
+			}
+			key3 = keys[thisIndex3];
 
 		}
 
-		key1 = keys[thisIndex1];
-		key2 = keys[thisIndex2];
-		key3 = keys[thisIndex3];
+		ratioRoundRobin = (ratioRoundRobin >= 2) ? 0 : ratioRoundRobin + 1;
 
 	}
 	void auxTimer1InterruptCallback(void) {
@@ -672,7 +680,7 @@ public:
 			lastKey3 = key3;
 
 		} else {
-			TIM17->CR1 &= TIM_CR1_CEN;
+			TIM17->CR1 &= ~TIM_CR1_CEN;
 		}
 
 	}

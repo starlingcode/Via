@@ -663,6 +663,10 @@ public:
 	uint32_t buttonPressed = 0;
 	uint32_t auxLogicHigh = 0;
 
+	int32_t multipliers[8] = {1, 2, 3, 4, 6, 8, 12, 16};
+
+	int32_t beatMultiplier = 1;
+
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
@@ -694,7 +698,7 @@ public:
 			// figure out a gradual phase locking function
 			beatPhaseLock = ((45 * ((int64_t)(error)))/beatTime);
 			beatTime = (45 * (((uint64_t)pllPileup << 32)))/(beatTime);
-			beatTimer =	((controls.knob3Value >> 9) + 1) * beatTime;
+			beatTimer =	beatMultiplier * beatTime;
 
 			pllPileup = 0;
 		}
@@ -740,6 +744,13 @@ public:
 		(this->*updateBaseFreqs)();
 
 		setAuxLogic(noteChange);
+
+		if (clockedBeat) {
+			int32_t multiplierCV = -inputs.cv3Samples[0];
+			multiplierCV += cv3Calibration;
+			multiplierCV >>= 4;
+			beatMultiplier = multipliers[__USAT(controls.knob3Value + multiplierCV, 12) >> 9];
+		}
 
 		if (runtimeDisplay) {
 			showQuant();

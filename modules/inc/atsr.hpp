@@ -680,10 +680,10 @@ public:
 		}
 
 		atsrState->attackIncrement = __USAT(fix16_mul(cycleMod,
-				expo.convert(4095 - controls.knob1Value) >> 6), 25);
-		atsrState->tIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob2Value) >> 6,
+				expo.convert(4095 - controls.knob1Value) >> 7), 25);
+		atsrState->tIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob2Value) >> 7,
 				tMod), 25);
-		atsrState->releaseIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob3Value) >> 6,
+		atsrState->releaseIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob3Value) >> 7,
 				rMod), 25);
 		setRedLED((atsrState->bLevel >> 4) * runtimeDisplay);
 		setBlueLED((atsrState->aLevel >> 4) * runtimeDisplay);
