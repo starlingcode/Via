@@ -1,40 +1,35 @@
 #include "sync3.hpp"
 
-#define __BEGIN		uint32_t phaseAccumulator1 = phase1; \
-					int32_t thisIncrement1 = increment1; \
-					uint32_t phaseAccumulator2 = phase2; \
+#define __BEGIN		uint32_t phaseAccumulator2 = phase2; \
 					int32_t thisIncrement2 = increment2; \
 					uint32_t phaseAccumulator3 = phase3; \
 					int32_t thisIncrement3 = increment3 + phaseModIncrement2; \
 					uint32_t phaseAccumulator4 = phase4; \
 					int32_t thisIncrement4 = increment4 + phaseModIncrement2; \
-					uint32_t thisNumerator1 = numerator1; \
-					uint32_t thisNumerator2 = numerator2; \
-					uint32_t thisNumerator3 = numerator3; \
 					int32_t samplesRemaining = VIA_SYNC3_BUFFER_SIZE; \
 					while (samplesRemaining) { \
-						phaseAccumulator1 += thisIncrement1; \
  						phaseAccumulator2 += thisIncrement2; \
 						phaseAccumulator3 += thisIncrement3; \
 						phaseAccumulator4 += thisIncrement4; \
-						phases[VIA_SYNC3_BUFFER_SIZE - samplesRemaining] = phaseAccumulator1; \
+						phases2[writePosition] = phaseAccumulator2; \
+						phases3[writePosition] = phaseAccumulator3; \
+						phases4[writePosition] = phaseAccumulator4; \
 
-#define __OP1TRI 		outputs.dac3Samples[writePosition] = (abs((int32_t) (phaseAccumulator2 * thisNumerator1)) >> 19);
-#define __OP2TRI 		outputs.dac1Samples[writePosition] = (abs((int32_t) (phaseAccumulator3 * thisNumerator2)) >> 19);
-#define __OP3TRI 		outputs.dac2Samples[writePosition] = (abs((int32_t) (phaseAccumulator4 * thisNumerator3)) >> 19);
+#define __OP1TRI 		outputs.dac3Samples[writePosition] = (abs((int32_t) (phaseAccumulator2)) >> 19);
+#define __OP2TRI 		outputs.dac1Samples[writePosition] = (abs((int32_t) (phaseAccumulator3)) >> 19);
+#define __OP3TRI 		outputs.dac2Samples[writePosition] = (abs((int32_t) (phaseAccumulator4)) >> 19);
 
-#define __OP1SQUARE 	outputs.dac3Samples[writePosition] = (((phaseAccumulator2 * thisNumerator1)) >> 31) * 4095;
-#define __OP2SQUARE 	outputs.dac1Samples[writePosition] = (((phaseAccumulator3 * thisNumerator2)) >> 31) * 4095;
-#define __OP3SQUARE 	outputs.dac2Samples[writePosition] = (((phaseAccumulator4 * thisNumerator3)) >> 31) * 4095;
+#define __OP1SQUARE 	outputs.dac3Samples[writePosition] = (((phaseAccumulator2)) >> 31) * 4095;
+#define __OP2SQUARE 	outputs.dac1Samples[writePosition] = (((phaseAccumulator3)) >> 31) * 4095;
+#define __OP3SQUARE 	outputs.dac2Samples[writePosition] = (((phaseAccumulator4)) >> 31) * 4095;
 
-#define __OP1SAW 		outputs.dac3Samples[writePosition] = (phaseAccumulator2 * thisNumerator1) >> 20;
-#define __OP2SAW 		outputs.dac1Samples[writePosition] = (phaseAccumulator3 * thisNumerator2) >> 20;
-#define __OP3SAW 		outputs.dac2Samples[writePosition] = (phaseAccumulator4 * thisNumerator3) >> 20;
+#define __OP1SAW 		outputs.dac3Samples[writePosition] = (phaseAccumulator2) >> 20;
+#define __OP2SAW 		outputs.dac1Samples[writePosition] = (phaseAccumulator3) >> 20;
+#define __OP3SAW 		outputs.dac2Samples[writePosition] = (phaseAccumulator4) >> 20;
 
 #define __END			writePosition ++; \
 						samplesRemaining --; \
 					} \
-					phase1 = phaseAccumulator1; \
 					phase2 = phaseAccumulator2; \
 					phase3 = phaseAccumulator3; \
 					phase4 = phaseAccumulator4; \

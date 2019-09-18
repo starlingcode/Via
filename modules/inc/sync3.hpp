@@ -13,7 +13,7 @@
 #include "oscillators.hpp"
 
 /// Macro used to specify the number of samples to per DAC transfer.
-#define VIA_SYNC3_BUFFER_SIZE 32
+#define VIA_SYNC3_BUFFER_SIZE 24
 
 /// Callback to link to the C code in the STM32 Sync3 Sense Library.
 void sync3TouchLink (void * uiVoid);
@@ -175,11 +175,17 @@ public:
 	uint32_t phase2 = 0;
 	uint32_t phase3 = 0;
 	uint32_t phase4 = 0;
-	uint32_t phases[VIA_SYNC3_BUFFER_SIZE];
-	int32_t increment1 = 1000;
-	int32_t increment2 = 1000;
-	int32_t increment3 = 1000;
-	int32_t increment4 = 1000;
+	uint32_t phases[VIA_SYNC3_BUFFER_SIZE * 2];
+	uint32_t phases2[VIA_SYNC3_BUFFER_SIZE * 2];
+	uint32_t phases3[VIA_SYNC3_BUFFER_SIZE * 2];
+	uint32_t phases4[VIA_SYNC3_BUFFER_SIZE * 2];
+	uint32_t increment1 = 1000;
+	uint32_t increment2 = 1000;
+	uint32_t increment3 = 1000;
+	uint32_t increment4 = 1000;
+	uint32_t divCount2 = 0;
+	uint32_t divCount3 = 0;
+	uint32_t divCount4 = 0;
 
 	uint32_t phaseModOn = 0;
 	int32_t lastPhaseMod = 0;
@@ -229,9 +235,9 @@ public:
 		setRGB(hueSpace[sync3UI.button2Mode * 2]);
 	}
 
-	int32_t sync1Div = 0;
-	int32_t sync2Div = 0;
-	int32_t sync3Div = 0;
+	uint32_t sync1Div = 0;
+	uint32_t sync2Div = 0;
+	uint32_t sync3Div = 0;
 
 	uint32_t numerator1 = 1;
 	uint32_t numerator2 = 1;
@@ -474,36 +480,41 @@ public:
 			advanceSubharm();
 		} else {
 			TIM2->CNT = 0;
-			int32_t playbackPosition = (64 - DMA1_Channel5->CNDTR) & 31;
+			int32_t playbackPosition = (VIA_SYNC3_BUFFER_SIZE * 2) - DMA1_Channel5->CNDTR;
 
 			periodCount = reading;
 
 			advanceSubharm();
 
-			error = phaseLockOn ? phases[playbackPosition] : 0;
+			divCount2 += errorPileup + 1;
+			divCount2 %= denominator1Select;
+			int32_t error = (divCount2 * sync1Div * numerator1Alt) - phases2[playbackPosition];
+			uint64_t phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator1Alt;
+			phaseSpan <<= 32;
+			phaseSpan /= denominator1Select;
+			increment2 = (60 * (phaseSpan + error))/(periodCount);
 
-			int32_t phaseSpan = (errorPileup + 1);
+			divCount3 += errorPileup + 1;
+			divCount3 %= denominator2Select;
+			error = (divCount3 * sync2Div * numerator2Alt) - phases3[playbackPosition] + (1 << 30) + phaseModTracker2;
+			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator2Alt;
+			phaseSpan <<= 32;
+			phaseSpan /= denominator2Select;
+			increment3 = (60 * (phaseSpan + error))/(periodCount);
 
-			increment1 = (45 * (((int64_t) phaseSpan << 32) - error))/(periodCount);
+			divCount4 += errorPileup + 1;
+			divCount4 %= denominator3Select;
+			error = (divCount4 * sync3Div * numerator3Alt) - phases4[playbackPosition] + (1 << 31) + phaseModTracker2;
+			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator3Alt;
+			phaseSpan <<= 32;
+			phaseSpan /= denominator3Select;
+			increment4 = (60 * (phaseSpan + error))/(periodCount);
+
 			errorPileup = 0;
-
-			increment2 = fix32Mul(increment1, sync1Div) * numerator1Alt;
-			increment3 = fix32Mul(increment1, sync2Div) * numerator2Alt;
-			increment4 = fix32Mul(increment1, sync3Div) * numerator3Alt;
-
-//			phase1 *= hardSync;
 
 			uint32_t ratioDelta = (key1 != lastKey1) | (key2 != lastKey2) | (key3 != lastKey3);
 
 			setLogicA(ratioDelta);
-
-			numerator1 = numerator1Select;
-			numerator2 = numerator2Select;
-			numerator3 = numerator3Select;
-
-			denominator1 = denominator1Select;
-			denominator2 = denominator2Select;
-			denominator3 = denominator3Select;
 
 			if (runtimeDisplay) {
 				setLEDC(ratioDelta);
@@ -519,7 +530,7 @@ public:
 	}
 	void mainFallingEdgeCallback(void) {
 
-		setLogicA(0);
+//		setLogicA(0);
 		if (runtimeDisplay) {
 			setLEDC(0);
 			setLEDB(0);
@@ -590,13 +601,8 @@ public:
 			uint32_t thisIndex1 = controls.knob1Value + __USAT(controls.cv1Value - cv1Calibration, 12);
 			thisIndex1 = index1Hysterisis(thisIndex1 >> 8, thisIndex1);
 			sync1Div = dividedPhases[thisIndex1];
-			if (phaseLockOn) {
-				numerator1Select = numerators[thisIndex1];
-				denominator1Select = denominators[thisIndex1];
-				phase2 += __SSAT((phase1 - (phase2 * denominator1)), 20);
-			} else {
-				numerator1Alt = numerators[thisIndex1];
-			}
+			denominator1Select = denominators[thisIndex1];
+			numerator1Alt = numerators[thisIndex1];
 			key1 = keys[thisIndex1];
 
 		} else if (ratioRoundRobin == 1) {
@@ -610,13 +616,8 @@ public:
 			thisIndex2 = index2Hysterisis(thisIndex2 >> 8, thisIndex2);
 			thisIndex2 += index2CVHysterisis(ratio2Mod >> 8, ratio2Mod);
 			sync2Div = dividedPhases[thisIndex2];
-			if (phaseLockOn) {
-				numerator2Select = numerators[thisIndex2];
-				denominator2Select = denominators[thisIndex2];
-				phase3 += __SSAT(((phase1 + fix32Mul((1<<30), dividedPhases[thisIndex2])) - ((phase3 - phaseModTracker2) * denominator2)), 20);
-			} else {
-				numerator2Alt = numerators[thisIndex2];
-			}
+			denominator2Select = denominators[thisIndex2];
+			numerator2Alt = numerators[thisIndex2];
 			key2 = keys[thisIndex2];
 
 		} else if (ratioRoundRobin == 2) {
@@ -630,13 +631,8 @@ public:
 			thisIndex3 = index3Hysterisis(thisIndex3 >> 8, thisIndex3);
 			thisIndex3 += index3CVHysterisis(ratio3Mod >> 8, ratio3Mod);
 			sync3Div = dividedPhases[thisIndex3];
-			if (phaseLockOn) {
-				numerator3Select = numerators[thisIndex3];
-				denominator3Select = denominators[thisIndex3];
-				phase4 += __SSAT((phase1 - ((phase4 - phaseModTracker2) * denominator3)), 20);
-			} else {
-				numerator3Alt = numerators[thisIndex3];
-			}
+			denominator3Select = denominators[thisIndex3];
+			numerator3Alt = numerators[thisIndex3];
 			key3 = keys[thisIndex3];
 
 		}
@@ -648,32 +644,44 @@ public:
 
 		if (tapTempo) {
 
+			int32_t playbackPosition = (VIA_SYNC3_BUFFER_SIZE * 2) - DMA1_Channel5->CNDTR;
+
 			advanceSubharm();
 
-			error = phaseLockOn ? phases[0] : 0;
+			divCount2 += errorPileup + 1;
+			divCount2 %= denominator1Select;
+			int32_t error = (divCount2 * sync1Div * numerator1Alt) - phases2[playbackPosition];
+			uint64_t phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator1Alt;
+			phaseSpan <<= 32;
+			phaseSpan /= denominator1Select;
+			increment2 = (60 * (phaseSpan + error))/(periodCount);
 
-			int32_t phaseSpan = 1;
+			divCount3 += errorPileup + 1;
+			divCount3 %= denominator2Select;
+			error = (divCount3 * sync2Div * numerator2Alt) - phases3[playbackPosition] + (1 << 30) + phaseModTracker2;
+			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator2Alt;
+			phaseSpan <<= 32;
+			phaseSpan /= denominator2Select;
+			increment3 = (60 * (phaseSpan + error))/(periodCount);
 
-			increment1 = (45 * (((int64_t) phaseSpan << 32) - error))/(periodCount);
+			divCount4 += errorPileup + 1;
+			divCount4 %= denominator3Select;
+			error = (divCount4 * sync3Div * numerator3Alt) - phases4[playbackPosition] + (1 << 31) + phaseModTracker2;
+			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator3Alt;
+			phaseSpan <<= 32;
+			phaseSpan /= denominator3Select;
+			increment4 = (60 * (phaseSpan + error))/(periodCount);
+
 			errorPileup = 0;
-
-			increment2 = fix32Mul(increment1, sync1Div) * numerator1Alt;
-			increment3 = fix32Mul(increment1, sync2Div) * numerator2Alt;
-			increment4 = fix32Mul(increment1, sync3Div) * numerator3Alt;
-
-	//			phase1 *= hardSync;
 
 			uint32_t ratioDelta = (key1 != lastKey1) | (key2 != lastKey2) | (key3 != lastKey3);
 
 			setLogicA(ratioDelta);
 
-			numerator1 = numerator1Select;
-			numerator2 = numerator2Select;
-			numerator3 = numerator3Select;
-
-			denominator1 = denominator1Select;
-			denominator2 = denominator2Select;
-			denominator3 = denominator3Select;
+			if (runtimeDisplay) {
+				setLEDC(ratioDelta);
+				setLEDB(1);
+			}
 
 			lastKey1 = key1;
 			lastKey2 = key2;
