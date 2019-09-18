@@ -530,7 +530,7 @@ public:
 	}
 	void mainFallingEdgeCallback(void) {
 
-//		setLogicA(0);
+		setLogicA(0);
 		if (runtimeDisplay) {
 			setLEDC(0);
 			setLEDB(0);
@@ -564,6 +564,9 @@ public:
 		TIM17->CNT = 0;
 		TIM17->CR1 |= TIM_CR1_CEN;
 		TIM17->ARR = periodCount >> 12;
+		TIM18->CNT = 0;
+		TIM18->CR1 |= TIM_CR1_CEN;
+		TIM18->ARR = periodCount >> 13;
 		if (runtimeDisplay) {
 			setLEDB(1);
 		}
@@ -686,6 +689,7 @@ public:
 			lastKey1 = key1;
 			lastKey2 = key2;
 			lastKey3 = key3;
+			TIM18->CR1 |= TIM_CR1_CEN;
 
 		} else {
 			TIM17->CR1 &= ~TIM_CR1_CEN;
@@ -693,6 +697,12 @@ public:
 
 	}
 	void auxTimer2InterruptCallback(void) {
+
+		setLogicA(0);
+		if (runtimeDisplay) {
+			setLEDC(0);
+			setLEDB(0);
+		}
 
 	}
 
