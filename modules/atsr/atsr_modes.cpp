@@ -42,7 +42,7 @@ void ViaAtsr::handleButton3ModeChange(int32_t mode) {
 	if (mode == 0) {
 		assignableLogic = &attacking;
 	} else if (mode == 1) {
-		assignableLogic = &transitioning;
+		assignableLogic = &ting;
 	} else if (mode == 2) {
 		assignableLogic = &sustaining;
 	} else if (mode == 3) {

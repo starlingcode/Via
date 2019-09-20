@@ -123,6 +123,10 @@ public:
 		HAL_FLASH_OB_Launch();
 		HAL_FLASH_Lock();
 
+		if (obStatus) {
+
+		}
+
 
 	}
 
@@ -198,6 +202,8 @@ public:
 	/// 16 samples from the hue space as RGB values with 12 bits per color channel.
 	rgb hueSpace[16] = {{4095, 0, 0}, {4095, 1228, 0}, {4095, 2457, 0}, {4095, 3685, 0}, {2047, 4095, 0}, {819, 4095, 0}, {0, 4095, 409}, {0, 4095, 1638}, {0, 4095, 4095}, {0, 2866, 4095}, {0, 1638, 4095}, {0, 409, 4095}, {2047, 0, 4095}, {3276, 0, 4095}, {4095, 0, 3685}, {4095, 0, 2456}};
 
+	rgb presetHues[6] = {{4095, 0, 0}, {0, 4095, 0}, {0, 0, 4095}, {2048, 2048, 0}, {0, 2048, 2048}, {2048, 0, 2048}};
+
 
 	/*
 	 *
@@ -255,6 +261,29 @@ public:
 
 	}
 
+	inline void setLogicOutputsLEDOnNoA(uint32_t logicA, uint32_t auxLogic,
+			uint32_t shA, uint32_t shB) {
+
+		// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
+		// LEDB_HIGH_MASK -> SH_B_SAMPLE_MASK >> 16 << 5 (pin 9 to pin 14, C)
+		// LEDC_HIGH_MASK -> ALOGIC_HIGH_MASK >> 16 >> 11 (pin 13 to pin 2, A)
+		// LEDD_HIGH_MASK -> BLOGIC_HIGH_MASK >> 16 >> 13 (pin 15 to pin 2, B)
+
+	#define LEDA_MASK (__ROR(shA, 16) >> 1)
+	#define LEDB_MASK (__ROR(shB, 16) << 5)
+	#define LEDC_MASK (__ROR(logicA, 16) >> 11)
+
+		//combine the mask variables for a shared GPIO group with a bitwise or
+		*aLogicOutput = (logicA | LEDB_MASK);
+
+		*auxLogicOutput = (auxLogic | LEDC_MASK);
+
+		*shAOutput = (shA | shB);
+
+		// *ledAOutput = LEDA_MASK;
+
+	}
+
 	/**
 	 * \brief Set all GPIO outputs at once.
 	 *
@@ -286,6 +315,16 @@ public:
 
 		if (runtimeDisplay) {
 			setLogicOutputsLEDOn(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
+		} else {
+			setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
+		}
+
+	}
+
+	inline void setLogicOutNoA(int32_t writeIndex, int32_t runtimeDisplay) {
+
+		if (runtimeDisplay) {
+			setLogicOutputsLEDOnNoA(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
 		} else {
 			setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
 		}
@@ -458,6 +497,21 @@ public:
 		setLEDB(0);
 		setLEDC(0);
 		setLEDD(0);
+	}
+
+	void updateRGBPreset(int32_t uiTimer, int32_t presetNumber) {
+
+		int32_t hue = presetNumber;
+
+		int32_t fade = __USAT((7000 - uiTimer), 12);
+
+		if (hue) {
+			updateRGBDisplay((fade * presetHues[hue - 1].r) >> 12,
+					(fade * presetHues[hue - 1].g) >> 12,
+					(fade * presetHues[hue - 1].b) >> 12,
+					1);
+		}
+
 	}
 
 };

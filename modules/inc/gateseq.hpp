@@ -184,6 +184,18 @@ public:
 
 		void writeStockPresets(void) override;
 
+		void blinkOnCallback(void) override {
+			restoreRed = *(this_module.redLevel);
+			restoreGreen = *(this_module.greenLevel);
+			restoreBlue = *(this_module.blueLevel);
+			this_module.updateRGBDisplay(4095, 4095, 4095, 1);
+		}
+
+		void blinkOffCallback(void) override {
+			this_module.updateRGBDisplay(restoreRed, restoreGreen,
+					restoreBlue, 1);
+		}
+
 		// TODO use enums
 		// (shA, gateA, pattern 1, shB, gateB, pattern 2, logic, na, na, na)
 		// dual euclidean
@@ -195,9 +207,9 @@ public:
 		// clock multiplier
 		uint32_t stockPreset4 = ENCODE_PRESET(0, 2, 3, 0, 2, 3, 1, 0, 0, 0);
 		// s&track
-		uint32_t stockPreset5 = ENCODE_PRESET(2, 0, 0, 0, 1, 0, 3, 0, 0, 0);
+		uint32_t stockPreset5 = ENCODE_PRESET(1, 0, 0, 0, 1, 0, 3, 0, 0, 0);
 		// resample
-		uint32_t stockPreset6 = ENCODE_PRESET(1, 0, 0, 1, 0, 0, 2, 0, 0, 0);
+		uint32_t stockPreset6 = ENCODE_PRESET(2, 0, 0, 2, 0, 0, 2, 0, 0, 0);
 
 		/// Initialization that for some reason happens outside of the constructor?
 		void initialize(void) override;
@@ -281,9 +293,50 @@ public:
 	int32_t readGateBEvent;
 	//@}
 
+	uint32_t pwmCounter;
+
+	uint32_t blueLED;
+
+#ifdef BUILD_F373
+
+	void initializeAuxOutputsGateseq(void) {
+
+		/// Tie the output pointers of the module to GPIO control registers.
+		aLogicOutput = &(GPIOC->BSRR);
+		auxLogicOutput = &(GPIOA->BSRR);
+		shAOutput = &(GPIOB->BSRR);
+		shBOutput = &(GPIOB->BSRR);
+
+		ledAOutput = &(GPIOF->BSRR);
+		ledBOutput = &(GPIOC->BSRR);
+		ledCOutput = &(GPIOA->BSRR);
+		ledDOutput = &(GPIOB->BSRR);
+
+		/// Tie the PWM control output pointers of the module class to GPIO control registers.
+		// tim3 channel 2
+		redLevel = &TIM3->CCR1 + 1;
+		// tim4 channel 4
+		greenLevel = &TIM4->CCR1 + 3;
+		// tim5 channel 1
+		blueLevel = (volatile uint32_t *) &blueLED;
+
+	}
+
+#endif
+
+#ifdef BUILD_VIRTUAL
+
+	void initializeAuxOutputsGateseq(void) {
+
+		initializeAuxOutputs();
+
+	}
+
+#endif
+
 	/*
 	 *
-	 * Event meta_handlers
+	 * Event handlers
 	 *
 	 */
 

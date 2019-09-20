@@ -144,6 +144,7 @@ void ViaScanner::transferCompleteCallback(void) {
 	outputs.logicA[0] = GET_ALOGIC_MASK(scanner.hemisphereBlend);
 	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(scanner.deltaBlend);
 
+
 }
 
 
@@ -157,6 +158,7 @@ void ViaScanner::slowConversionCallback(void) {
 	uint32_t blueLevel = abs(scanner.yInput) >> 4;
 
 	updateRGBDisplay(redLevel, greenLevel, blueLevel, runtimeDisplay);
+	updateRGBPreset(scannerUI.timerRead(), scannerUI.presetNumber);
 
 }
 

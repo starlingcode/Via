@@ -144,6 +144,18 @@ public:
 		void aux3EnterMenuCallback(void) override;
 		void aux4EnterMenuCallback(void) override;
 
+		void blinkOnCallback(void) override {
+			restoreRed = *(this_module.redLevel);
+			restoreGreen = *(this_module.greenLevel);
+			restoreBlue = *(this_module.blueLevel);
+			this_module.updateRGBDisplay(4095, 4095, 4095, 1);
+		}
+
+		void blinkOffCallback(void) override {
+			this_module.updateRGBDisplay(restoreRed, restoreGreen,
+					restoreBlue, 1);
+		}
+
 		void initialize(void) override;
 
 		void writeStockPresets(void) override;

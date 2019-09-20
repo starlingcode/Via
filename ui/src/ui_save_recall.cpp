@@ -50,6 +50,8 @@ void ViaUI::loadFromEEPROM(int32_t position) {
 	aux3Mode = (modeStateBuffer & AUX_MODE3_MASK) >> AUX_MODE3_SHIFT;
 	aux4Mode = (modeStateBuffer & AUX_MODE4_MASK) >> AUX_MODE4_SHIFT;
 
+	storeStateToEEPROM(0);
+
 }
 
 // writes 2 16-bit values representing the modeStateBuffer word to EEPROM at the specified position,  1 runtime + 6 presets + calibration word

@@ -282,7 +282,9 @@ class PllController {
 	int32_t lastMultiplier = 1;
 	int32_t lastYIndex = 0;
 
+#ifdef BUILD_F373
 	int32_t lastRatioX = 1;
+#endif
 	int32_t ratioXTransitionPoint = 0;
 	int32_t ratioXStable = 1;
 
@@ -301,7 +303,9 @@ class PllController {
 
 	}
 
+#ifdef BUILD_F373
 	int32_t lastRatioY = 1;
+#endif
 	int32_t ratioYTransitionPoint = 0;
 	int32_t ratioYStable = 1;
 
@@ -324,9 +328,17 @@ class PllController {
 
 public:
 
+#ifdef BUILD_VIRTUAL
+	int32_t lastRatioX = 1;
+	int32_t lastRatioY = 1;
+#endif
+
 	uint32_t virtualTimer;
 
 	uint32_t periodCount = 48000;
+	uint32_t aggregatePeriod = 48000;
+	uint32_t pileUp = 0;
+	uint32_t skipPll = 0;
 	int32_t pllNudge = 0;
 	buffer nudgeBuffer;
 	int32_t nudgeSum = 0;
@@ -360,11 +372,12 @@ public:
 
 #ifdef BUILD_F373
 
-		// store the length of the last period
-		periodCount = TIM2->CNT;
+			// store the length of the last period
+			periodCount = TIM2->CNT;
 
-		// reset the timer value
-		TIM2->CNT = 0;
+			// reset the timer value
+			TIM2->CNT = 0;
+
 #endif
 
 #ifdef BUILD_VIRTUAL
@@ -411,6 +424,9 @@ public:
 	int32_t cv1Offset = 0;
 	int32_t cv2Offset = 0;
 
+	// hack
+	int32_t audioBaseIncrementStore = 34894;
+	int32_t drumBaseIncrementStore = 58623;
 	int32_t audioBaseIncrement = 34894;
 	int32_t drumBaseIncrement = 58623;
 

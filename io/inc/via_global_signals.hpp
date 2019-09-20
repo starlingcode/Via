@@ -67,6 +67,7 @@ public:
 	void updateSlow(void);
 	void updateExtra(void);
 	void updateSlowExtra(void);
+	void updateExtraNoCV1(void);
 
 };
 

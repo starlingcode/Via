@@ -15,12 +15,12 @@ void ViaGateseq::handleButton1ModeChange(int32_t mode) {
 		sequencer.trackA = 0;
 		break;
 	case 1:
-		sequencer.sampleA = 1;
-		sequencer.trackA = 0;
-		break;
-	case 2:
 		sequencer.sampleA = 0;
 		sequencer.trackA = 1;
+		break;
+	case 2:
+		sequencer.sampleA = 1;
+		sequencer.trackA = 0;
 		break;
 	}
 
@@ -145,12 +145,12 @@ void ViaGateseq::handleButton4ModeChange(int32_t mode) {
 		sequencer.trackB = 0;
 		break;
 	case 1:
-		sequencer.sampleB = 1;
-		sequencer.trackB = 0;
-		break;
-	case 2:
 		sequencer.sampleB = 0;
 		sequencer.trackB = 1;
+		break;
+	case 2:
+		sequencer.sampleB = 1;
+		sequencer.trackB = 0;
 		break;
 	}
 

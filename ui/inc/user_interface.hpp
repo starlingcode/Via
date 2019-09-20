@@ -132,6 +132,8 @@ public:
 	void presetMenu(int32_t sig);
 	/// State entered after touch event in preset menu state.
 	void presetPressedMenu(int32_t sig);
+	/// State entered after touch event in preset menu state.
+	void presetDoubleTappedMenu(int32_t sig);
 	/// State to indicate storage of a new preset
 	void newPreset(int32_t sig);
 	/// State to indicate preset recall.
@@ -142,64 +144,124 @@ public:
 	/// Used by the preset menu to indicate the preset slot to be recalled or overwritten.
 	int32_t presetNumber = 0;
 
+	int32_t tapped = 0;
+	int32_t blink = 0;
+
+	uint32_t restoreRed = 0;
+	uint32_t restoreGreen = 0;
+	uint32_t restoreBlue = 0;
+
+	int32_t aux1Enabled = 1;
+	int32_t aux2Enabled = 1;
+	int32_t aux2AltEnabled = 1;
+	int32_t aux3Enabled = 1;
+	int32_t aux4Enabled = 1;
+
 	//@{
 	/// State change event handlers. TODO add default methods.
 	virtual void button1TapCallback(void) {
 		transition(&ViaUI::defaultMenu);
 	}
-	virtual void button1HoldCallback(void) = 0;
-	virtual void button2TapCallback(void) = 0;
-	virtual void button2HoldCallback(void) = 0;
-	virtual void button3TapCallback(void) = 0;
-	virtual void button3HoldCallback(void) = 0;
-	virtual void button4TapCallback(void) = 0;
-	virtual void button4HoldCallback(void) = 0;
-	virtual void button5TapCallback(void) = 0;
-	virtual void button5HoldCallback(void) = 0;
-	virtual void button6TapCallback(void) = 0;
-	virtual void button6HoldCallback(void) = 0;
+	virtual void button1HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button2TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button2HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button3TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button3HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button4TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button4HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button5TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button5HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button6TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void button6HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
 
-	virtual void aux1TapCallback(void) = 0;
-	virtual void aux1HoldCallback(void) = 0;
-	virtual void aux2TapCallback(void) = 0;
-	virtual void aux2HoldCallback(void) = 0;
-	virtual void aux2AltTapCallback(void) = 0;
-	virtual void aux2AltHoldCallback(void) = 0;
-	virtual void aux3TapCallback(void) = 0;
-	virtual void aux3HoldCallback(void) = 0;
-	virtual void aux4TapCallback(void) = 0;
-	virtual void aux4HoldCallback(void) = 0;
+	virtual void aux1TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux1HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux2TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux2HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux2AltTapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux2AltHoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux3TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux3HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux4TapCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
+	virtual void aux4HoldCallback(void) {
+		transition(&ViaUI::defaultMenu);
+	}
 
-	virtual void defaultEnterMenuCallback(void) = 0;
-	virtual void newModeEnterMenuCallback(void) = 0;
-	virtual void newAuxModeEnterMenuCallback(void) = 0;
-	virtual void presetEnterMenuCallback(void) = 0;
+	virtual void defaultEnterMenuCallback(void) {};
+	virtual void newModeEnterMenuCallback(void) {};
+	virtual void newAuxModeEnterMenuCallback(void) {};
+	virtual void presetEnterMenuCallback(void) {};
 
-	virtual void button1EnterMenuCallback(void) = 0;
-	virtual void button2EnterMenuCallback(void) = 0;
-	virtual void button3EnterMenuCallback(void) = 0;
-	virtual void button4EnterMenuCallback(void) = 0;
-	virtual void button5EnterMenuCallback(void) = 0;
-	virtual void button6EnterMenuCallback(void) = 0;
+	virtual void button1EnterMenuCallback(void) {};
+	virtual void button2EnterMenuCallback(void) {};
+	virtual void button3EnterMenuCallback(void) {};
+	virtual void button4EnterMenuCallback(void) {};
+	virtual void button5EnterMenuCallback(void) {};
+	virtual void button6EnterMenuCallback(void) {};
 
-	virtual void aux1EnterMenuCallback(void) = 0;
-	virtual void aux2EnterMenuCallback(void) = 0;
-	virtual void aux2AltEnterMenuCallback(void) = 0;
-	virtual void aux3EnterMenuCallback(void) = 0;
-	virtual void aux4EnterMenuCallback(void) = 0;
+	virtual void aux1EnterMenuCallback(void) {};
+	virtual void aux2EnterMenuCallback(void) {};
+	virtual void aux2AltEnterMenuCallback(void) {};
+	virtual void aux3EnterMenuCallback(void) {};
+	virtual void aux4EnterMenuCallback(void) {};
+
+	virtual void blinkOnCallback(void) {};
+	virtual void blinkOffCallback(void) {};
+
+	virtual void specialMenuCallback(void) {};
 	//@}
 
 	/// Virtual method used in subclasses to access module display drivers.
-	virtual void uiSetLEDs(int) = 0;
+	virtual void uiSetLEDs(int) {};
 
 	/// Virtual method to represent state recall, implemented in subclasses.
-	virtual void recallModuleState(void) = 0;
+	virtual void recallModuleState(void) {};
 
 	/// Virtual method used to represent writing the factory presets, implemented in subclasses.
-	virtual void writeStockPresets(void) = 0;
+	virtual void writeStockPresets(void) {};
 
 	/// Initial setup of UI
-	virtual void initialize(void) = 0;
+	virtual void initialize(void);
 
 	virtual ~ViaUI(void) {};
 
@@ -376,12 +438,24 @@ public:
 
 #endif
 
-		/// An aggregate function to reset the timer, set the timeout to max, and enable it. Useful when entering a button menu and measuring length of press on release event with timerRead().
-	void resetTimerMenu(void) {
-		timerReset();
-		timerSetOverflow(65535);
-		timerEnable();
-	}
+	/// An aggregate function to reset the timer, set the timeout to max, and enable it. Useful when entering a button menu and measuring length of press on release event with timerRead().
+void resetTimerMenu(void) {
+	timerReset();
+	timerSetOverflow(2048);
+	timerEnable();
+}
+void resetTimerBlink(void) {
+	timerReset();
+	timerSetOverflow(256);
+	timerEnable();
+}
+void resetTimerHold(void) {
+	timerReset();
+	timerSetOverflow(65535);
+	timerEnable();
+}
+
+
 
 };
 

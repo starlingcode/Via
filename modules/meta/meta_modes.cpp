@@ -47,17 +47,17 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 	case audio:
 
 		if (metaUI.LOOP_MODE == noloop) {
-			updateRGBDisplay(0, 4095, 4095, 1);
+			updateRGBDisplay(0, 4095, 4095, 1 * (metaUI.presetNumber == 0));
 			initializeDrum();
 		} else {
-			updateRGBDisplay(0, 0, 4095, 1);
+			updateRGBDisplay(0, 0, 4095, 1 * (metaUI.presetNumber == 0));
 			initializeOscillator();
 		}
 
 		break;
 	case env:
 
-		updateRGBDisplay(0, 4095, 0, 1);
+		updateRGBDisplay(0, 4095, 0, 1 * (metaUI.presetNumber == 0));
 
 		if (metaUI.LOOP_MODE == noloop) {
 			initializeEnvelope();
@@ -68,7 +68,7 @@ void ViaMeta::handleButton3ModeChange(int32_t mode) {
 		break;
 	case seq:
 
-		updateRGBDisplay(4095, 0, 0, 1);
+		updateRGBDisplay(4095, 0, 0, 1 * (metaUI.presetNumber == 0));
 
 		if (metaUI.LOOP_MODE == noloop) {
 			initializeSequence();
@@ -272,8 +272,11 @@ void ViaMeta::handleAux4ModeChange(int32_t mode) {
 
 void ViaMeta::initializeDrum(void) {
 
-	updateRGB = &ViaMeta::updateRGBDrum;
-	currentRGBBehavior = &ViaMeta::updateRGBDrum;
+	if (!presetSequenceMode) {
+		updateRGB = &ViaMeta::updateRGBDrum;
+		currentRGBBehavior = &ViaMeta::updateRGBDrum;
+	}
+	metaController.drumBaseIncrement = metaController.drumBaseIncrementStore;
 
 	metaController.generateIncrements = &MetaController::generateIncrementsDrum;
 	metaController.parseControls = &MetaController::parseControlsDrum;
@@ -294,10 +297,15 @@ void ViaMeta::initializeDrum(void) {
 }
 void ViaMeta::initializeOscillator(void) {
 
-	updateRGB = &ViaMeta::updateRGBOsc;
-	currentRGBBehavior = &ViaMeta::updateRGBOsc;
 
-	metaController.parseControls = &MetaController::parseControlsAudio;
+	if (presetSequenceMode) {
+		metaController.parseControls = &MetaController::parseControlsDrum;
+		metaController.drumBaseIncrement = (metaController.drumBaseIncrementStore)*3;
+	} else {
+		metaController.parseControls = &MetaController::parseControlsAudio;
+		updateRGB = &ViaMeta::updateRGBOsc;
+		currentRGBBehavior = &ViaMeta::updateRGBOsc;
+	}
 	metaController.generateIncrements = &MetaController::generateIncrementsAudio;
 	metaController.advancePhase = &MetaController::advancePhaseOversampled;
 	metaController.fm = inputs.cv2Samples;
@@ -316,8 +324,10 @@ void ViaMeta::initializeOscillator(void) {
 }
 void ViaMeta::initializeEnvelope(void) {
 
-	updateRGB = &ViaMeta::updateRGBSubaudio;
-	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+	if (!presetSequenceMode) {
+		updateRGB = &ViaMeta::updateRGBSubaudio;
+		currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+	}
 
 	metaController.parseControls = &MetaController::parseControlsEnv;
 	metaController.generateIncrements = &MetaController::generateIncrementsEnv;
@@ -337,9 +347,10 @@ void ViaMeta::initializeEnvelope(void) {
 
 }
 void ViaMeta::initializeSimpleLFO(void) {
-
-	updateRGB = &ViaMeta::updateRGBSubaudio;
-	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+	if (!presetSequenceMode) {
+		updateRGB = &ViaMeta::updateRGBSubaudio;
+		currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+	}
 
 	metaController.parseControls = &MetaController::parseControlsEnv;
 	metaController.generateIncrements = &MetaController::generateIncrementsEnv;
@@ -359,9 +370,10 @@ void ViaMeta::initializeSimpleLFO(void) {
 
 }
 void ViaMeta::initializeSequence(void) {
-
-	updateRGB = &ViaMeta::updateRGBSubaudio;
-	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+	if (!presetSequenceMode) {
+		updateRGB = &ViaMeta::updateRGBSubaudio;
+		currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+	}
 
 	metaController.parseControls = &MetaController::parseControlsSeq;
 	metaController.generateIncrements = &MetaController::generateIncrementsSeq;
@@ -382,8 +394,10 @@ void ViaMeta::initializeSequence(void) {
 }
 void ViaMeta::initializeComplexLFO(void) {
 
-	updateRGB = &ViaMeta::updateRGBSubaudio;
-	currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+	if (!presetSequenceMode) {
+		updateRGB = &ViaMeta::updateRGBSubaudio;
+		currentRGBBehavior = &ViaMeta::updateRGBSubaudio;
+	}
 
 	metaController.parseControls = &MetaController::parseControlsSeq;
 	metaController.generateIncrements = &MetaController::generateIncrementsSeq;

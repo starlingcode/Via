@@ -115,6 +115,18 @@ public:
 		/// A utility method to write the factory presets from memory.
 		void writeStockPresets(void) override {}
 
+		void blinkOnCallback(void) override {
+			restoreRed = *(this_module.redLevel);
+			restoreGreen = *(this_module.greenLevel);
+			restoreBlue = *(this_module.blueLevel);
+			this_module.updateRGBDisplay(4095, 4095, 4095, 1);
+		}
+
+		void blinkOffCallback(void) override {
+			this_module.updateRGBDisplay(restoreRed, restoreGreen,
+					restoreBlue, 1);
+		}
+
 		/// On construction, link the calibTouchLink callback to the STM32 touch sense library.
 		ViaAtsrUI(ViaAtsr& x): this_module(x) {
 			linkUI((void *) &atsrTouchLink, (void *) this);
@@ -192,7 +204,7 @@ public:
 	public:
 
 		int32_t attackIncrement = 0;
-		int32_t transitionIncrement = 0;
+		int32_t tIncrement = 0;
 		int32_t releaseIncrement = 0;
 
 		int32_t aLevel = 0;
@@ -244,12 +256,12 @@ public:
 			phase += attackIncrement;
 			if (phase >= 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
-				module.atsrState = &module.transition;
+				module.atsrState = &module.t;
 				module.atsrState->phase = 0;
 				module.atsrState->aLevel = 65535;
 				module.atsrState->bLevel = 0;
 				module.attacking = 0;
-				module.transitioning = 1;
+				module.ting = 1;
 			} else {
 				aLevel = module.evaluateA(phase);
 				bLevel = 0;
@@ -262,6 +274,10 @@ public:
 			module.atsrState->aLevel = aLevel;
 			module.atsrState->aScale = aLevel;
 			module.atsrState->bLevel = 0;
+			if (!module.gateDelayActive) {
+				module.gateDelayActive = 1;
+				module.gateDelayPhase = phase;
+			}
 			module.attacking = 0;
 			module.releasing = 1;
 		}
@@ -271,21 +287,21 @@ public:
 
 	};
 
-	class Transition: public AtsrState {
+	class T: public AtsrState {
 
 	public:
 
 		ViaAtsr& module;
 
 		void step(void) override {
-			phase += transitionIncrement;
+			phase += tIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
 				module.atsrState = &module.sustain;
 				module.atsrState->phase = 0;
 				module.atsrState->aLevel = 0;
 				module.atsrState->bLevel = 65535;
-				module.transitioning = 0;
+				module.ting = 0;
 				module.sustaining = 1;
 			} else {
 				aLevel = module.evaluateD(MAX_PHASE - phase);
@@ -301,7 +317,7 @@ public:
 			module.atsrState->bLevel = bLevel;
 			module.atsrState->aScale = aLevel;
 			module.atsrState->bScale = bLevel;
-			module.transitioning = 0;
+			module.ting = 0;
 			module.attacking = 1;
 		}
 
@@ -312,12 +328,16 @@ public:
 			module.atsrState->aScale = aLevel;
 			module.atsrState->bScale = bLevel;
 			module.atsrState->bLevel = bLevel;
-			module.transitioning = 0;
+			if (!module.gateDelayActive) {
+				module.gateDelayActive = 1;
+				module.gateDelayPhase = phase + (1 << 28);
+			}
+			module.ting = 0;
 			module.releasing = 1;
 		}
 
 		/// Define the pointer to the outer class.
-		Transition(ViaAtsr& x): module(x) {}
+		T(ViaAtsr& x): module(x) {}
 
 	};
 
@@ -475,12 +495,12 @@ public:
 			phase += attackIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
-				module.atsrState = &module.transition;
+				module.atsrState = &module.t;
 				module.atsrState->phase = 0;
 				module.atsrState->aLevel = 65535;
 				module.atsrState->bLevel = 0;
 				module.attacking = 0;
-				module.transitioning = 1;
+				module.ting = 1;
 			} else {
 				int32_t position = module.evaluateA(phase);
 				aLevel = aScale + fix16_mul(65535 - aScale, module.evaluateA(phase));
@@ -503,19 +523,21 @@ public:
 
 	};
 
-	Resting resting;
 	Attack attack;
-	Transition transition;
+	T t;
 	Sustain sustain;
-	ReleaseFromS releaseFromS;
 	ReleaseFromA releaseFromA;
 	ReleaseFromT releaseFromT;
+	ReleaseFromS releaseFromS;
 	Retrigger retrigger;
+	Resting resting;
 
 	int32_t releasing = 0;
 	int32_t attacking = 0;
-	int32_t transitioning = 0;
+	int32_t ting = 0;
 	int32_t sustaining = 0;
+
+	int32_t startup = 8;
 
 	// random module utilities
 
@@ -535,16 +557,46 @@ public:
 	int32_t cvSH = 1;
 
 	int32_t attackTimeSample = 0;
-	int32_t transitionTimeSample = 0;
+	int32_t tTimeSample = 0;
 	int32_t releaseTimeSample = 0;
 
 	// aux logic min trigger length
 
 	int32_t lastSustain = 0;
+	int32_t lastLoop = 0;
 	int32_t auxLogicHold = 0;
 	int32_t auxLogicCounter = 0;
 
 	int32_t incScale = 65536;
+
+	int32_t gateLowCountdown = 0;
+
+	int32_t gateDelayPhase = 0;
+	int32_t gateDelayActive = 0;
+	int32_t gateDelayOut = 0;
+	int32_t gateDelayTransition;
+	int32_t gateDelayTrigger = 0;
+
+	int32_t cv1Offset = 0;
+	int32_t cv2Offset = 0;
+	int32_t cv3Offset = 0;
+	int32_t dac3Offset = 0;
+
+	void gateDelayProcess(void) {
+		if (gateDelayActive) {
+			gateDelayPhase += (gateDelayPhase > 0xFFFFFFF) ? atsrState->attackIncrement : atsrState->tIncrement;
+			if (gateDelayPhase > 0xFFFFFFF) {
+				gateDelayPhase = 0;
+				gateDelayActive = 0;
+				gateDelayTrigger = 8;
+			}
+		}
+		gateDelayTrigger = __USAT(gateDelayTrigger - 1, 8);
+		gateDelayTrigger += (sustaining < lastSustain) * 4;
+		lastSustain = sustaining;
+		gateDelayOut = (sustaining | (gateDelayTrigger > 0)) & !gateDelayActive;
+	}
+
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
@@ -559,12 +611,13 @@ public:
 		gateOn = 0;
 	}
 	void auxRisingEdgeCallback(void) {
-		if (gateOn | buttonOn) {
+		if (gateOn | buttonOn | (gateLowCountdown != 0)) {
 			atsrState->processGateHigh();
+			auxLogicHold = 1;
 		}
 	}
 	void auxFallingEdgeCallback(void) {
-		// do nothing
+		auxLogicHold = 0;
 	}
 	void buttonPressedCallback(void) {
 		atsrState->processGateHigh();
@@ -579,38 +632,58 @@ public:
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
 		render(0);
+		gateLowCountdown = __USAT(gateLowCountdown - 1, 16);
 	}
 	void transferCompleteCallback(void) {
 		render(VIA_ATSR_BUFFER_SIZE);
+		gateLowCountdown = __USAT(gateLowCountdown - 1, 16);
 	}
 	void slowConversionCallback(void) {
 
+		startup = __USAT(startup - 1, 16);
+
 		controls.updateExtra();
 
-		int32_t dMod = (int32_t) inputs.cv2Samples[0];
+		int32_t tMod = (int32_t) inputs.cv2Samples[0];
 		int32_t rMod = (int32_t) inputs.cv3Samples[0];
-		dMod += 32767;
-		rMod += 32767;
-		dMod >>= 4;
+		tMod += 32767 - cv2Calibration;
+		rMod += 32767 - cv3Calibration;
+		tMod >>= 4;
 		rMod >>= 4;
-		dMod = expo.convert(__USAT(dMod, 12)) >> 5;
+		tMod = expo.convert(__USAT(tMod, 12)) >> 5;
 		rMod = expo.convert(__USAT(rMod, 12)) >> 5;
 
 		int32_t cycleMod;
 
 		if (cycleTime) {
-			cycleMod = expo.convert(controls.cv1Value) >> 5;
-			dMod = fix16_mul(cycleMod, dMod);
-			rMod = fix16_mul(cycleMod, rMod);
+			cycleMod = expo.convert(4095 - controls.cv1Value + cv1Calibration) >> 5;
+			tMod = __USAT(fix16_mul(cycleMod, tMod), 26);
+			rMod = __USAT(fix16_mul(cycleMod, rMod), 26);
 		} else {
-			cycleMod = expo.convert(4095 - controls.cv1Value) >> 5;
+			cycleMod = expo.convert(4095 - controls.cv1Value + cv1Calibration) >> 5;
+		}
+
+		if (attacking) {
+			cycleMod = attackTimeSample;
+		} else {
+			attackTimeSample = cycleMod;
+		}
+		if (ting) {
+			tMod = tTimeSample;
+		} else {
+			tTimeSample = tMod;
+		}
+		if (releasing) {
+			rMod = releaseTimeSample;
+		} else {
+			releaseTimeSample = rMod;
 		}
 
 		atsrState->attackIncrement = __USAT(fix16_mul(cycleMod,
-				expo.convert(4095 - controls.knob1Value) >> 6), 25);
-		atsrState->transitionIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob2Value) >> 6,
-				dMod), 25);
-		atsrState->releaseIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob3Value) >> 6,
+				expo.convert(4095 - controls.knob1Value) >> 7), 25);
+		atsrState->tIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob2Value) >> 7,
+				tMod), 25);
+		atsrState->releaseIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob3Value) >> 7,
 				rMod), 25);
 		setRedLED((atsrState->bLevel >> 4) * runtimeDisplay);
 		setBlueLED((atsrState->aLevel >> 4) * runtimeDisplay);
@@ -619,26 +692,10 @@ public:
 #ifdef BUILD_VIRTUAL
 
 		atsrState->attackIncrement = fix16_mul(atsrState->attackIncrement, incScale);
-		atsrState->transitionIncrement = fix16_mul(atsrState->transitionIncrement, incScale);
+		atsrState->tIncrement = fix16_mul(atsrState->tIncrement, incScale);
 		atsrState->releaseIncrement = fix16_mul(atsrState->releaseIncrement, incScale);
 
 #endif
-
-		if (cvSH & attacking) {
-			atsrState->attackIncrement = attackTimeSample;
-		} else {
-			attackTimeSample = atsrState->attackIncrement;
-		}
-		if (cvSH & transitioning) {
-			atsrState->transitionIncrement = transitionTimeSample;
-		} else {
-			transitionTimeSample = atsrState->transitionIncrement;
-		}
-		if (cvSH & releasing) {
-			atsrState->releaseIncrement = releaseTimeSample;
-		} else {
-			releaseTimeSample = atsrState->releaseIncrement;
-		}
 
 
 	}
@@ -663,8 +720,13 @@ public:
 	void handleButton5ModeChange(int32_t);
 	void handleButton6ModeChange(int32_t);
 
+	void readCalibrationPacket(void) {
+		calibrationPacket = atsrUI.loadFromMemory(7);
+		decodeCalibrationPacket();
+	}
+
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
-	ViaAtsr() : atsrUI(*this), attack(*this), transition(*this), sustain(*this), releaseFromA(*this),
+	ViaAtsr() : atsrUI(*this), attack(*this), t(*this), sustain(*this), releaseFromA(*this),
 			releaseFromT(*this), releaseFromS(*this), retrigger(*this), resting(*this) {
 
 		/// Link the module GPIO registers.
@@ -683,6 +745,19 @@ public:
 		/// Call the UI initialization that needs to happen after outer class construction.
 		atsrUI.initialize();
 
+		uint32_t optionBytes = readOptionBytes();
+		uint32_t ob1Data = optionBytes & 0xFFFF;
+		uint32_t ob2Data = optionBytes >> 16;
+
+		if (ob1Data == 254 && ob2Data == 255) {
+			readCalibrationPacket();
+			atsrUI.writeStockPresets();
+			writeOptionBytes(5, 1);
+		} else if (ob1Data == 5) {
+			readCalibrationPacket();
+		} else if (ob1Data != 0) {
+			writeOptionBytes(0, 0);
+		}
 
 	}
 

@@ -20,8 +20,8 @@ class Delay {
 private:
 	int32_t * delayLine;
 	int32_t delayWrite = 0;
-	int32_t lastReadPosition = 0;
-	int32_t lastSample = 0;
+	// int32_t lastReadPosition = 0;
+	// int32_t lastSample = 0;
 
 public:
 
@@ -171,7 +171,7 @@ private:
 	int32_t lastDeltaXState = 1;
 	int32_t deltaXTransitionSample = 0;
 	int32_t deltaXOutputStable = 0;
-	int32_t deltaXRising = 0;
+	// int32_t deltaXRising = 0;
 
 	inline int32_t deltaXHysterisis(int32_t thisDeltaState, int32_t sample) {
 
@@ -191,7 +191,7 @@ private:
 	int32_t lastDeltaYState = 1;
 	int32_t deltaYTransitionSample = 0;
 	int32_t deltaYOutputStable = 0;
-	int32_t deltaYRising = 0;
+	// int32_t deltaYRising = 0;
 
 	inline int32_t deltaYHysterisis(int32_t thisDeltaState, int32_t sample) {
 

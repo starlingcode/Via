@@ -124,9 +124,23 @@ public:
 		void aux3EnterMenuCallback(void) override;
 		void aux4EnterMenuCallback(void) override;
 
+		void specialMenuCallback(void) override;
+
 		void initialize(void) override;
 
 		void writeStockPresets(void) override;
+
+		void blinkOnCallback(void) override {
+			restoreRed = *(this_module.redLevel);
+			restoreGreen = *(this_module.greenLevel);
+			restoreBlue = *(this_module.blueLevel);
+			this_module.updateRGBDisplay(4095, 4095, 4095, 1);
+		}
+
+		void blinkOffCallback(void) override {
+			this_module.updateRGBDisplay(restoreRed, restoreGreen,
+					restoreBlue, 1);
+		}
 
 		// TODO use enums ....
 		// drum
@@ -138,7 +152,7 @@ public:
 		// looping AR
 		uint32_t stockPreset4 = ENCODE_PRESET(3, 3, 1, 1, 3, 1, 0, 1, 0, 0);
 		// complex sequence
-		uint32_t stockPreset5 = ENCODE_PRESET(4, 2, 2, 5, 2, 0, 0, 0, 1, 0);
+		uint32_t stockPreset5 = ENCODE_PRESET(4, 3, 2, 5, 3, 0, 0, 0, 1, 0);
 		// complex LFO
 		uint32_t stockPreset6 = ENCODE_PRESET(0, 0, 2, 1, 0, 1, 0, 1, 0, 0);
 
@@ -356,6 +370,36 @@ public:
 
 	}
 
+	void updateRGBEdit(void) {
+
+		int32_t hue = presetSequence[presetSequenceEditIndex];
+
+		int32_t inactive = (presetSequenceIndex != presetSequenceEditIndex) * 2;
+
+		updateRGBDisplay(presetHues[hue - 1].r >> inactive,
+				presetHues[hue - 1].g  >> inactive,
+				presetHues[hue - 1].b  >> inactive,
+				1);
+
+	}
+
+	void updateRGBPreset(void) {
+
+		int32_t hue = (metaUI.presetNumber);
+
+		int32_t fade = 4095;
+		if (!presetSequenceMode) {
+			fade = __USAT((7000 - metaUI.timerRead()), 12);
+		}
+
+		if (hue) {
+			updateRGBDisplay((fade * presetHues[hue - 1].r) >> 12,
+					(fade * presetHues[hue - 1].g) >> 12,
+					(fade * presetHues[hue - 1].b) >> 12,
+					1);
+		}
+
+	}
 
 
 	void init(void);
@@ -363,6 +407,15 @@ public:
 	ViaMetaUI metaUI;
 
 	int32_t runtimeDisplay;
+
+	int32_t presetSequenceMode = 0;
+	int32_t presetSequenceEdit = 0;
+	int32_t presetSequenceIndex = 0;
+	int32_t presetSequenceRandom = 0;
+	int32_t presetSequenceEditIndex = 0;
+	int32_t presetSequenceBank = 0;
+	int32_t presetOverride = 0;
+	int32_t presetSequence[8] = {1, 2, 3, 4, 5, 6, 1, 2};
 
 	MetaWavetable metaWavetable;
 	MetaController metaController;
@@ -378,6 +431,8 @@ public:
 
 	int32_t transientScale = 1 << 3;
 	uint32_t minTransientLength = 14;
+
+	int32_t buttonHigh = 0;
 
 	/*
 	 *

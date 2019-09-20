@@ -40,6 +40,7 @@ void ViaUI::presetMenu(int32_t sig) {
 		break;
 
 		case EXPAND_SW_OFF_SIG:
+		presetNumber = 0;
 		transition(&ViaUI::defaultMenu);
 		break;
 
@@ -56,7 +57,7 @@ void ViaUI::presetPressedMenu(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		timerReset();
-		timerSetOverflow(5000);
+		timerSetOverflow(8191);
 		timerEnable();
 		break;
 
@@ -64,41 +65,101 @@ void ViaUI::presetPressedMenu(int32_t sig) {
 		switch (presetNumber) {
 		case 1:
 			if (*button1 == releasedState) {
+				transition(&ViaUI::presetDoubleTappedMenu);
+			}
+			break;
+			case 2:
+			if (*button2 == releasedState) {
+				transition(&ViaUI::presetDoubleTappedMenu);
+			}
+			break;
+			case 3:
+			if (*button3 == releasedState) {
+				transition(&ViaUI::presetDoubleTappedMenu);
+			}
+			break;
+			case 4:
+			if (*button4 == releasedState) {
+				transition(&ViaUI::presetDoubleTappedMenu);
+			}
+			break;
+			case 5:
+			if (*button5 == releasedState) {
+				transition(&ViaUI::presetDoubleTappedMenu);
+			}
+			break;
+			case 6:
+			if (*button6 == releasedState) {
+				transition(&ViaUI::presetDoubleTappedMenu);
+			}
+			break;
+		}
+		break;
+
+		case TIMEOUT_SIG:
+			storeStateToEEPROM(presetNumber);
+			presetNumber = 0;
+			transition(&ViaUI::newPreset);
+		break;
+
+		// if trig button is released, exit menu
+		case EXPAND_SW_OFF_SIG:
+			presetNumber = 0;
+			transition(&ViaUI::defaultMenu);
+		break;
+
+		case EXIT_SIG:
+		break;
+	}
+}
+
+void ViaUI::presetDoubleTappedMenu(int32_t sig) {
+	switch (sig) {
+	case ENTRY_SIG:
+		timerReset();
+		timerSetOverflow(1024);
+		timerEnable();
+		break;
+
+	case SENSOR_EVENT_SIG:
+		switch (presetNumber) {
+		case 1:
+			if (*button1 == pressedState) {
 				loadFromEEPROM(presetNumber);
 				recallModuleState();
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 2:
-			if (*button2 == releasedState) {
+			if (*button2 == pressedState) {
 				loadFromEEPROM(presetNumber);
 				recallModuleState();
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 3:
-			if (*button3 == releasedState) {
+			if (*button3 == pressedState) {
 				loadFromEEPROM(presetNumber);
 				recallModuleState();
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 4:
-			if (*button4 == releasedState) {
+			if (*button4 == pressedState) {
 				loadFromEEPROM(presetNumber);
 				recallModuleState();
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 5:
-			if (*button5 == releasedState) {
+			if (*button5 == pressedState) {
 				loadFromEEPROM(presetNumber);
 				recallModuleState();
 				transition(&ViaUI::switchPreset);
 			}
 			break;
 			case 6:
-			if (*button6 == releasedState) {
+			if (*button6 == pressedState) {
 				loadFromEEPROM(presetNumber);
 				recallModuleState();
 				transition(&ViaUI::switchPreset);
@@ -108,13 +169,14 @@ void ViaUI::presetPressedMenu(int32_t sig) {
 		break;
 
 		case TIMEOUT_SIG:
-		storeStateToEEPROM(presetNumber);
-		transition(&ViaUI::newPreset);
+			presetNumber = 0;
+			transition(&ViaUI::presetMenu);
 		break;
 
 		// if trig button is released, exit menu
 		case EXPAND_SW_OFF_SIG:
-		transition(&ViaUI::defaultMenu);
+			presetNumber = 0;
+			transition(&ViaUI::defaultMenu);
 		break;
 
 		case EXIT_SIG:
@@ -133,7 +195,7 @@ void ViaUI::newPreset(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		timerReset();
-		timerSetOverflow(500);
+		timerSetOverflow(300);
 		timerEnable();
 		break;
 
@@ -143,6 +205,7 @@ void ViaUI::newPreset(int32_t sig) {
 			uiSetLEDs(flashCounter % 8);
 		} else {
 			flashCounter = 0;
+			presetNumber = 0;
 			transition(&ViaUI::defaultMenu);
 		}
 	}
@@ -159,7 +222,7 @@ void ViaUI::switchPreset(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		timerReset();
-		timerSetOverflow(500);
+		timerSetOverflow(300);
 		timerEnable();
 		break;
 
@@ -170,8 +233,10 @@ void ViaUI::switchPreset(int32_t sig) {
 		} else {
 			flashCounter = 0;
 			if (EXPANDER_BUTTON_PRESSED) {
+				presetNumber = 0;
 				transition(&ViaUI::presetMenu);
 			} else {
+				presetNumber = 0;
 				transition(&ViaUI::defaultMenu);
 			}
 		}
@@ -189,12 +254,12 @@ void ViaUI::overwritePresets(int32_t sig) {
 	switch (sig) {
 	case ENTRY_SIG:
 		timerReset();
-		timerSetOverflow(500);
+		timerSetOverflow(250);
 		timerEnable();
 		break;
 
 	case TIMEOUT_SIG:
-		if (flashCounter < 32) {
+		if (flashCounter < 3) {
 			flashCounter++;
 			uiSetLEDs(flashCounter % 8);
 		} else {

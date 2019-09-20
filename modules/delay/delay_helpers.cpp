@@ -30,13 +30,14 @@ void ViaDelay::render(int32_t writePosition) {
 		lastTarget = delayTimeTarget;
 	}
 
-	int32_t noise;
+//	int32_t noise;
+
 	if (burstCounter > 0) {
 		burstCounter --;
 		advanceLFSR();
-		noise = lfsrState - 32767;
+//		noise = lfsrState - 32767;
 	} else {
-		noise = 0;
+//		noise = 0;
 	}
 
 	delay.delayTime = fix16_mul(lastTarget, delayMod);

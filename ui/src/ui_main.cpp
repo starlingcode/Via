@@ -45,21 +45,22 @@ void ViaUI::defaultMenu(int32_t sig) {
 	} else if (sig == SENSOR_EVENT_SIG) {
 		if (*button3 == pressedState) {
 			transition(&ViaUI::button3Menu);
-
+			tapped = 1;
 		} else if (*button1 == pressedState) {
 			transition(&ViaUI::button1Menu);
-
+			tapped = 1;
 		} else if (*button4 == pressedState) {
 			transition(&ViaUI::button4Menu);
-
+			tapped = 1;
 		} else if (*button6 == pressedState) {
 			transition(&ViaUI::button6Menu);
-
+			tapped = 1;
 		} else if (*button2 == pressedState) {
 			transition(&ViaUI::button2Menu);
-
+			tapped = 1;
 		} else if (*button5 == pressedState) {
 			transition(&ViaUI::button5Menu);
+			tapped = 1;
 		}
 	} else if (sig == EXPAND_SW_ON_SIG) {
 		transition(&ViaUI::presetMenu);

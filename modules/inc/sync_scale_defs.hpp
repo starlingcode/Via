@@ -12,434 +12,433 @@
 
 
 
-static const ScaleNote ratio7_40 = {11468, 3435973836, 40};
-static const ScaleNote ratio1_1_4 = {65536, 0, 4};
-static const ScaleNote ratio16_7 = {149796, 2454267026, 7};
-static const ScaleNote ratio24_1 = {1572864, 0, 1};
-static const ScaleNote ratio5_36 = {9102, 954437176, 36};
-static const ScaleNote ratio15_17 = {57825, 3789677025, 17};
-static const ScaleNote ratio32_1 = {2097152, 0, 1};
-static const ScaleNote ratio1_2 = {32768, 0, 2};
-static const ScaleNote ratio5_56 = {5851, 1840700269, 56};
-static const ScaleNote ratio24_7_32 = {224694, 3681400539, 32};
-static const ScaleNote ratio3_10 = {19660, 3435973836, 10};
-static const ScaleNote ratio8_1_8 = {524288, 0, 8};
-static const ScaleNote ratio225_49 = {300930, 2629571814, 49};
-static const ScaleNote ratio3_8 = {24576, 0, 8};
-static const ScaleNote ratio25_567 = {2889, 2552740703, 567};
-static const ScaleNote ratio15_32 = {30720, 0, 32};
-static const ScaleNote ratio25_1 = {1638400, 0, 1};
-static const ScaleNote ratio1_2_4 = {32768, 0, 4};
-static const ScaleNote ratio5_189 = {1733, 3249631340, 189};
-static const ScaleNote ratio5_63 = {5201, 1158959429, 63};
-static const ScaleNote ratio1_5 = {13107, 858993459, 5};
-static const ScaleNote ratio32_5 = {419430, 1717986918, 5};
-static const ScaleNote ratio11_224 = {3218, 1227133513, 224};
-static const ScaleNote ratio15_16 = {61440, 0, 16};
-static const ScaleNote ratio7_16 = {28672, 0, 16};
-static const ScaleNote ratio3_25 = {7864, 1374389534, 25};
-static const ScaleNote ratio1_7 = {9362, 1227133513, 7};
-static const ScaleNote ratio5_13 = {25206, 660764199, 13};
-static const ScaleNote ratio11_1 = {720896, 0, 1};
-static const ScaleNote ratio7_3 = {152917, 1431655765, 3};
-static const ScaleNote ratio96_5 = {1258291, 858993459, 5};
-static const ScaleNote ratio18_7 = {168521, 613566756, 7};
-static const ScaleNote ratio88_7 = {823881, 613566756, 7};
-static const ScaleNote ratio19_256 = {4864, 0, 256};
-static const ScaleNote ratio9_80 = {7372, 3435973836, 80};
-static const ScaleNote ratio3_5 = {39321, 2576980377, 5};
-static const ScaleNote ratio27_512 = {3456, 0, 512};
-static const ScaleNote ratio17_11 = {101282, 3904515723, 11};
-static const ScaleNote ratio17_8 = {139264, 0, 8};
-static const ScaleNote ratio81_25 = {212336, 2748779069, 25};
-static const ScaleNote ratio40_7 = {374491, 1840700269, 7};
-static const ScaleNote ratio45_1 = {2949120, 0, 1};
-static const ScaleNote ratio7_32 = {14336, 0, 32};
-static const ScaleNote ratio3_7 = {28086, 3681400539, 7};
-static const ScaleNote ratio24_7 = {224694, 3681400539, 7};
-static const ScaleNote ratio9_1 = {589824, 0, 1};
-static const ScaleNote ratio25_147 = {11145, 2483484490, 147};
-static const ScaleNote ratio8_9 = {58254, 954437176, 9};
-static const ScaleNote ratio176_7 = {1647762, 1227133513, 7};
-static const ScaleNote ratio3_112 = {1755, 1840700269, 112};
-static const ScaleNote ratio19_64 = {19456, 0, 64};
 static const ScaleNote ratio144_5 = {1887436, 3435973837, 5};
-static const ScaleNote ratio7_2 = {229376, 0, 2};
-static const ScaleNote ratio4_3_8 = {87381, 1431655765, 8};
-static const ScaleNote ratio13_7 = {121709, 3067833782, 7};
-static const ScaleNote ratio8_1 = {524288, 0, 1};
-static const ScaleNote ratio17_256 = {4352, 0, 256};
-static const ScaleNote ratio3_4_8 = {49152, 0, 8};
-static const ScaleNote ratio17_4 = {278528, 0, 4};
-static const ScaleNote ratio13_32 = {26624, 0, 32};
-static const ScaleNote ratio56_5 = {734003, 858993459, 5};
+static const ScaleNote ratio13_8 = {106496, 0, 8};
+static const ScaleNote ratio21_1 = {1376256, 0, 1};
+static const ScaleNote ratio27_64 = {27648, 0, 64};
+static const ScaleNote ratio9_28 = {21065, 613566756, 28};
 static const ScaleNote ratio27_128 = {13824, 0, 128};
-static const ScaleNote ratio8_7_32 = {74898, 1227133513, 32};
-static const ScaleNote ratio48_7 = {449389, 3067833782, 7};
-static const ScaleNote ratio17_3 = {371370, 2863311530, 3};
-static const ScaleNote ratio27_4 = {442368, 0, 4};
-static const ScaleNote ratio25_9 = {182044, 1908874353, 9};
-static const ScaleNote ratio7_64 = {7168, 0, 64};
-static const ScaleNote ratio7_160 = {2867, 858993459, 160};
-static const ScaleNote ratio19_32 = {38912, 0, 32};
-static const ScaleNote ratio7_81 = {5663, 2598190092, 81};
-static const ScaleNote ratio7_45 = {10194, 2099761789, 45};
-static const ScaleNote ratio5_4 = {81920, 0, 4};
-static const ScaleNote ratio19_8 = {155648, 0, 8};
-static const ScaleNote ratio2_3_8 = {43690, 2863311530, 8};
-static const ScaleNote ratio1_48 = {1365, 1431655765, 48};
-static const ScaleNote ratio28_1 = {1835008, 0, 1};
-static const ScaleNote ratio2_7 = {18724, 2454267026, 7};
-static const ScaleNote ratio17_5 = {222822, 1717986918, 5};
-static const ScaleNote ratio1_3_16 = {21845, 1431655765, 16};
-static const ScaleNote ratio147_25 = {385351, 2920577761, 25};
-static const ScaleNote ratio36_5 = {471859, 858993459, 5};
-static const ScaleNote ratio1_40 = {1638, 1717986918, 40};
-static const ScaleNote ratio567_25 = {1486356, 2061584302, 25};
-static const ScaleNote ratio6_7 = {56173, 3067833782, 7};
-static const ScaleNote ratio1_12 = {5461, 1431655765, 12};
-static const ScaleNote ratio19_2 = {622592, 0, 2};
-static const ScaleNote ratio3_2_8 = {98304, 0, 8};
-static const ScaleNote ratio19_16 = {77824, 0, 16};
+static const ScaleNote ratio8_3_16 = {174762, 2863311530, 16};
+static const ScaleNote ratio7_2 = {229376, 0, 2};
+static const ScaleNote ratio32_9 = {233016, 3817748707, 9};
+static const ScaleNote ratio20_1 = {1310720, 0, 1};
+static const ScaleNote ratio4_1_4 = {262144, 0, 4};
+static const ScaleNote ratio25_243 = {6742, 1661427678, 243};
+static const ScaleNote ratio7_13 = {35288, 2643056797, 13};
+static const ScaleNote ratio17_16 = {69632, 0, 16};
+static const ScaleNote ratio13_9 = {94663, 477218588, 9};
+static const ScaleNote ratio13_256 = {3328, 0, 256};
+static const ScaleNote ratio5_64 = {5120, 0, 64};
+static const ScaleNote ratio9_2 = {294912, 0, 2};
+static const ScaleNote ratio1_36 = {1820, 1908874353, 36};
+static const ScaleNote ratio2_1_8 = {131072, 0, 8};
+static const ScaleNote ratio4_1_16 = {262144, 0, 16};
+static const ScaleNote ratio19_512 = {2432, 0, 512};
+static const ScaleNote ratio18_7 = {168521, 613566756, 7};
+static const ScaleNote ratio1_1_32 = {65536, 0, 32};
+static const ScaleNote ratio1_2 = {32768, 0, 2};
 static const ScaleNote ratio5_81 = {4045, 1855850066, 81};
-static const ScaleNote ratio1_15 = {4369, 286331153, 15};
-static const ScaleNote ratio16_5 = {209715, 858993459, 5};
-static const ScaleNote ratio225_7 = {2106514, 1227133514, 7};
-static const ScaleNote ratio27_16 = {110592, 0, 16};
-static const ScaleNote ratio5_27 = {12136, 1272582902, 27};
-static const ScaleNote ratio128_5 = {1677721, 2576980378, 5};
-static const ScaleNote ratio7_9 = {50972, 1908874353, 9};
-static const ScaleNote ratio80_9 = {582542, 954437177, 9};
-static const ScaleNote ratio7_6 = {76458, 2863311530, 6};
-static const ScaleNote ratio27_2 = {884736, 0, 2};
+static const ScaleNote ratio2_3_8 = {43690, 2863311530, 8};
+static const ScaleNote ratio1_2_4 = {32768, 0, 4};
 static const ScaleNote ratio5_7 = {46811, 1840700269, 7};
+static const ScaleNote ratio1_7_32 = {9362, 1227133513, 32};
+static const ScaleNote ratio5_63 = {5201, 1158959429, 63};
+static const ScaleNote ratio75_49 = {100310, 876523937, 49};
+static const ScaleNote ratio6_5_16 = {78643, 858993459, 16};
+static const ScaleNote ratio3_4_32 = {49152, 0, 32};
+static const ScaleNote ratio15_16 = {61440, 0, 16};
+static const ScaleNote ratio9_1 = {589824, 0, 1};
+static const ScaleNote ratio5_144 = {2275, 2386092942, 144};
+static const ScaleNote ratio5_14 = {23405, 3067833782, 14};
+static const ScaleNote ratio10_9 = {72817, 3340530119, 9};
+static const ScaleNote ratio1_1_4 = {65536, 0, 4};
+static const ScaleNote ratio8_5_16 = {104857, 2576980377, 16};
+static const ScaleNote ratio17_9 = {123790, 954437176, 9};
+static const ScaleNote ratio11_28 = {25746, 1227133513, 28};
+static const ScaleNote ratio9_17 = {34695, 2273806215, 17};
+static const ScaleNote ratio6_7_32 = {56173, 3067833782, 32};
+static const ScaleNote ratio3_4 = {49152, 0, 4};
+static const ScaleNote ratio25_21 = {78019, 204522252, 21};
+static const ScaleNote ratio9_80 = {7372, 3435973836, 80};
+static const ScaleNote ratio56_5 = {734003, 858993459, 5};
+static const ScaleNote ratio96_5 = {1258291, 858993459, 5};
+static const ScaleNote ratio9_224 = {2633, 613566756, 224};
+static const ScaleNote ratio3_1_4 = {196608, 0, 4};
+static const ScaleNote ratio13_3 = {283989, 1431655765, 3};
+static const ScaleNote ratio28_5 = {367001, 2576980377, 5};
+static const ScaleNote ratio27_5 = {353894, 1717986918, 5};
+static const ScaleNote ratio7_256 = {1792, 0, 256};
+static const ScaleNote ratio3_5_16 = {39321, 2576980377, 16};
+static const ScaleNote ratio9_16 = {36864, 0, 16};
+static const ScaleNote ratio13_2 = {425984, 0, 2};
+static const ScaleNote ratio5_189 = {1733, 3249631340, 189};
+static const ScaleNote ratio25_729 = {2247, 1985464991, 729};
+static const ScaleNote ratio5_192 = {1706, 2863311530, 192};
+static const ScaleNote ratio49_75 = {42816, 3665038759, 75};
+static const ScaleNote ratio88_7 = {823881, 613566756, 7};
+static const ScaleNote ratio1_8 = {8192, 0, 8};
+static const ScaleNote ratio1_16 = {4096, 0, 16};
+static const ScaleNote ratio2_5_16 = {26214, 1717986918, 16};
+static const ScaleNote ratio4_5 = {52428, 3435973836, 5};
+static const ScaleNote ratio1_15 = {4369, 286331153, 15};
+static const ScaleNote ratio5_128 = {2560, 0, 128};
 static const ScaleNote ratio17_2 = {557056, 0, 2};
 static const ScaleNote ratio3_2_4 = {98304, 0, 4};
-static const ScaleNote ratio11_7 = {102985, 613566756, 7};
-static const ScaleNote ratio32_3 = {699050, 2863311530, 3};
-static const ScaleNote ratio19_4 = {311296, 0, 4};
-static const ScaleNote ratio13_15 = {56797, 3722304989, 15};
-static const ScaleNote ratio5_9 = {36408, 3817748707, 9};
-static const ScaleNote ratio11_3 = {240298, 2863311530, 3};
-static const ScaleNote ratio11_256 = {2816, 0, 256};
-static const ScaleNote ratio9_320 = {1843, 858993459, 320};
-static const ScaleNote ratio4_7 = {37449, 613566756, 7};
-static const ScaleNote ratio128_3 = {2796202, 2863311530, 3};
-static const ScaleNote ratio17_64 = {17408, 0, 64};
-static const ScaleNote ratio15_7 = {140434, 1227133513, 7};
-static const ScaleNote ratio9_7 = {84260, 2454267026, 7};
-static const ScaleNote ratio729_25 = {1911029, 3264175145, 25};
-static const ScaleNote ratio5_2 = {163840, 0, 2};
-static const ScaleNote ratio27_32 = {55296, 0, 32};
-static const ScaleNote ratio25_243 = {6742, 1661427678, 243};
-static const ScaleNote ratio27_256 = {6912, 0, 256};
-static const ScaleNote ratio3_56 = {3510, 3681400539, 56};
-static const ScaleNote ratio16_3 = {349525, 1431655765, 3};
-static const ScaleNote ratio4_1_8 = {262144, 0, 8};
-static const ScaleNote ratio16_1 = {1048576, 0, 1};
-static const ScaleNote ratio9_4 = {147456, 0, 4};
-static const ScaleNote ratio7_15 = {30583, 2004318071, 15};
-static const ScaleNote ratio45_4 = {737280, 0, 4};
-static const ScaleNote ratio16_5_16 = {209715, 858993459, 16};
-static const ScaleNote ratio13_11 = {77451, 2733161006, 11};
-static const ScaleNote ratio5_16 = {20480, 0, 16};
-static const ScaleNote ratio11_128 = {5632, 0, 128};
-static const ScaleNote ratio9_13 = {45371, 330382099, 13};
-static const ScaleNote ratio3_1_4 = {196608, 0, 4};
-static const ScaleNote ratio3_32 = {6144, 0, 32};
-static const ScaleNote ratio38_1 = {2490368, 0, 1};
-static const ScaleNote ratio17_16 = {69632, 0, 16};
-static const ScaleNote ratio13_4 = {212992, 0, 4};
-static const ScaleNote ratio9_20 = {29491, 858993459, 20};
-static const ScaleNote ratio9_224 = {2633, 613566756, 224};
-static const ScaleNote ratio5_96 = {3413, 1431655765, 96};
-static const ScaleNote ratio2_3_16 = {43690, 2863311530, 16};
-static const ScaleNote ratio112_5 = {1468006, 1717986918, 5};
-static const ScaleNote ratio49_25 = {128450, 2405181685, 25};
-static const ScaleNote ratio4_1_4 = {262144, 0, 4};
-static const ScaleNote ratio21_1 = {1376256, 0, 1};
-static const ScaleNote ratio5_11 = {29789, 390451572, 11};
-static const ScaleNote ratio15_128 = {7680, 0, 128};
-static const ScaleNote ratio1_6_16 = {10922, 2863311530, 16};
-static const ScaleNote ratio1_36 = {1820, 1908874353, 36};
-static const ScaleNote ratio5_6 = {54613, 1431655765, 6};
-static const ScaleNote ratio1_1_16 = {65536, 0, 16};
-static const ScaleNote ratio81_7 = {758345, 613566756, 7};
-static const ScaleNote ratio9_25 = {23592, 4123168604, 25};
-static const ScaleNote ratio27_64 = {27648, 0, 64};
-static const ScaleNote ratio21_25 = {55050, 1030792151, 25};
-static const ScaleNote ratio11_17 = {42405, 2779096485, 17};
-static const ScaleNote ratio32_9 = {233016, 3817748707, 9};
-static const ScaleNote ratio3_28 = {7021, 3067833782, 28};
-static const ScaleNote ratio8_7 = {74898, 1227133513, 7};
-static const ScaleNote ratio1_10 = {6553, 2576980377, 10};
-static const ScaleNote ratio12_7 = {112347, 1840700269, 7};
-static const ScaleNote ratio6_7_32 = {56173, 3067833782, 32};
-static const ScaleNote ratio80_3 = {1747626, 2863311531, 3};
-static const ScaleNote ratio1_5_16 = {13107, 858993459, 16};
-static const ScaleNote ratio75_7 = {702171, 1840700269, 7};
-static const ScaleNote ratio2_1_4 = {131072, 0, 4};
-static const ScaleNote ratio34_1 = {2228224, 0, 1};
-static const ScaleNote ratio9_160 = {3686, 1717986918, 160};
-static const ScaleNote ratio144_7 = {1348169, 613566757, 7};
-static const ScaleNote ratio3_14 = {14043, 1840700269, 14};
-static const ScaleNote ratio13_8 = {106496, 0, 8};
-static const ScaleNote ratio17_15 = {74274, 572662306, 15};
-static const ScaleNote ratio5_14 = {23405, 3067833782, 14};
-static const ScaleNote ratio64_9 = {466033, 3340530119, 9};
-static const ScaleNote ratio11_2 = {360448, 0, 2};
-static const ScaleNote ratio7_4 = {114688, 0, 4};
-static const ScaleNote ratio11_8 = {90112, 0, 8};
-static const ScaleNote ratio10_3 = {218453, 1431655765, 3};
-static const ScaleNote ratio1_1_32 = {65536, 0, 32};
-static const ScaleNote ratio25_27 = {60681, 2067947216, 27};
-static const ScaleNote ratio8_3_16 = {174762, 2863311530, 16};
-static const ScaleNote ratio4_1 = {262144, 0, 1};
-static const ScaleNote ratio11_64 = {11264, 0, 64};
-static const ScaleNote ratio64_3 = {1398101, 1431655765, 3};
-static const ScaleNote ratio19_128 = {9728, 0, 128};
-static const ScaleNote ratio192_5 = {2516582, 1717986918, 5};
-static const ScaleNote ratio7_17 = {26985, 1768515945, 17};
-static const ScaleNote ratio13_3 = {283989, 1431655765, 3};
-static const ScaleNote ratio12_1_4 = {786432, 0, 4};
-static const ScaleNote ratio6_5 = {78643, 858993459, 5};
-static const ScaleNote ratio9_40 = {14745, 2576980377, 40};
-static const ScaleNote ratio1_32 = {2048, 0, 32};
-static const ScaleNote ratio22_7 = {205970, 1227133513, 7};
-static const ScaleNote ratio5_17 = {19275, 1263225675, 17};
-static const ScaleNote ratio10_9 = {72817, 3340530119, 9};
-static const ScaleNote ratio9_112 = {5266, 1227133513, 112};
-static const ScaleNote ratio24_1_4 = {1572864, 0, 4};
-static const ScaleNote ratio15_13 = {75618, 1982292598, 13};
-static const ScaleNote ratio17_9 = {123790, 954437176, 9};
-static const ScaleNote ratio5_28 = {11702, 3681400539, 28};
-static const ScaleNote ratio20_9 = {145635, 2386092942, 9};
-static const ScaleNote ratio1_9 = {7281, 3340530119, 9};
-static const ScaleNote ratio40_3 = {873813, 1431655765, 3};
-static const ScaleNote ratio5_108 = {3034, 318145725, 108};
-static const ScaleNote ratio27_8 = {221184, 0, 8};
-static const ScaleNote ratio1_17 = {3855, 252645135, 17};
-static const ScaleNote ratio1_4 = {16384, 0, 4};
-static const ScaleNote ratio15_64 = {15360, 0, 64};
-static const ScaleNote ratio2_7_32 = {18724, 2454267026, 32};
-static const ScaleNote ratio3_5_16 = {39321, 2576980377, 16};
-static const ScaleNote ratio14_1 = {917504, 0, 1};
-static const ScaleNote ratio2_1_8 = {131072, 0, 8};
-static const ScaleNote ratio25_18 = {91022, 954437176, 18};
-static const ScaleNote ratio19_512 = {2432, 0, 512};
-static const ScaleNote ratio72_5 = {943718, 1717986918, 5};
-static const ScaleNote ratio7_256 = {1792, 0, 256};
-static const ScaleNote ratio44_7 = {411940, 2454267026, 7};
-static const ScaleNote ratio25_729 = {2247, 1985464991, 729};
-static const ScaleNote ratio25_21 = {78019, 204522252, 21};
-static const ScaleNote ratio13_512 = {1664, 0, 512};
-static const ScaleNote ratio49_225 = {14272, 1221679586, 225};
-static const ScaleNote ratio3_11 = {17873, 1952257861, 11};
-static const ScaleNote ratio20_1 = {1310720, 0, 1};
-static const ScaleNote ratio2_5 = {26214, 1717986918, 5};
-static const ScaleNote ratio49_75 = {42816, 3665038759, 75};
-static const ScaleNote ratio40_9 = {291271, 477218588, 9};
-static const ScaleNote ratio7_11 = {41704, 3123612578, 11};
-static const ScaleNote ratio675_49 = {902791, 3593748145, 49};
-static const ScaleNote ratio7_225 = {2038, 3855926194, 225};
-static const ScaleNote ratio10_7 = {93622, 3681400539, 7};
-static const ScaleNote ratio26_1 = {1703936, 0, 1};
-static const ScaleNote ratio1_1_8 = {65536, 0, 8};
-static const ScaleNote ratio1_2_8 = {32768, 0, 8};
-static const ScaleNote ratio1_1 = {65536, 0, 1};
-static const ScaleNote ratio5_21 = {15603, 3476878287, 21};
-static const ScaleNote ratio13_1 = {851968, 0, 1};
-static const ScaleNote ratio24_5 = {314572, 3435973836, 5};
-static const ScaleNote ratio1_27 = {2427, 1113510039, 27};
-static const ScaleNote ratio75_49 = {100310, 876523937, 49};
-static const ScaleNote ratio3_16 = {12288, 0, 16};
-static const ScaleNote ratio12_1 = {786432, 0, 1};
-static const ScaleNote ratio189_25 = {495452, 687194767, 25};
-static const ScaleNote ratio5_1 = {327680, 0, 1};
-static const ScaleNote ratio1_3_8 = {21845, 1431655765, 8};
-static const ScaleNote ratio64_5 = {838860, 3435973837, 5};
-static const ScaleNote ratio25_189 = {8668, 3363254813, 189};
-static const ScaleNote ratio9_10 = {58982, 1717986918, 10};
-static const ScaleNote ratio13_5 = {170393, 2576980377, 5};
-static const ScaleNote ratio1_24 = {2730, 2863311530, 24};
-static const ScaleNote ratio1_21 = {3120, 3272356035, 21};
-static const ScaleNote ratio9_17 = {34695, 2273806215, 17};
-static const ScaleNote ratio2_1 = {131072, 0, 1};
-static const ScaleNote ratio3_7_32 = {28086, 3681400539, 32};
-static const ScaleNote ratio2_1_32 = {131072, 0, 32};
-static const ScaleNote ratio45_7 = {421302, 3681400539, 7};
-static const ScaleNote ratio25_49 = {33436, 3155486176, 49};
-static const ScaleNote ratio8_1_4 = {524288, 0, 4};
-static const ScaleNote ratio36_25 = {94371, 3607772528, 25};
-static const ScaleNote ratio9_64 = {9216, 0, 64};
-static const ScaleNote ratio4_1_16 = {262144, 0, 16};
-static const ScaleNote ratio16_7_32 = {149796, 2454267026, 32};
-static const ScaleNote ratio49_675 = {4757, 1838882294, 675};
-static const ScaleNote ratio40_1 = {2621440, 0, 1};
-static const ScaleNote ratio7_135 = {3398, 699920596, 135};
-static const ScaleNote ratio11_13 = {55453, 2312674697, 13};
-static const ScaleNote ratio15_11 = {89367, 1171354717, 11};
-static const ScaleNote ratio25_3 = {546133, 1431655765, 3};
-static const ScaleNote ratio3_4 = {49152, 0, 4};
-static const ScaleNote ratio11_5 = {144179, 858993459, 5};
-static const ScaleNote ratio20_7 = {187245, 3067833782, 7};
-static const ScaleNote ratio2_5_16 = {26214, 1717986918, 16};
-static const ScaleNote ratio25_81 = {20227, 689315738, 81};
-static const ScaleNote ratio96_7 = {898779, 1840700269, 7};
-static const ScaleNote ratio1_16 = {4096, 0, 16};
-static const ScaleNote ratio15_256 = {3840, 0, 256};
-static const ScaleNote ratio243_25 = {637009, 3951369912, 25};
-static const ScaleNote ratio15_1 = {983040, 0, 1};
-static const ScaleNote ratio3_1_32 = {196608, 0, 32};
-static const ScaleNote ratio7_10 = {45875, 858993459, 10};
-static const ScaleNote ratio11_9 = {80099, 2386092942, 9};
-static const ScaleNote ratio80_7 = {748982, 3681400539, 7};
-static const ScaleNote ratio8_3 = {174762, 2863311530, 3};
-static const ScaleNote ratio8_5 = {104857, 2576980377, 5};
-static const ScaleNote ratio9_5 = {117964, 3435973836, 5};
-static const ScaleNote ratio1_25 = {2621, 1889785610, 25};
-static const ScaleNote ratio27_5 = {353894, 1717986918, 5};
-static const ScaleNote ratio6_5_16 = {78643, 858993459, 16};
-static const ScaleNote ratio3_40 = {4915, 858993459, 40};
-static const ScaleNote ratio15_4 = {245760, 0, 4};
-static const ScaleNote ratio5_18 = {18204, 1908874353, 18};
-static const ScaleNote ratio5_24 = {13653, 1431655765, 24};
-static const ScaleNote ratio11_56 = {12873, 613566756, 56};
-static const ScaleNote ratio1_4_8 = {16384, 0, 8};
-static const ScaleNote ratio1_6 = {10922, 2863311530, 6};
-static const ScaleNote ratio1_8_32 = {8192, 0, 32};
-static const ScaleNote ratio5_3 = {109226, 2863311530, 3};
-static const ScaleNote ratio13_17 = {50115, 3284386755, 17};
-static const ScaleNote ratio2_3 = {43690, 2863311530, 3};
-static const ScaleNote ratio9_11 = {53620, 1561806289, 11};
-static const ScaleNote ratio13_2 = {425984, 0, 2};
-static const ScaleNote ratio7_75 = {6116, 2977843991, 75};
-static const ScaleNote ratio243_7 = {2275035, 1840700270, 7};
-static const ScaleNote ratio19_1 = {1245184, 0, 1};
-static const ScaleNote ratio320_9 = {2330168, 3817748708, 9};
-static const ScaleNote ratio13_256 = {3328, 0, 256};
-static const ScaleNote ratio1_7_32 = {9362, 1227133513, 32};
-static const ScaleNote ratio160_7 = {1497965, 3067833783, 7};
-static const ScaleNote ratio8_5_16 = {104857, 2576980377, 16};
-static const ScaleNote ratio11_4 = {180224, 0, 4};
-static const ScaleNote ratio15_8 = {122880, 0, 8};
-static const ScaleNote ratio17_7 = {159158, 3681400539, 7};
-static const ScaleNote ratio27_25 = {70778, 3779571220, 25};
-static const ScaleNote ratio9_8 = {73728, 0, 8};
-static const ScaleNote ratio11_112 = {6436, 2454267026, 112};
 static const ScaleNote ratio3_80 = {2457, 2576980377, 80};
-static const ScaleNote ratio36_7 = {337042, 1227133513, 7};
-static const ScaleNote ratio15_512 = {1920, 0, 512};
-static const ScaleNote ratio1_4_32 = {16384, 0, 32};
-static const ScaleNote ratio5_48 = {6826, 2863311530, 48};
-static const ScaleNote ratio8_3_8 = {174762, 2863311530, 8};
-static const ScaleNote ratio72_25 = {188743, 2920577761, 25};
-static const ScaleNote ratio16_1_4 = {1048576, 0, 4};
-static const ScaleNote ratio3_20 = {9830, 1717986918, 20};
-static const ScaleNote ratio25_7 = {234057, 613566756, 7};
-static const ScaleNote ratio1_2_32 = {32768, 0, 32};
-static const ScaleNote ratio2_9 = {14563, 2386092942, 9};
-static const ScaleNote ratio189_5 = {2477260, 3435973836, 5};
-static const ScaleNote ratio128_9 = {932067, 2386092942, 9};
-static const ScaleNote ratio441_25 = {1156055, 171798692, 25};
-static const ScaleNote ratio6_1 = {393216, 0, 1};
-static const ScaleNote ratio48_5 = {629145, 2576980377, 5};
-static const ScaleNote ratio13_9 = {94663, 477218588, 9};
-static const ScaleNote ratio3_4_32 = {49152, 0, 32};
-static const ScaleNote ratio81_5 = {1061683, 858993459, 5};
-static const ScaleNote ratio7_13 = {35288, 2643056797, 13};
-static const ScaleNote ratio3_128 = {1536, 0, 128};
-static const ScaleNote ratio21_5 = {275251, 858993459, 5};
-static const ScaleNote ratio49_2025 = {1585, 3476272295, 2025};
-static const ScaleNote ratio1_3 = {21845, 1431655765, 3};
-static const ScaleNote ratio63_5 = {825753, 2576980377, 5};
-static const ScaleNote ratio135_4 = {2211840, 0, 4};
-static const ScaleNote ratio4_5_16 = {52428, 3435973836, 16};
-static const ScaleNote ratio17_1 = {1114112, 0, 1};
-static const ScaleNote ratio1_20 = {3276, 3435973836, 20};
-static const ScaleNote ratio3_8_32 = {24576, 0, 32};
-static const ScaleNote ratio11_16 = {45056, 0, 16};
-static const ScaleNote ratio3_1 = {196608, 0, 1};
-static const ScaleNote ratio36_1 = {2359296, 0, 1};
-static const ScaleNote ratio9_56 = {10532, 2454267026, 56};
-static const ScaleNote ratio1_2_16 = {32768, 0, 16};
-static const ScaleNote ratio160_9 = {1165084, 1908874354, 9};
-static const ScaleNote ratio5_128 = {2560, 0, 128};
-static const ScaleNote ratio5_192 = {1706, 2863311530, 192};
-static const ScaleNote ratio13_64 = {13312, 0, 64};
-static const ScaleNote ratio2025_49 = {2708375, 2191309844, 49};
-static const ScaleNote ratio135_7 = {1263908, 2454267026, 7};
-static const ScaleNote ratio4_7_32 = {37449, 613566756, 32};
-static const ScaleNote ratio4_3 = {87381, 1431655765, 3};
-static const ScaleNote ratio7_25 = {18350, 343597383, 25};
-static const ScaleNote ratio11_28 = {25746, 1227133513, 28};
-static const ScaleNote ratio30_1 = {1966080, 0, 1};
-static const ScaleNote ratio11_32 = {22528, 0, 32};
-static const ScaleNote ratio16_9 = {116508, 1908874353, 9};
-static const ScaleNote ratio13_128 = {6656, 0, 128};
-static const ScaleNote ratio28_5 = {367001, 2576980377, 5};
-static const ScaleNote ratio11_14 = {51492, 2454267026, 14};
-static const ScaleNote ratio4_9 = {29127, 477218588, 9};
-static const ScaleNote ratio9_28 = {21065, 613566756, 28};
-static const ScaleNote ratio192_7 = {1797558, 3681400539, 7};
-static const ScaleNote ratio4_5 = {52428, 3435973836, 5};
-static const ScaleNote ratio27_1024 = {1728, 0, 1024};
-static const ScaleNote ratio4_3_16 = {87381, 1431655765, 16};
-static const ScaleNote ratio25_441 = {3715, 827828163, 441};
-static const ScaleNote ratio3_64 = {3072, 0, 64};
-static const ScaleNote ratio7_243 = {1887, 3729374894, 243};
-static const ScaleNote ratio7_80 = {5734, 1717986918, 80};
-static const ScaleNote ratio5_8 = {40960, 0, 8};
-static const ScaleNote ratio1_18 = {3640, 3817748707, 18};
-static const ScaleNote ratio5_144 = {2275, 2386092942, 144};
-static const ScaleNote ratio5_112 = {2925, 3067833782, 112};
-static const ScaleNote ratio11_15 = {48059, 3149642683, 15};
-static const ScaleNote ratio14_5 = {183500, 3435973836, 5};
-static const ScaleNote ratio72_7 = {674084, 2454267026, 7};
-static const ScaleNote ratio6_1_4 = {393216, 0, 4};
-static const ScaleNote ratio7_5 = {91750, 1717986918, 5};
-static const ScaleNote ratio6_1_8 = {393216, 0, 8};
-static const ScaleNote ratio20_3 = {436906, 2863311530, 3};
-static const ScaleNote ratio17_32 = {34816, 0, 32};
-static const ScaleNote ratio1_13 = {5041, 991146299, 13};
-static const ScaleNote ratio13_16 = {53248, 0, 16};
-static const ScaleNote ratio18_1 = {1179648, 0, 1};
-static const ScaleNote ratio9_256 = {2304, 0, 256};
-static const ScaleNote ratio3_17 = {11565, 757935405, 17};
-static const ScaleNote ratio5_72 = {4551, 477218588, 72};
-static const ScaleNote ratio17_512 = {2176, 0, 512};
-static const ScaleNote ratio24_5_16 = {314572, 3435973836, 16};
-static const ScaleNote ratio1_8 = {8192, 0, 8};
-static const ScaleNote ratio7_27 = {16990, 3499602981, 27};
-static const ScaleNote ratio9_16 = {36864, 0, 16};
-static const ScaleNote ratio17_128 = {8704, 0, 128};
-static const ScaleNote ratio27_1 = {1769472, 0, 1};
-static const ScaleNote ratio5_32 = {10240, 0, 32};
+static const ScaleNote ratio2_1_32 = {131072, 0, 32};
 static const ScaleNote ratio7_8 = {57344, 0, 8};
-static const ScaleNote ratio22_1 = {1441792, 0, 1};
-static const ScaleNote ratio15_2 = {491520, 0, 2};
-static const ScaleNote ratio7_1 = {458752, 0, 1};
-static const ScaleNote ratio9_2 = {294912, 0, 2};
-static const ScaleNote ratio10_1 = {655360, 0, 1};
-static const ScaleNote ratio63_25 = {165150, 3092376453, 25};
-static const ScaleNote ratio1_14 = {4681, 613566756, 14};
-static const ScaleNote ratio1_11 = {5957, 3514064151, 11};
-static const ScaleNote ratio9_14 = {42130, 1227133513, 14};
+static const ScaleNote ratio4_7_32 = {37449, 613566756, 32};
+static const ScaleNote ratio25_1 = {1638400, 0, 1};
+static const ScaleNote ratio14_1 = {917504, 0, 1};
+static const ScaleNote ratio135_7 = {1263908, 2454267026, 7};
+static const ScaleNote ratio75_7 = {702171, 1840700269, 7};
+static const ScaleNote ratio30_1 = {1966080, 0, 1};
+static const ScaleNote ratio7_27 = {16990, 3499602981, 27};
+static const ScaleNote ratio11_16 = {45056, 0, 16};
 static const ScaleNote ratio27_7 = {252781, 3067833782, 7};
-static const ScaleNote ratio256_9 = {1864135, 477218588, 9};
-static const ScaleNote ratio7_128 = {3584, 0, 128};
-static const ScaleNote ratio5_12 = {27306, 2863311530, 12};
-static const ScaleNote ratio9_128 = {4608, 0, 128};
-static const ScaleNote ratio3_13 = {15123, 2973438897, 13};
-static const ScaleNote ratio25_63 = {26006, 1499829849, 63};
-static const ScaleNote ratio16_3_8 = {349525, 1431655765, 8};
-static const ScaleNote ratio18_5 = {235929, 2576980377, 5};
-static const ScaleNote ratio12_5 = {157286, 1717986918, 5};
+static const ScaleNote ratio25_189 = {8668, 3363254813, 189};
+static const ScaleNote ratio10_7 = {93622, 3681400539, 7};
+static const ScaleNote ratio13_17 = {50115, 3284386755, 17};
+static const ScaleNote ratio81_7 = {758345, 613566756, 7};
 static const ScaleNote ratio7_20 = {22937, 2576980377, 20};
-static const ScaleNote ratio9_32 = {18432, 0, 32};
+static const ScaleNote ratio3_40 = {4915, 858993459, 40};
+static const ScaleNote ratio8_7_32 = {74898, 1227133513, 32};
+static const ScaleNote ratio18_1 = {1179648, 0, 1};
+static const ScaleNote ratio135_4 = {2211840, 0, 4};
+static const ScaleNote ratio11_17 = {42405, 2779096485, 17};
+static const ScaleNote ratio3_8 = {24576, 0, 8};
+static const ScaleNote ratio81_5 = {1061683, 858993459, 5};
+static const ScaleNote ratio4_3 = {87381, 1431655765, 3};
+static const ScaleNote ratio4_3_16 = {87381, 1431655765, 16};
+static const ScaleNote ratio7_9 = {50972, 1908874353, 9};
+static const ScaleNote ratio3_56 = {3510, 3681400539, 56};
+static const ScaleNote ratio5_108 = {3034, 318145725, 108};
+static const ScaleNote ratio1_1 = {65536, 0, 1};
+static const ScaleNote ratio9_4 = {147456, 0, 4};
+static const ScaleNote ratio15_4 = {245760, 0, 4};
+static const ScaleNote ratio27_256 = {6912, 0, 256};
+static const ScaleNote ratio1_3_8 = {21845, 1431655765, 8};
+static const ScaleNote ratio7_45 = {10194, 2099761789, 45};
+static const ScaleNote ratio19_128 = {9728, 0, 128};
+static const ScaleNote ratio80_3 = {1747626, 2863311531, 3};
+static const ScaleNote ratio81_25 = {212336, 2748779069, 25};
+static const ScaleNote ratio19_1 = {1245184, 0, 1};
+static const ScaleNote ratio11_1 = {720896, 0, 1};
+static const ScaleNote ratio9_64 = {9216, 0, 64};
+static const ScaleNote ratio128_5 = {1677721, 2576980378, 5};
+static const ScaleNote ratio72_25 = {188743, 2920577761, 25};
+static const ScaleNote ratio7_15 = {30583, 2004318071, 15};
+static const ScaleNote ratio27_1024 = {1728, 0, 1024};
+static const ScaleNote ratio25_3 = {546133, 1431655765, 3};
+static const ScaleNote ratio16_1 = {1048576, 0, 1};
+static const ScaleNote ratio27_32 = {55296, 0, 32};
+static const ScaleNote ratio8_1_8 = {524288, 0, 8};
+static const ScaleNote ratio3_2_8 = {98304, 0, 8};
+static const ScaleNote ratio16_7_32 = {149796, 2454267026, 32};
+static const ScaleNote ratio1_24 = {2730, 2863311530, 24};
+static const ScaleNote ratio6_5 = {78643, 858993459, 5};
+static const ScaleNote ratio3_64 = {3072, 0, 64};
+static const ScaleNote ratio27_512 = {3456, 0, 512};
+static const ScaleNote ratio3_14 = {14043, 1840700269, 14};
+static const ScaleNote ratio7_10 = {45875, 858993459, 10};
+static const ScaleNote ratio8_5 = {104857, 2576980377, 5};
+static const ScaleNote ratio7_75 = {6116, 2977843991, 75};
+static const ScaleNote ratio63_25 = {165150, 3092376453, 25};
+static const ScaleNote ratio16_5_16 = {209715, 858993459, 16};
+static const ScaleNote ratio11_32 = {22528, 0, 32};
+static const ScaleNote ratio7_1 = {458752, 0, 1};
+static const ScaleNote ratio45_7 = {421302, 3681400539, 7};
+static const ScaleNote ratio3_1_32 = {196608, 0, 32};
+static const ScaleNote ratio1_4_8 = {16384, 0, 8};
+static const ScaleNote ratio63_5 = {825753, 2576980377, 5};
+static const ScaleNote ratio5_4 = {81920, 0, 4};
+static const ScaleNote ratio80_9 = {582542, 954437177, 9};
+static const ScaleNote ratio22_1 = {1441792, 0, 1};
+static const ScaleNote ratio11_56 = {12873, 613566756, 56};
+static const ScaleNote ratio13_1 = {851968, 0, 1};
+static const ScaleNote ratio1_4 = {16384, 0, 4};
+static const ScaleNote ratio112_5 = {1468006, 1717986918, 5};
+static const ScaleNote ratio5_72 = {4551, 477218588, 72};
+static const ScaleNote ratio5_32 = {10240, 0, 32};
+static const ScaleNote ratio19_2 = {622592, 0, 2};
+static const ScaleNote ratio5_12 = {27306, 2863311530, 12};
+static const ScaleNote ratio9_160 = {3686, 1717986918, 160};
+static const ScaleNote ratio13_16 = {53248, 0, 16};
+static const ScaleNote ratio12_7 = {112347, 1840700269, 7};
+static const ScaleNote ratio11_8 = {90112, 0, 8};
+static const ScaleNote ratio6_1 = {393216, 0, 1};
+static const ScaleNote ratio3_4_8 = {49152, 0, 8};
+static const ScaleNote ratio3_28 = {7021, 3067833782, 28};
+static const ScaleNote ratio5_36 = {9102, 954437176, 36};
+static const ScaleNote ratio5_112 = {2925, 3067833782, 112};
+static const ScaleNote ratio3_16 = {12288, 0, 16};
+static const ScaleNote ratio7_80 = {5734, 1717986918, 80};
+static const ScaleNote ratio25_567 = {2889, 2552740703, 567};
+static const ScaleNote ratio45_1 = {2949120, 0, 1};
+static const ScaleNote ratio15_512 = {1920, 0, 512};
+static const ScaleNote ratio20_7 = {187245, 3067833782, 7};
+static const ScaleNote ratio27_16 = {110592, 0, 16};
+static const ScaleNote ratio3_7 = {28086, 3681400539, 7};
 static const ScaleNote ratio3_2 = {98304, 0, 2};
+static const ScaleNote ratio7_128 = {3584, 0, 128};
+static const ScaleNote ratio12_5 = {157286, 1717986918, 5};
+static const ScaleNote ratio3_8_32 = {24576, 0, 32};
+static const ScaleNote ratio5_96 = {3413, 1431655765, 96};
+static const ScaleNote ratio49_25 = {128450, 2405181685, 25};
+static const ScaleNote ratio24_5_16 = {314572, 3435973836, 16};
+static const ScaleNote ratio25_63 = {26006, 1499829849, 63};
+static const ScaleNote ratio5_56 = {5851, 1840700269, 56};
+static const ScaleNote ratio2_3 = {43690, 2863311530, 3};
+static const ScaleNote ratio5_18 = {18204, 1908874353, 18};
+static const ScaleNote ratio9_5 = {117964, 3435973836, 5};
+static const ScaleNote ratio1_1_16 = {65536, 0, 16};
+static const ScaleNote ratio1_9 = {7281, 3340530119, 9};
+static const ScaleNote ratio2_5 = {26214, 1717986918, 5};
+static const ScaleNote ratio2_1 = {131072, 0, 1};
+static const ScaleNote ratio25_9 = {182044, 1908874353, 9};
+static const ScaleNote ratio48_5 = {629145, 2576980377, 5};
+static const ScaleNote ratio1_6 = {10922, 2863311530, 6};
+static const ScaleNote ratio9_14 = {42130, 1227133513, 14};
+static const ScaleNote ratio15_128 = {7680, 0, 128};
+static const ScaleNote ratio9_112 = {5266, 1227133513, 112};
+static const ScaleNote ratio7_160 = {2867, 858993459, 160};
+static const ScaleNote ratio5_16 = {20480, 0, 16};
+static const ScaleNote ratio7_243 = {1887, 3729374894, 243};
+static const ScaleNote ratio3_11 = {17873, 1952257861, 11};
+static const ScaleNote ratio5_11 = {29789, 390451572, 11};
+static const ScaleNote ratio225_49 = {300930, 2629571814, 49};
+static const ScaleNote ratio4_3_8 = {87381, 1431655765, 8};
+static const ScaleNote ratio8_7 = {74898, 1227133513, 7};
+static const ScaleNote ratio1_2_32 = {32768, 0, 32};
+static const ScaleNote ratio7_25 = {18350, 343597383, 25};
+static const ScaleNote ratio192_5 = {2516582, 1717986918, 5};
+static const ScaleNote ratio11_14 = {51492, 2454267026, 14};
+static const ScaleNote ratio40_7 = {374491, 1840700269, 7};
+static const ScaleNote ratio25_49 = {33436, 3155486176, 49};
+static const ScaleNote ratio9_10 = {58982, 1717986918, 10};
+static const ScaleNote ratio27_25 = {70778, 3779571220, 25};
+static const ScaleNote ratio320_9 = {2330168, 3817748708, 9};
+static const ScaleNote ratio25_7 = {234057, 613566756, 7};
+static const ScaleNote ratio11_112 = {6436, 2454267026, 112};
+static const ScaleNote ratio8_3 = {174762, 2863311530, 3};
+static const ScaleNote ratio20_3 = {436906, 2863311530, 3};
+static const ScaleNote ratio17_7 = {159158, 3681400539, 7};
+static const ScaleNote ratio15_11 = {89367, 1171354717, 11};
+static const ScaleNote ratio17_128 = {8704, 0, 128};
+static const ScaleNote ratio13_15 = {56797, 3722304989, 15};
+static const ScaleNote ratio160_9 = {1165084, 1908874354, 9};
+static const ScaleNote ratio24_1_4 = {1572864, 0, 4};
+static const ScaleNote ratio24_7 = {224694, 3681400539, 7};
+static const ScaleNote ratio44_7 = {411940, 2454267026, 7};
+static const ScaleNote ratio25_81 = {20227, 689315738, 81};
+static const ScaleNote ratio1_5 = {13107, 858993459, 5};
+static const ScaleNote ratio1_8_32 = {8192, 0, 32};
+static const ScaleNote ratio18_5 = {235929, 2576980377, 5};
+static const ScaleNote ratio9_20 = {29491, 858993459, 20};
+static const ScaleNote ratio22_7 = {205970, 1227133513, 7};
+static const ScaleNote ratio9_128 = {4608, 0, 128};
+static const ScaleNote ratio13_7 = {121709, 3067833782, 7};
+static const ScaleNote ratio15_13 = {75618, 1982292598, 13};
+static const ScaleNote ratio16_3_8 = {349525, 1431655765, 8};
+static const ScaleNote ratio32_1 = {2097152, 0, 1};
+static const ScaleNote ratio9_320 = {1843, 858993459, 320};
+static const ScaleNote ratio11_224 = {3218, 1227133513, 224};
+static const ScaleNote ratio3_112 = {1755, 1840700269, 112};
+static const ScaleNote ratio6_1_4 = {393216, 0, 4};
+static const ScaleNote ratio5_17 = {19275, 1263225675, 17};
+static const ScaleNote ratio24_1 = {1572864, 0, 1};
+static const ScaleNote ratio15_2 = {491520, 0, 2};
+static const ScaleNote ratio2_9 = {14563, 2386092942, 9};
+static const ScaleNote ratio11_9 = {80099, 2386092942, 9};
+static const ScaleNote ratio15_1 = {983040, 0, 1};
+static const ScaleNote ratio2_7 = {18724, 2454267026, 7};
+static const ScaleNote ratio5_48 = {6826, 2863311530, 48};
+static const ScaleNote ratio3_5 = {39321, 2576980377, 5};
+static const ScaleNote ratio17_8 = {139264, 0, 8};
+static const ScaleNote ratio2025_49 = {2708375, 2191309844, 49};
+static const ScaleNote ratio1_12 = {5461, 1431655765, 12};
+static const ScaleNote ratio5_9 = {36408, 3817748707, 9};
+static const ScaleNote ratio34_1 = {2228224, 0, 1};
+static const ScaleNote ratio1_3_16 = {21845, 1431655765, 16};
+static const ScaleNote ratio21_5 = {275251, 858993459, 5};
+static const ScaleNote ratio49_675 = {4757, 1838882294, 675};
+static const ScaleNote ratio25_18 = {91022, 954437176, 18};
+static const ScaleNote ratio1_5_16 = {13107, 858993459, 16};
+static const ScaleNote ratio4_7 = {37449, 613566756, 7};
+static const ScaleNote ratio8_9 = {58254, 954437176, 9};
+static const ScaleNote ratio11_4 = {180224, 0, 4};
+static const ScaleNote ratio9_11 = {53620, 1561806289, 11};
+static const ScaleNote ratio1_48 = {1365, 1431655765, 48};
+static const ScaleNote ratio1_21 = {3120, 3272356035, 21};
+static const ScaleNote ratio1_3 = {21845, 1431655765, 3};
+static const ScaleNote ratio19_64 = {19456, 0, 64};
+static const ScaleNote ratio5_1 = {327680, 0, 1};
+static const ScaleNote ratio13_128 = {6656, 0, 128};
+static const ScaleNote ratio5_13 = {25206, 660764199, 13};
+static const ScaleNote ratio1_32 = {2048, 0, 32};
+static const ScaleNote ratio3_128 = {1536, 0, 128};
+static const ScaleNote ratio25_441 = {3715, 827828163, 441};
+static const ScaleNote ratio6_1_8 = {393216, 0, 8};
+static const ScaleNote ratio21_25 = {55050, 1030792151, 25};
+static const ScaleNote ratio11_13 = {55453, 2312674697, 13};
+static const ScaleNote ratio11_64 = {11264, 0, 64};
+static const ScaleNote ratio24_5 = {314572, 3435973836, 5};
+static const ScaleNote ratio8_3_8 = {174762, 2863311530, 8};
+static const ScaleNote ratio16_1_4 = {1048576, 0, 4};
+static const ScaleNote ratio4_9 = {29127, 477218588, 9};
+static const ScaleNote ratio1_18 = {3640, 3817748707, 18};
+static const ScaleNote ratio8_1_4 = {524288, 0, 4};
+static const ScaleNote ratio128_9 = {932067, 2386092942, 9};
+static const ScaleNote ratio36_1 = {2359296, 0, 1};
+static const ScaleNote ratio28_1 = {1835008, 0, 1};
+static const ScaleNote ratio7_135 = {3398, 699920596, 135};
+static const ScaleNote ratio147_25 = {385351, 2920577761, 25};
+static const ScaleNote ratio567_25 = {1486356, 2061584302, 25};
+static const ScaleNote ratio7_11 = {41704, 3123612578, 11};
+static const ScaleNote ratio72_7 = {674084, 2454267026, 7};
+static const ScaleNote ratio27_1 = {1769472, 0, 1};
+static const ScaleNote ratio5_8 = {40960, 0, 8};
+static const ScaleNote ratio1_20 = {3276, 3435973836, 20};
+static const ScaleNote ratio225_7 = {2106514, 1227133514, 7};
+static const ScaleNote ratio441_25 = {1156055, 171798692, 25};
+static const ScaleNote ratio17_64 = {17408, 0, 64};
+static const ScaleNote ratio192_7 = {1797558, 3681400539, 7};
+static const ScaleNote ratio7_16 = {28672, 0, 16};
+static const ScaleNote ratio189_25 = {495452, 687194767, 25};
+static const ScaleNote ratio16_3 = {349525, 1431655765, 3};
+static const ScaleNote ratio36_5 = {471859, 858993459, 5};
+static const ScaleNote ratio14_5 = {183500, 3435973836, 5};
+static const ScaleNote ratio3_20 = {9830, 1717986918, 20};
+static const ScaleNote ratio96_7 = {898779, 1840700269, 7};
+static const ScaleNote ratio26_1 = {1703936, 0, 1};
+static const ScaleNote ratio7_5 = {91750, 1717986918, 5};
+static const ScaleNote ratio15_7 = {140434, 1227133513, 7};
+static const ScaleNote ratio3_32 = {6144, 0, 32};
+static const ScaleNote ratio36_7 = {337042, 1227133513, 7};
+static const ScaleNote ratio5_6 = {54613, 1431655765, 6};
+static const ScaleNote ratio27_8 = {221184, 0, 8};
+static const ScaleNote ratio20_9 = {145635, 2386092942, 9};
+static const ScaleNote ratio15_17 = {57825, 3789677025, 17};
+static const ScaleNote ratio1_25 = {2621, 1889785610, 25};
+static const ScaleNote ratio13_32 = {26624, 0, 32};
+static const ScaleNote ratio9_40 = {14745, 2576980377, 40};
+static const ScaleNote ratio32_5 = {419430, 1717986918, 5};
+static const ScaleNote ratio12_1 = {786432, 0, 1};
+static const ScaleNote ratio13_512 = {1664, 0, 512};
+static const ScaleNote ratio9_56 = {10532, 2454267026, 56};
+static const ScaleNote ratio80_7 = {748982, 3681400539, 7};
+static const ScaleNote ratio15_64 = {15360, 0, 64};
+static const ScaleNote ratio24_7_32 = {224694, 3681400539, 32};
+static const ScaleNote ratio17_5 = {222822, 1717986918, 5};
+static const ScaleNote ratio27_2 = {884736, 0, 2};
+static const ScaleNote ratio9_8 = {73728, 0, 8};
+static const ScaleNote ratio1_2_16 = {32768, 0, 16};
+static const ScaleNote ratio3_7_32 = {28086, 3681400539, 32};
+static const ScaleNote ratio7_3 = {152917, 1431655765, 3};
+static const ScaleNote ratio9_25 = {23592, 4123168604, 25};
+static const ScaleNote ratio40_3 = {873813, 1431655765, 3};
+static const ScaleNote ratio9_7 = {84260, 2454267026, 7};
+static const ScaleNote ratio1_6_16 = {10922, 2863311530, 16};
+static const ScaleNote ratio5_24 = {13653, 1431655765, 24};
+static const ScaleNote ratio4_1 = {262144, 0, 1};
+static const ScaleNote ratio17_1 = {1114112, 0, 1};
+static const ScaleNote ratio38_1 = {2490368, 0, 1};
+static const ScaleNote ratio1_17 = {3855, 252645135, 17};
+static const ScaleNote ratio16_9 = {116508, 1908874353, 9};
+static const ScaleNote ratio19_4 = {311296, 0, 4};
+static const ScaleNote ratio10_1 = {655360, 0, 1};
+static const ScaleNote ratio8_1 = {524288, 0, 1};
+static const ScaleNote ratio7_17 = {26985, 1768515945, 17};
+static const ScaleNote ratio17_11 = {101282, 3904515723, 11};
+static const ScaleNote ratio7_4 = {114688, 0, 4};
+static const ScaleNote ratio25_27 = {60681, 2067947216, 27};
+static const ScaleNote ratio4_5_16 = {52428, 3435973836, 16};
+static const ScaleNote ratio17_3 = {371370, 2863311530, 3};
+static const ScaleNote ratio189_5 = {2477260, 3435973836, 5};
+static const ScaleNote ratio2_7_32 = {18724, 2454267026, 32};
+static const ScaleNote ratio15_8 = {122880, 0, 8};
+static const ScaleNote ratio256_9 = {1864135, 477218588, 9};
+static const ScaleNote ratio5_3 = {109226, 2863311530, 3};
+static const ScaleNote ratio7_64 = {7168, 0, 64};
+static const ScaleNote ratio49_2025 = {1585, 3476272295, 2025};
+static const ScaleNote ratio11_256 = {2816, 0, 256};
+static const ScaleNote ratio45_4 = {737280, 0, 4};
+static const ScaleNote ratio7_81 = {5663, 2598190092, 81};
+static const ScaleNote ratio36_25 = {94371, 3607772528, 25};
+static const ScaleNote ratio2_1_4 = {131072, 0, 4};
+static const ScaleNote ratio7_225 = {2038, 3855926194, 225};
+static const ScaleNote ratio3_1 = {196608, 0, 1};
+static const ScaleNote ratio11_5 = {144179, 858993459, 5};
+static const ScaleNote ratio17_4 = {278528, 0, 4};
+static const ScaleNote ratio9_256 = {2304, 0, 256};
+static const ScaleNote ratio17_32 = {34816, 0, 32};
+static const ScaleNote ratio144_7 = {1348169, 613566757, 7};
+static const ScaleNote ratio6_7 = {56173, 3067833782, 7};
+static const ScaleNote ratio19_32 = {38912, 0, 32};
+static const ScaleNote ratio40_9 = {291271, 477218588, 9};
+static const ScaleNote ratio49_225 = {14272, 1221679586, 225};
+static const ScaleNote ratio1_14 = {4681, 613566756, 14};
+static const ScaleNote ratio27_4 = {442368, 0, 4};
+static const ScaleNote ratio11_3 = {240298, 2863311530, 3};
+static const ScaleNote ratio10_3 = {218453, 1431655765, 3};
+static const ScaleNote ratio7_40 = {11468, 3435973836, 40};
+static const ScaleNote ratio16_5 = {209715, 858993459, 5};
+static const ScaleNote ratio7_6 = {76458, 2863311530, 6};
+static const ScaleNote ratio3_25 = {7864, 1374389534, 25};
+static const ScaleNote ratio243_25 = {637009, 3951369912, 25};
+static const ScaleNote ratio25_147 = {11145, 2483484490, 147};
+static const ScaleNote ratio11_15 = {48059, 3149642683, 15};
+static const ScaleNote ratio19_8 = {155648, 0, 8};
+static const ScaleNote ratio72_5 = {943718, 1717986918, 5};
+static const ScaleNote ratio17_15 = {74274, 572662306, 15};
+static const ScaleNote ratio176_7 = {1647762, 1227133513, 7};
+static const ScaleNote ratio64_3 = {1398101, 1431655765, 3};
+static const ScaleNote ratio40_1 = {2621440, 0, 1};
+static const ScaleNote ratio5_2 = {163840, 0, 2};
+static const ScaleNote ratio13_11 = {77451, 2733161006, 11};
+static const ScaleNote ratio13_5 = {170393, 2576980377, 5};
+static const ScaleNote ratio1_40 = {1638, 1717986918, 40};
+static const ScaleNote ratio160_7 = {1497965, 3067833783, 7};
+static const ScaleNote ratio19_256 = {4864, 0, 256};
+static const ScaleNote ratio11_7 = {102985, 613566756, 7};
+static const ScaleNote ratio3_13 = {15123, 2973438897, 13};
+static const ScaleNote ratio1_4_32 = {16384, 0, 32};
+static const ScaleNote ratio48_7 = {449389, 3067833782, 7};
+static const ScaleNote ratio9_13 = {45371, 330382099, 13};
+static const ScaleNote ratio15_32 = {30720, 0, 32};
+static const ScaleNote ratio19_16 = {77824, 0, 16};
+static const ScaleNote ratio5_21 = {15603, 3476878287, 21};
+static const ScaleNote ratio5_28 = {11702, 3681400539, 28};
+static const ScaleNote ratio243_7 = {2275035, 1840700270, 7};
+static const ScaleNote ratio11_128 = {5632, 0, 128};
+static const ScaleNote ratio12_1_4 = {786432, 0, 4};
+static const ScaleNote ratio13_64 = {13312, 0, 64};
+static const ScaleNote ratio1_10 = {6553, 2576980377, 10};
+static const ScaleNote ratio9_32 = {18432, 0, 32};
+static const ScaleNote ratio1_13 = {5041, 991146299, 13};
+static const ScaleNote ratio1_2_8 = {32768, 0, 8};
+static const ScaleNote ratio675_49 = {902791, 3593748145, 49};
+static const ScaleNote ratio3_17 = {11565, 757935405, 17};
+static const ScaleNote ratio64_9 = {466033, 3340530119, 9};
+static const ScaleNote ratio1_11 = {5957, 3514064151, 11};
+static const ScaleNote ratio1_7 = {9362, 1227133513, 7};
+static const ScaleNote ratio7_32 = {14336, 0, 32};
+static const ScaleNote ratio3_10 = {19660, 3435973836, 10};
+static const ScaleNote ratio128_3 = {2796202, 2863311530, 3};
+static const ScaleNote ratio1_1_8 = {65536, 0, 8};
+static const ScaleNote ratio64_5 = {838860, 3435973837, 5};
+static const ScaleNote ratio5_27 = {12136, 1272582902, 27};
+static const ScaleNote ratio11_2 = {360448, 0, 2};
+static const ScaleNote ratio2_3_16 = {43690, 2863311530, 16};
+static const ScaleNote ratio15_256 = {3840, 0, 256};
 static const ScaleNote ratio17_13 = {85700, 3964585196, 13};
-static const ScaleNote ratio5_64 = {5120, 0, 64};
+static const ScaleNote ratio17_256 = {4352, 0, 256};
+static const ScaleNote ratio13_4 = {212992, 0, 4};
+static const ScaleNote ratio32_3 = {699050, 2863311530, 3};
+static const ScaleNote ratio17_512 = {2176, 0, 512};
+static const ScaleNote ratio1_27 = {2427, 1113510039, 27};
+static const ScaleNote ratio729_25 = {1911029, 3264175145, 25};
+static const ScaleNote ratio4_1_8 = {262144, 0, 8};
 
 
 
@@ -1177,19 +1176,7 @@ static const ScaleNote * const bohlenPeirceBlueLambda2_vs_bohlenPeirceDurI[128] 
 &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, 
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1}; 
 
-static const ScaleNote * const bohlenPeirceDurII_vs_bohlenPeirceGamma[128] = {&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, 
-&ratio25_21, &ratio25_21, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio7_5, &ratio7_5, &ratio7_5, 
-&ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio9_5, 
-&ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, 
-&ratio15_7, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio63_25, &ratio63_25, &ratio63_25, &ratio63_25, 
-&ratio63_25, &ratio63_25, &ratio63_25, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio7_3, 
-&ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio49_25, &ratio49_25, &ratio49_25, &ratio49_25, &ratio49_25, &ratio49_25, 
-&ratio49_25, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, 
-&ratio5_3, &ratio5_3, &ratio5_3, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio9_7, &ratio9_7, 
-&ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, 
-&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1}; 
-
-static const ScaleNote * const bohlenPeirceGLambda_vs_bohlenPeirceHarmoni[128] = {&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, 
+static const ScaleNote * const bohlenPeirceDurII_vs_bohlenPeirceGLambda[128] = {&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, 
 &ratio25_21, &ratio25_21, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio7_5, &ratio7_5, &ratio7_5, 
 &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio9_5, 
 &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, 
@@ -1198,19 +1185,31 @@ static const ScaleNote * const bohlenPeirceGLambda_vs_bohlenPeirceHarmoni[128] =
 &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, 
 &ratio15_7, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, 
 &ratio5_3, &ratio5_3, &ratio5_3, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio9_7, &ratio9_7, 
-&ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, 
+&ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, 
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1}; 
 
-static const ScaleNote * const bohlenPeirceHPentatoni_vs_bohlenPeirceMollI[128] = {&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio9_7, &ratio9_7, &ratio9_7, 
-&ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, 
-&ratio5_3, &ratio5_3, &ratio5_3, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, 
-&ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, 
-&ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, 
-&ratio7_3, &ratio7_3, &ratio7_3, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, 
-&ratio15_7, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio5_3, &ratio5_3, 
-&ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio75_49, &ratio75_49, &ratio75_49, &ratio75_49, &ratio75_49, 
-&ratio75_49, &ratio75_49, &ratio75_49, &ratio75_49, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, 
-&ratio9_7, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio1_1, &ratio1_1, 
+static const ScaleNote * const bohlenPeirceGamma_vs_bohlenPeirceHPentatoni[128] = {&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio27_25, &ratio27_25, &ratio27_25, 
+&ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, 
+&ratio9_7, &ratio9_7, &ratio9_7, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, 
+&ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio9_5, &ratio9_5, &ratio9_5, 
+&ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio49_25, &ratio49_25, &ratio49_25, &ratio49_25, &ratio49_25, &ratio49_25, 
+&ratio49_25, &ratio49_25, &ratio49_25, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, 
+&ratio7_3, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, 
+&ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, 
+&ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, 
+&ratio5_3, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio1_1, &ratio1_1, 
+&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1}; 
+
+static const ScaleNote * const bohlenPeirceHarmoni_vs_bohlenPeirceMollI[128] = {&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, 
+&ratio27_25, &ratio27_25, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio7_5, &ratio7_5, &ratio7_5, 
+&ratio7_5, &ratio7_5, &ratio7_5, &ratio7_5, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, &ratio9_5, 
+&ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, 
+&ratio15_7, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio63_25, &ratio63_25, &ratio63_25, &ratio63_25, 
+&ratio63_25, &ratio63_25, &ratio63_25, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio25_9, &ratio7_3, 
+&ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio7_3, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, &ratio15_7, 
+&ratio15_7, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio9_5, &ratio5_3, &ratio5_3, &ratio5_3, &ratio5_3, 
+&ratio5_3, &ratio5_3, &ratio5_3, &ratio75_49, &ratio75_49, &ratio75_49, &ratio75_49, &ratio75_49, &ratio75_49, &ratio75_49, &ratio9_7, &ratio9_7, 
+&ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio9_7, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, &ratio25_21, 
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1}; 
 
 static const ScaleNote * const bohlenPeirceMollII_vs_bohlenPeirceProoijenMaj[128] = {&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, &ratio27_25, 
@@ -1744,9 +1743,9 @@ static const ScaleNote * const rhythm_integers0[128] = {&ratio1_1, &ratio1_1, &r
 &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
 &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
 &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
-&ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio9_1, 
-&ratio9_1, &ratio9_1, &ratio9_1, &ratio9_1, &ratio9_1, &ratio9_1, &ratio9_1, &ratio9_1, &ratio9_1, &ratio9_1, &ratio9_1, &ratio9_1, 
-&ratio9_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, 
+&ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio8_1, 
+&ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, 
+&ratio8_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, 
 &ratio12_1, &ratio12_1, &ratio12_1, &ratio16_1, &ratio16_1, &ratio16_1, &ratio16_1, &ratio16_1, &ratio16_1, &ratio16_1, &ratio16_1, &ratio16_1, 
 &ratio16_1, &ratio16_1, &ratio16_1, &ratio16_1, &ratio16_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, 
 &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1}; 
@@ -1756,9 +1755,9 @@ static const ScaleNote * const rhythm_integers1[128] = {&ratio1_2, &ratio1_2, &r
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
 &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
 &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
-&ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio9_2, 
-&ratio9_2, &ratio9_2, &ratio9_2, &ratio9_2, &ratio9_2, &ratio9_2, &ratio9_2, &ratio9_2, &ratio9_2, &ratio9_2, &ratio9_2, &ratio9_2, 
-&ratio9_2, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
+&ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio4_1, 
+&ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
+&ratio4_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
 &ratio6_1, &ratio6_1, &ratio6_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, 
 &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, 
 &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1}; 
@@ -1768,9 +1767,9 @@ static const ScaleNote * const rhythm_integers2[128] = {&ratio1_3, &ratio1_3, &r
 &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, 
 &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
-&ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio3_1, 
-&ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
-&ratio3_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
+&ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio8_3, 
+&ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, 
+&ratio8_3, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
 &ratio4_1, &ratio4_1, &ratio4_1, &ratio16_3, &ratio16_3, &ratio16_3, &ratio16_3, &ratio16_3, &ratio16_3, &ratio16_3, &ratio16_3, &ratio16_3, 
 &ratio16_3, &ratio16_3, &ratio16_3, &ratio16_3, &ratio16_3, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, 
 &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1}; 
@@ -1780,9 +1779,9 @@ static const ScaleNote * const rhythm_integers3[128] = {&ratio1_4, &ratio1_4, &r
 &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
 &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
-&ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio9_4, 
-&ratio9_4, &ratio9_4, &ratio9_4, &ratio9_4, &ratio9_4, &ratio9_4, &ratio9_4, &ratio9_4, &ratio9_4, &ratio9_4, &ratio9_4, &ratio9_4, 
-&ratio9_4, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
+&ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio2_1, 
+&ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
+&ratio2_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
 &ratio3_1, &ratio3_1, &ratio3_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
 &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
 &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1}; 
@@ -1792,33 +1791,33 @@ static const ScaleNote * const rhythm_integers4[128] = {&ratio1_6, &ratio1_6, &r
 &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
 &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, 
 &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
-&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio3_2, 
-&ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
-&ratio3_2, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
+&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio4_3, 
+&ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, 
+&ratio4_3, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
 &ratio2_1, &ratio2_1, &ratio2_1, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, 
 &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
 &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1}; 
 
-static const ScaleNote * const rhythm_integers5[128] = {&ratio1_9, &ratio1_9, &ratio1_9, &ratio1_9, &ratio1_9, &ratio1_9, &ratio1_9, &ratio1_9, &ratio1_9, &ratio1_9, &ratio1_9, &ratio1_9, &ratio1_9, 
-&ratio1_9, &ratio1_9, &ratio2_9, &ratio2_9, &ratio2_9, &ratio2_9, &ratio2_9, &ratio2_9, &ratio2_9, &ratio2_9, &ratio2_9, &ratio2_9, 
-&ratio2_9, &ratio2_9, &ratio2_9, &ratio2_9, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, 
-&ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio4_9, &ratio4_9, &ratio4_9, &ratio4_9, &ratio4_9, &ratio4_9, 
-&ratio4_9, &ratio4_9, &ratio4_9, &ratio4_9, &ratio4_9, &ratio4_9, &ratio4_9, &ratio4_9, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, 
-&ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio1_1, 
-&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
-&ratio1_1, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, 
-&ratio4_3, &ratio4_3, &ratio4_3, &ratio16_9, &ratio16_9, &ratio16_9, &ratio16_9, &ratio16_9, &ratio16_9, &ratio16_9, &ratio16_9, &ratio16_9, 
-&ratio16_9, &ratio16_9, &ratio16_9, &ratio16_9, &ratio16_9, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, 
-&ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3}; 
+static const ScaleNote * const rhythm_integers5[128] = {&ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, 
+&ratio1_8, &ratio1_8, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
+&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, 
+&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
+&ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio9_8, 
+&ratio9_8, &ratio9_8, &ratio9_8, &ratio9_8, &ratio9_8, &ratio9_8, &ratio9_8, &ratio9_8, &ratio9_8, &ratio9_8, &ratio9_8, &ratio9_8, 
+&ratio9_8, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
+&ratio3_2, &ratio3_2, &ratio3_2, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
+&ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
+&ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1}; 
 
 static const ScaleNote * const rhythm_integers6[128] = {&ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, 
 &ratio1_12, &ratio1_12, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, 
 &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
 &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, 
 &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
-&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio3_4, 
-&ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
-&ratio3_4, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio2_3, 
+&ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, 
+&ratio2_3, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, 
 &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
 &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1}; 
@@ -1828,9 +1827,9 @@ static const ScaleNote * const rhythm_integers7[128] = {&ratio1_16, &ratio1_16, 
 &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, 
 &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
 &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, 
-&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio9_16, 
-&ratio9_16, &ratio9_16, &ratio9_16, &ratio9_16, &ratio9_16, &ratio9_16, &ratio9_16, &ratio9_16, &ratio9_16, &ratio9_16, &ratio9_16, &ratio9_16, 
-&ratio9_16, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
+&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio1_2, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
+&ratio1_2, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
 &ratio3_4, &ratio3_4, &ratio3_4, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
 &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2}; 
@@ -1840,9 +1839,9 @@ static const ScaleNote * const rhythm_integers8[128] = {&ratio1_24, &ratio1_24, 
 &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, 
 &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, 
 &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
-&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio3_8, 
-&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, 
-&ratio3_8, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
+&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_3, 
+&ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, 
+&ratio1_3, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
 &ratio1_2, &ratio1_2, &ratio1_2, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, 
 &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1}; 
@@ -1897,19 +1896,7 @@ static const ScaleNote * const no_triplets3[128] = {&ratio1_4, &ratio1_4, &ratio
 &ratio2_1, &ratio2_1, &ratio2_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
 &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1}; 
 
-static const ScaleNote * const no_triplets4[128] = {&ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, 
-&ratio1_5, &ratio1_5, &ratio1_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, 
-&ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, 
-&ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio2_5, &ratio4_5, 
-&ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, 
-&ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, 
-&ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio4_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, 
-&ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, 
-&ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, &ratio8_5, 
-&ratio8_5, &ratio8_5, &ratio8_5, &ratio16_5, &ratio16_5, &ratio16_5, &ratio16_5, &ratio16_5, &ratio16_5, &ratio16_5, &ratio16_5, &ratio16_5, 
-&ratio16_5, &ratio16_5, &ratio16_5, &ratio16_5, &ratio16_5, &ratio16_5, &ratio16_5}; 
-
-static const ScaleNote * const no_triplets5[128] = {&ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, 
+static const ScaleNote * const no_triplets4[128] = {&ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, 
 &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, 
 &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, 
 &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio2_3, 
@@ -1921,19 +1908,7 @@ static const ScaleNote * const no_triplets5[128] = {&ratio1_6, &ratio1_6, &ratio
 &ratio4_3, &ratio4_3, &ratio4_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, 
 &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3, &ratio8_3}; 
 
-static const ScaleNote * const no_triplets6[128] = {&ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, 
-&ratio1_7, &ratio1_7, &ratio1_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, 
-&ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, 
-&ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio2_7, &ratio4_7, 
-&ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, 
-&ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, 
-&ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio4_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, 
-&ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, 
-&ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, &ratio8_7, 
-&ratio8_7, &ratio8_7, &ratio8_7, &ratio16_7, &ratio16_7, &ratio16_7, &ratio16_7, &ratio16_7, &ratio16_7, &ratio16_7, &ratio16_7, &ratio16_7, 
-&ratio16_7, &ratio16_7, &ratio16_7, &ratio16_7, &ratio16_7, &ratio16_7, &ratio16_7}; 
-
-static const ScaleNote * const no_triplets7[128] = {&ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, 
+static const ScaleNote * const no_triplets5[128] = {&ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, 
 &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
 &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
 &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_2, 
@@ -1945,102 +1920,126 @@ static const ScaleNote * const no_triplets7[128] = {&ratio1_8, &ratio1_8, &ratio
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
 &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1}; 
 
+static const ScaleNote * const no_triplets6[128] = {&ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, 
+&ratio1_12, &ratio1_12, &ratio1_12, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, 
+&ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, 
+&ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_3, 
+&ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, 
+&ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, 
+&ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, 
+&ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, 
+&ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, &ratio2_3, 
+&ratio2_3, &ratio2_3, &ratio2_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, 
+&ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3, &ratio4_3}; 
+
+static const ScaleNote * const no_triplets7[128] = {&ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, 
+&ratio1_16, &ratio1_16, &ratio1_16, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, 
+&ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, 
+&ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_4, 
+&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
+&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
+&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
+&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1}; 
+
 
 
 static const ScaleNote * const triplets0[128] = {&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
-&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
-&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
-&ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
-&ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
-&ratio3_1, &ratio3_1, &ratio3_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
-&ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
-&ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio12_1, 
-&ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, 
-&ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, 
-&ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1}; 
-
-static const ScaleNote * const triplets1[128] = {&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
-&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
-&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
-&ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
-&ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
-&ratio3_2, &ratio3_2, &ratio3_2, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
+&ratio1_1, &ratio1_1, &ratio1_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
 &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
 &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio6_1, 
 &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
 &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
-&ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1}; 
+&ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, 
+&ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, 
+&ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, 
+&ratio12_1, &ratio12_1, &ratio12_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, 
+&ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1, &ratio24_1}; 
 
-static const ScaleNote * const triplets2[128] = {&ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, 
-&ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, 
-&ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
-&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
-&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
-&ratio1_1, &ratio1_1, &ratio1_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
-&ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
-&ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio4_1, 
-&ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
-&ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
-&ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1}; 
-
-static const ScaleNote * const triplets3[128] = {&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
-&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
-&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
-&ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
-&ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
-&ratio3_4, &ratio3_4, &ratio3_4, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
+static const ScaleNote * const triplets1[128] = {&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
 &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
 &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_1, 
 &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
 &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
-&ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1}; 
+&ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
+&ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
+&ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
+&ratio6_1, &ratio6_1, &ratio6_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, 
+&ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1, &ratio12_1}; 
 
-static const ScaleNote * const triplets4[128] = {&ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, 
-&ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, 
-&ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio1_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, 
-&ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, 
-&ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, &ratio3_5, 
-&ratio3_5, &ratio3_5, &ratio3_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, 
-&ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, 
-&ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio6_5, &ratio12_5, 
-&ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, 
-&ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, 
-&ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5, &ratio12_5}; 
-
-static const ScaleNote * const triplets5[128] = {&ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, 
-&ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, 
-&ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
-&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
-&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
-&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
+static const ScaleNote * const triplets2[128] = {&ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, &ratio1_3, 
+&ratio1_3, &ratio1_3, &ratio1_3, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
 &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio2_1, 
 &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
 &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
-&ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1}; 
+&ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
+&ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
+&ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
+&ratio4_1, &ratio4_1, &ratio4_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, 
+&ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1, &ratio8_1}; 
 
-static const ScaleNote * const triplets6[128] = {&ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, 
-&ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, 
-&ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio1_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, 
-&ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, 
-&ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, &ratio3_7, 
-&ratio3_7, &ratio3_7, &ratio3_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, 
-&ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, 
-&ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio6_7, &ratio12_7, 
-&ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, 
-&ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, 
-&ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7, &ratio12_7}; 
-
-static const ScaleNote * const triplets7[128] = {&ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, 
-&ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, 
-&ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, 
-&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, 
-&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, 
-&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
+static const ScaleNote * const triplets3[128] = {&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
+&ratio1_4, &ratio1_4, &ratio1_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
 &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
 &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_2, 
 &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
 &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
+&ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
+&ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
+&ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
+&ratio3_1, &ratio3_1, &ratio3_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, 
+&ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1, &ratio6_1}; 
+
+static const ScaleNote * const triplets4[128] = {&ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, &ratio1_6, 
+&ratio1_6, &ratio1_6, &ratio1_6, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_1, 
+&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
+&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
+&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
+&ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
+&ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
+&ratio2_1, &ratio2_1, &ratio2_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, 
+&ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1, &ratio4_1}; 
+
+static const ScaleNote * const triplets5[128] = {&ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, &ratio1_8, 
+&ratio1_8, &ratio1_8, &ratio1_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, 
+&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, 
+&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_4, 
+&ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
+&ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
+&ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
+&ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
+&ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
+&ratio3_2, &ratio3_2, &ratio3_2, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, 
+&ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1, &ratio3_1}; 
+
+static const ScaleNote * const triplets6[128] = {&ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, &ratio1_12, 
+&ratio1_12, &ratio1_12, &ratio1_12, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
+&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, 
+&ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_4, &ratio1_2, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, 
+&ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_2, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
+&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
+&ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, &ratio1_1, 
+&ratio1_1, &ratio1_1, &ratio1_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, 
+&ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1, &ratio2_1}; 
+
+static const ScaleNote * const triplets7[128] = {&ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, &ratio1_16, 
+&ratio1_16, &ratio1_16, &ratio1_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, 
+&ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, 
+&ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_16, &ratio3_8, 
+&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, 
+&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, 
+&ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_8, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
+&ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
+&ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, &ratio3_4, 
+&ratio3_4, &ratio3_4, &ratio3_4, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, 
 &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2, &ratio3_2}; 
 
 
@@ -2160,7 +2159,7 @@ static const ScaleNote* const*seventhTetradsMinimalProgressionGrid[8] = {a_maj7t
 
 static const ScaleNote* const*impressionistGrid[8] = {impressionista_vs_impressionistb, impressionist_vs_impressionistd, impressioniste_vs_impressionistf, impressionistg_vs_impressionisth, impressionisti_vs_impressionistj, impressionistk_vs_impressionistl, impressionistm_vs_impressionistn, impressionisto_vs_impressionistp}; 
 
-static const ScaleNote* const*bohlenPeirceGrid[8] = {bohlenPeirceAScale_vs_bohlenPeirceBlueLambda, bohlenPeirceBlueLambda2_vs_bohlenPeirceDurI, bohlenPeirceDurII_vs_bohlenPeirceGamma, bohlenPeirceGLambda_vs_bohlenPeirceHarmoni, bohlenPeirceHPentatoni_vs_bohlenPeirceMollI, bohlenPeirceMollII_vs_bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin_vs_bohlenPeirceWalkerA, bohlenPeirceWalkerB_vs_bohlenPeirceWalkerI}; 
+static const ScaleNote* const*bohlenPeirceGrid[8] = {bohlenPeirceAScale_vs_bohlenPeirceBlueLambda, bohlenPeirceBlueLambda2_vs_bohlenPeirceDurI, bohlenPeirceDurII_vs_bohlenPeirceGLambda, bohlenPeirceGamma_vs_bohlenPeirceHPentatoni, bohlenPeirceHarmoni_vs_bohlenPeirceMollI, bohlenPeirceMollII_vs_bohlenPeirceProoijenMaj, bohlenPeirceProoijenMin_vs_bohlenPeirceWalkerA, bohlenPeirceWalkerB_vs_bohlenPeirceWalkerI}; 
 
 static const ScaleNote* const*modesofrootGrid[8] = {modesofroota, modesofrootb, modesofrootc, modesofrootd, modesofroote, modesofrootf, modesofrootg, modesofrooth}; 
 

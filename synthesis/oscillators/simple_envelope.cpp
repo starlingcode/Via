@@ -71,15 +71,11 @@ void SimpleEnvelope::advance(ViaInputStreams * inputs,
 
 int32_t SimpleEnvelope::attackState(void) {
 
-	switch (phaseEvent) {
-
-	case (AT_B_FROM_ATTACK):
+	if (phaseEvent ==  AT_B_FROM_ATTACK) {
 		incrementArbiter = &SimpleEnvelope::releaseState;
 		return release;
-
-	default:
+	} else {
 		return attack;
-
 	}
 }
 
@@ -90,29 +86,22 @@ int32_t SimpleEnvelope::releaseState(void) {
 		return -attack;
 	}
 
-	switch (phaseEvent) {
-
-	case (AT_A_FROM_RELEASE):
+	if (phaseEvent ==  AT_A_FROM_RELEASE) {
 		incrementArbiter = &SimpleEnvelope::restingState;
 		phase = 1;
 		return 0;
-	default:
+	} else {
 		return release;
-
 	};
 }
 
 int32_t SimpleEnvelope::retriggerState(void) {
 
-	switch (phaseEvent) {
-
-	case (AT_B_FROM_RELEASE):
+	if (phaseEvent ==  AT_B_FROM_RELEASE) {
 		incrementArbiter = &SimpleEnvelope::releaseState;
 		return release;
-
-	default:
+	} else {
 		return -attack;
-
 	}
 }
 
