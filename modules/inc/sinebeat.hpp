@@ -3,7 +3,7 @@
 
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
-#include <oscillators.hpp>
+#include <dsp.hpp>
 
 #ifdef BUILD_F373
 

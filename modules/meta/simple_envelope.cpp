@@ -5,7 +5,7 @@
  *      Author: willmitchell
  */
 
-#include "oscillators.hpp"
+#include "meta.hpp"
 
 void SimpleEnvelope::parseControls(ViaControls * controls, ViaInputStreams * inputs) {
 

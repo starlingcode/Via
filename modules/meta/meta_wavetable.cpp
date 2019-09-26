@@ -5,7 +5,7 @@
  *      Author: willmitchell
  */
 
-#include <oscillators.hpp>
+#include <meta.hpp>
 
 void MetaWavetable::parseControls(ViaControls * controls) {
 

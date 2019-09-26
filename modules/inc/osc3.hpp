@@ -5,22 +5,22 @@
  */
 
 /// Macro used to specify the number of samples to per DAC transfer.
-#define OSC_BUFFER_SIZE 32
+#define OSC3_BUFFER_SIZE 32
 
 /// Callback to link to the C code in the STM32 Touch Sense Library.
-void oscTouchLink (void *);
+void osc3TouchLink (void *);
 
 #ifndef INC_Calib_HPP_
 #define INC_Calib_HPP_
 
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
-#include <oscillators.hpp>
+#include <dsp.hpp>
 
 /// Calibration/template module class.
 
 /** A simple self calibration tool that doubles as an introductory template.*/
-class ViaOsc : public ViaModule {
+class ViaOsc3 : public ViaModule {
 
 public:
 
@@ -31,7 +31,7 @@ public:
 	 * One C++ trick at a time for now.
 	 **/
 
-	class ViaOscUI: public ViaUI {
+	class ViaOsc3UI: public ViaUI {
 
 	public:
 
@@ -39,7 +39,7 @@ public:
 		 * Pointer to the outer class to allow access to data and methods.
 		 * See constructor and outer class constructor for details.
 		 */
-		ViaOsc& this_module;
+		ViaOsc3& this_module;
 
 
 		//@{
@@ -115,8 +115,8 @@ public:
 		void writeStockPresets(void) override {}
 
 		/// On construction, link the calibTouchLink callback to the STM32 touch sense library.
-		ViaOscUI(ViaOsc& x): this_module(x) {
-			linkUI((void *) &oscTouchLink, (void *) this);
+		ViaOsc3UI(ViaOsc3& x): this_module(x) {
+			linkUI((void *) &osc3TouchLink, (void *) this);
 		}
 
 		void blinkOnCallback(void) override {
@@ -144,7 +144,7 @@ public:
 	};
 
 	/// An instance of the UI implementation.
-	ViaOscUI oscUI;
+	ViaOsc3UI osc3UI;
 
 	/// A member that the UI implementation can use to turn the module's runtime display off.
 	int32_t runtimeDisplay = 1;
@@ -154,7 +154,7 @@ public:
 	/// For some reason I have it wrapped like this?
 	/// Perhaps the C code in the hardware executable mangled the namespace? Gotta check.
 	void ui_dispatch(int32_t sig) {
-		this->oscUI.dispatch(sig);
+		this->osc3UI.dispatch(sig);
 	};
 
 
@@ -164,7 +164,7 @@ public:
 	 *
 	 */
 
-	void (ViaOsc::*render)(int32_t writePosition);
+	void (ViaOsc3::*render)(int32_t writePosition);
 
 	void renderSaw(int32_t writePosition);
 	void renderSquare(int32_t writePosition);
@@ -312,7 +312,7 @@ public:
 
 	}
 
-	void (ViaOsc::*updateBaseFreqs)(void) = &ViaOsc::updateBaseFreqsSmooth;
+	void (ViaOsc3::*updateBaseFreqs)(void) = &ViaOsc3::updateBaseFreqsSmooth;
 
 	void updateBaseFreqsScale(void) {
 
@@ -600,7 +600,7 @@ public:
 
 	}
 
-	void (ViaOsc::*doDetune)(int32_t detuneMod);
+	void (ViaOsc3::*doDetune)(int32_t detuneMod);
 
 	inline void updateFrequencies(void) {
 
@@ -735,7 +735,7 @@ public:
 	}
 	void transferCompleteCallback(void) {
 		setLogicOutNoA(0, runtimeDisplay);
-		(this->*render)(OSC_BUFFER_SIZE);
+		(this->*render)(OSC3_BUFFER_SIZE);
 	}
 	void slowConversionCallback(void) {
 
@@ -779,29 +779,29 @@ public:
 	void handleButton6ModeChange(int32_t);
 
 	void readCalibrationPacket(void) {
-		calibrationPacket = oscUI.loadFromMemory(7);
+		calibrationPacket = osc3UI.loadFromMemory(7);
 		decodeCalibrationPacket();
 	}
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
-	ViaOsc() : oscUI(*this) {
+	ViaOsc3() : osc3UI(*this) {
 
 		/// Link the module GPIO registers.
 		initializeAuxOutputs();
 
 		/// Initialize the input stream buffers.
-		inputs.init(OSC_BUFFER_SIZE);
+		inputs.init(OSC3_BUFFER_SIZE);
 		/// Initialize the output stream buffers.
-		outputs.init(OSC_BUFFER_SIZE);
+		outputs.init(OSC3_BUFFER_SIZE);
 		/// Set the data members that will be used to determine DMA stream initialization in the hardware executable.
-		outputBufferSize = OSC_BUFFER_SIZE;
+		outputBufferSize = OSC3_BUFFER_SIZE;
 		inputBufferSize = 1;
 
-		render = &ViaOsc::renderTri;
-		doDetune = &ViaOsc::linearDetune;
+		render = &ViaOsc3::renderTri;
+		doDetune = &ViaOsc3::linearDetune;
 
 		/// Call the UI initialization that needs to happen after outer class construction.
-		oscUI.initialize();
+		osc3UI.initialize();
 
 		uint32_t optionBytes = readOptionBytes();
 		uint32_t ob1Data = optionBytes & 0xFFFF;
@@ -809,7 +809,7 @@ public:
 
 		if (ob1Data == 254 && ob2Data == 255) {
 			readCalibrationPacket();
-			oscUI.writeStockPresets();
+			osc3UI.writeStockPresets();
 			writeOptionBytes(6, 1);
 		} else if (ob1Data == 6) {
 			readCalibrationPacket();

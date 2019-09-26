@@ -11,6 +11,32 @@
 #include "dsp.hpp"
 #include "via_global_signals.hpp"
 
+template <typename Target>
+struct ViaModuleTest {
+	int interface() {
+		return static_cast<Target*>(this)->implementation();
+	}
+	int implementation() {
+		return 0;
+	}
+};
+
+struct Generic: ViaModuleTest<Generic> {
+	int implementation () {
+		return 1;
+	}
+};
+
+struct F373: ViaModuleTest<F373> {
+	int implementation () {
+		return 2;
+	}
+};
+
+struct Derived3: ViaModuleTest<Derived3> {
+
+};
+
 /// Hardware module class.
 /** Global module class inherited by each module if built as module firmware.*/
 class ViaModule {

@@ -5,7 +5,7 @@
  *      Author: willmitchell
  */
 
-#include <sequencers.hpp>
+#include <gateseq.hpp>
 
 #include "dsp.hpp"
 

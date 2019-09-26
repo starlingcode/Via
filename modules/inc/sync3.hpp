@@ -10,7 +10,7 @@
 
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
-#include "oscillators.hpp"
+#include "dsp.hpp"
 
 /// Macro used to specify the number of samples to per DAC transfer.
 #define VIA_SYNC3_BUFFER_SIZE 24

@@ -10,18 +10,185 @@
 
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
-#include <oscillators.hpp>
+#include <dsp.hpp>
 #include "meta_tables.hpp"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+// simplest wavetable, provide a phase and a morph
+
+class MetaWavetable {
+
+public:
+
+	int32_t morphBase = 0;
+	int16_t * morphMod;
+	int16_t * morphScale;
+	int32_t phase = 0;
+	uint32_t tableSize = 0;
+	int32_t increment = 0;
+
+	int32_t morphModOffset = 0;
+
+	int32_t oversamplingFactor = 3;
+	int32_t bufferSize = 8;
+
+	// results
+	int32_t delta = 0;
+
+	uint32_t phaseOut[32];
+	int32_t signalOut[32];
+
+	void parseControls(ViaControls * controls);
+
+	void advance(uint32_t * wavetable) {
+		if (oversamplingFactor) {
+			advanceOversampled(wavetable);
+		} else {
+			advanceSingleSample(wavetable);
+		}
+	}
+
+	void advanceSingleSample(uint32_t * wavetable);
+
+	void advanceOversampled(uint32_t * wavetable);
+
+};
+
+// meta oscillator controller
+
+class MetaController {
+
+	ExpoConverter expo;
+
+public:
+
+	int32_t timeBase1 = 0;
+	int32_t timeBase2 = 0;
+	int32_t dutyCycleBase = 0;
+	int32_t triggerSignal = 0;
+	int32_t gateSignal = 0;
+	int32_t freeze = 0;
+	int32_t gateOn = 0;
+	uint32_t loopMode = 0;
+	int32_t atB = 0;
+
+	int32_t increment1 = 0;
+	int32_t increment2 = 0;
+	int32_t incrementUsed = 0;
+	int32_t dutyCycle = 0;
+	int32_t lastPhase = 0;
+	int32_t oscillatorOn = 0;
+	int16_t * fm;
+	int32_t * expoFM;
+
+	int32_t cv1Offset = 0;
+	int32_t cv2Offset = 0;
+
+	// hack
+	int32_t audioBaseIncrementStore = 34894;
+	int32_t drumBaseIncrementStore = 58623;
+	int32_t audioBaseIncrement = 34894;
+	int32_t drumBaseIncrement = 58623;
+
+	int32_t phase = 0;
+	int32_t phaseBeforeIncrement = 0;
+	int32_t ghostPhase = 0;
+	int32_t phaseEvent = 0;
+
+	void parseControlsExternal(ViaControls * controls, ViaInputStreams * inputs);
+
+	void (MetaController::*parseControls)(ViaControls * controls, ViaInputStreams * inputs);
+
+	void parseControlsAudio(ViaControls * controls, ViaInputStreams * inputs);
+	void parseControlsDrum(ViaControls * controls, ViaInputStreams * inputs);
+	void parseControlsEnv(ViaControls * controls, ViaInputStreams * inputs);
+	void parseControlsSeq(ViaControls * controls, ViaInputStreams * inputs);
+
+	void generateIncrementsExternal(ViaInputStreams * inputs);
+
+	void (MetaController::*generateIncrements)(ViaInputStreams * inputs);
+
+	void generateIncrementsAudio(ViaInputStreams * inputs);
+	void generateIncrementsDrum(ViaInputStreams * inputs);
+	void generateIncrementsEnv(ViaInputStreams * inputs);
+	void generateIncrementsSeq(ViaInputStreams * inputs);
+
+	void advancePhaseExternal(uint32_t * phaseDistTable);
+
+	int32_t (MetaController::*advancePhase)(uint32_t * phaseDistTable);
+	int32_t advancePhasePWM(uint32_t * phaseDistTable);
+	int32_t advancePhaseOversampled(uint32_t * phaseDistTable);
 
 
+	int32_t (MetaController::*incrementArbiter)(void);
 
-#ifdef __cplusplus
-}
-#endif
+	int32_t noRetrigAttackState(void);
+	int32_t noRetrigReleaseState(void);
+
+	int32_t hardSyncAttackState(void);
+	int32_t hardSyncReleaseState(void);
+
+	int32_t envAttackState(void);
+	int32_t envReleaseState(void);
+	int32_t envRetriggerState(void);
+
+	int32_t gateAttackState(void);
+	int32_t gateReleaseReverseState(void);
+	int32_t gatedState(void);
+	int32_t gateReleaseState(void);
+	int32_t gateRetriggerState(void);
+
+	int32_t pendulumRestingState(void);
+	int32_t pendulumForwardAttackState(void);
+	int32_t pendulumForwardReleaseState(void);
+	int32_t pendulumReverseAttackState(void);
+	int32_t pendulumReverseReleaseState(void);
+
+	int32_t stickyPendulumRestingState(void);
+	int32_t stickyPendulumAtBState(void);
+	int32_t stickyPendulumForwardAttackState(void);
+	int32_t stickyPendulumForwardReleaseState(void);
+	int32_t stickyPendulumReverseAttackState(void);
+	int32_t stickyPendulumReverseReleaseState(void);
+
+	void (MetaController::*loopHandler)(void);
+
+	void handleLoopOff(void);
+	void handleLoopOn(void);
+
+};
+
+
+// just the envelope
+
+class SimpleEnvelope {
+
+	int32_t previousPhase;
+
+	ExpoConverter expo;
+
+public:
+
+	uint32_t attack = 100000;
+	uint32_t release = 0;
+	uint32_t increment = 0;
+	uint32_t morph = 0;
+	uint32_t phase = 0;
+	int32_t phaseEvent = 0;
+	uint32_t trigger;
+
+	int32_t * output;
+
+	void parseControls (ViaControls * controls, ViaInputStreams * inputs);
+	void advance (ViaInputStreams * inputs, uint32_t * wavetable);
+
+	int32_t (SimpleEnvelope::*incrementArbiter)(void);
+
+	int32_t attackState(void);
+	int32_t releaseState(void);
+	int32_t retriggerState(void);
+	int32_t restingState(void);
+
+};
 
 #define META_BUFFER_SIZE 8
 

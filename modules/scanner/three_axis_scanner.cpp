@@ -5,7 +5,7 @@
  *      Author: willmitchell
  */
 
-#include "signal_processors.hpp"
+#include "scanner.hpp"
 
 
 void ThreeAxisScanner::parseControls(ViaControls * controls) {

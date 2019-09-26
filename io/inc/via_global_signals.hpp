@@ -62,6 +62,7 @@ public:
 	uint32_t cv1Value = 0;
 	//@}
 
+
 	/// Update the average for each ADC with the latest value. TODO add methods to update values independently.
 	void update(void);
 	void updateSlow(void);
@@ -98,6 +99,16 @@ public:
 	int32_t * auxTrigSamples;
 	int32_t auxTrigInput;
 	//@}
+
+	inline int32_t getCV2(void) {
+		int32_t sample = cv2Samples[0];
+		return -sample;
+	}
+
+	inline int32_t getCV3(void) {
+		int32_t sample = cv3Samples[0];
+		return -sample;
+	}
 
 	/// Allocate memory acccording to the input buffer size
 	int32_t bufferSize;

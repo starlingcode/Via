@@ -8,21 +8,185 @@
 #ifndef INC_SYNC_HPP_
 #define INC_SYNC_HPP_
 
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
-#include <oscillators.hpp>
 #include "sync_scale_defs.hpp"
 #include "sync_tables.hpp"
 
-#ifdef __cplusplus
-}
+
+class PllController {
+
+	uint32_t pllCounter = 0;
+	int32_t lastMultiplier = 1;
+	int32_t lastYIndex = 0;
+
+#ifdef BUILD_F373
+	int32_t lastRatioX = 1;
 #endif
+	int32_t ratioXTransitionPoint = 0;
+	int32_t ratioXStable = 1;
+
+	int32_t ratioXHysterisis(int32_t thisRatioX, int32_t control) {
+
+		if (ratioXStable) {
+			ratioXStable = ((lastRatioX - thisRatioX) == 0);
+			ratioXTransitionPoint = control & 0b111111100000;
+			lastRatioX = thisRatioX;
+			return thisRatioX;
+		} else {
+			ratioXStable = abs(control - ratioXTransitionPoint) > 8;
+			lastRatioX = ratioXStable ? thisRatioX : lastRatioX;
+			return lastRatioX;
+		}
+
+	}
+
+#ifdef BUILD_F373
+	int32_t lastRatioY = 1;
+#endif
+	int32_t ratioYTransitionPoint = 0;
+	int32_t ratioYStable = 1;
+
+	int32_t ratioYHysterisis(int32_t control, int32_t shiftAmount) {
+
+		int32_t thisRatioY = control >> shiftAmount;
+
+		if (ratioYStable) {
+			ratioYStable = ((lastRatioY - thisRatioY) == 0);
+			ratioYTransitionPoint = thisRatioY << shiftAmount;
+			lastRatioY = thisRatioY;
+			return thisRatioY;
+		} else {
+			ratioYStable = abs(control - ratioYTransitionPoint) > 8;
+			lastRatioY = ratioYStable ? thisRatioY : lastRatioY;
+			return lastRatioY;
+		}
+
+	}
+
+public:
+
+#ifdef BUILD_VIRTUAL
+	int32_t lastRatioX = 1;
+	int32_t lastRatioY = 1;
+#endif
+
+	uint32_t virtualTimer;
+
+	uint32_t periodCount = 48000;
+	uint32_t aggregatePeriod = 48000;
+	uint32_t pileUp = 0;
+	uint32_t skipPll = 0;
+	int32_t pllNudge = 0;
+	buffer nudgeBuffer;
+	int32_t nudgeSum = 0;
+
+	uint32_t phaseSignal = 0;
+	uint32_t phaseModSignal = 0;
+	uint32_t tapTempo = 0;
+	uint32_t pllReset = 0;
+
+	int16_t * rootMod;
+	uint32_t phaseOffset = 0;
+	uint32_t syncMode = 0;
+	Scale * scale;
+	int32_t cv2Offset;
+	int32_t cv1Offset;
+
+	uint32_t fracMultiplier = 0;
+	uint32_t intMultiplier = 0;
+	uint32_t gcd = 1;
+
+	uint32_t increment = 0;
+	uint32_t phaseReset = 0;
+	uint32_t ratioChange = 0;
+	uint32_t yIndexChange = 0;
+
+	uint32_t errorSig = 0;
+
+	void parseControls(ViaControls * controls, ViaInputStreams * input);
+
+	inline void measureFrequency(void) {
+
+#ifdef BUILD_F373
+
+			// store the length of the last period
+			periodCount = TIM2->CNT;
+
+			// reset the timer value
+			TIM2->CNT = 0;
+
+#endif
+
+#ifdef BUILD_VIRTUAL
+
+		periodCount = virtualTimer;
+		virtualTimer = 0;
+
+#endif
+
+	}
+
+	void doPLL(void);
+	void generateFrequency(void);
+
+};
+
+class SyncWavetable {
+
+	int32_t previousPhase = 0;
+	int32_t previousPhaseMod = 0;
+
+public:
+
+	// assigned per mode
+	int16_t * fm;
+	int16_t * pm;
+	int16_t * pwm;
+	int16_t * morphMod;
+	int32_t cv2Offset = 0;
+	int32_t cv3Offset = 0;
+	uint32_t tableSize = 0;
+
+	// generated externally
+	int32_t phaseReset = 1;
+	int32_t increment = 0;
+	int32_t morphBase = 0;
+
+	// results
+	int32_t phaseMod = 0;
+	uint32_t phase = 0;
+	int32_t ghostPhase = 0;
+	int32_t phaseEvent = 0;
+	int32_t delta = 0;
+
+	int32_t phaseOut[32];
+	int32_t signalOut[32];
+
+	int32_t oversamplingFactor = 3;
+	int32_t bufferSize = 8;
+
+	void parseControls(ViaControls * controls);
+
+	inline int32_t incrementPhase(uint32_t * phaseDistTable);
+
+	void oversample(uint32_t * wavetable,
+			uint32_t * phaseDistTable);
+
+	void spline(uint32_t * wavetable,
+			uint32_t * phaseDistTable);
+
+	void advance(uint32_t * wavetable,
+			uint32_t * phaseDistTable) {
+		if (increment > (1 << 22)) {
+			oversample(wavetable, phaseDistTable);
+		} else {
+			spline(wavetable, phaseDistTable);
+		}
+	}
+
+
+};
 
 #define SYNC_BUFFER_SIZE 8
 
