@@ -256,7 +256,7 @@ enum gateseq_aux4Modes {
 void gateseqTouchLink (void *);
 
 /// Gateseq module
-class ViaGateseq : public ViaModule {
+class ViaGateseq : public TARGET_VIA {
 
 public:
 

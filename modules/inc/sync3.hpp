@@ -18,7 +18,7 @@
 /// Callback to link to the C code in the STM32 Sync3 Sense Library.
 void sync3TouchLink (void * uiVoid);
 
-class ViaSync3 : public ViaModule {
+class ViaSync3 : public TARGET_VIA {
 
 public:
 
@@ -470,8 +470,12 @@ public:
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
-
+		#ifdef BUILD_F373
 		int32_t reading = TIM2->CNT;
+		#endif
+		#ifdef BUILD_VIRTUAL
+		int32_t reading = 0;
+		#endif
 
 		tapTempo = 0;
 
@@ -479,8 +483,19 @@ public:
 			errorPileup ++;
 			advanceSubharm();
 		} else {
+			#ifdef BUILD_F373
 			TIM2->CNT = 0;
+			#endif
+			#ifdef BUILD_VIRTUAL
+			////////
+			#endif
+
+			#ifdef BUILD_F373
 			int32_t playbackPosition = (VIA_SYNC3_BUFFER_SIZE * 2) - DMA1_Channel5->CNDTR;
+			#endif
+			#ifdef BUILD_VIRTUAL
+			int32_t playbackPosition = 0;
+			#endif
 
 			periodCount = reading;
 
@@ -556,6 +571,8 @@ public:
 	}
 	void buttonPressedCallback(void) {
 
+		#ifdef BUILD_F373
+
 		int32_t reading = TIM2->CNT;
 		TIM2->CNT = 0;
 		tapTempo = 1;
@@ -570,6 +587,8 @@ public:
 		if (runtimeDisplay) {
 			setLEDB(1);
 		}
+
+		#endif
 
 	}
 	void buttonReleasedCallback(void) {
@@ -647,7 +666,17 @@ public:
 
 		if (tapTempo) {
 
+			#ifdef BUILD_F373
+
 			int32_t playbackPosition = (VIA_SYNC3_BUFFER_SIZE * 2) - DMA1_Channel5->CNDTR;
+
+			#endif
+
+			#ifdef BUILD_VIRTUAL
+
+			int32_t playbackPosition = 0;
+
+			#endif
 
 			advanceSubharm();
 
@@ -689,10 +718,14 @@ public:
 			lastKey1 = key1;
 			lastKey2 = key2;
 			lastKey3 = key3;
+			#ifdef BUILD_F373
 			TIM18->CR1 |= TIM_CR1_CEN;
+			#endif
 
 		} else {
+			#ifdef BUILD_F373
 			TIM17->CR1 &= ~TIM_CR1_CEN;
+			#endif
 		}
 
 	}

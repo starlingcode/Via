@@ -18,7 +18,7 @@
 /// Callback to link to the C code in the STM32 Touch Sense Library.
 void touchTouchLink (void * uiVoid);
 
-class ViaTouch : public ViaModule {
+class ViaTouch : public TARGET_VIA {
 
 public:
 
@@ -226,7 +226,10 @@ public:
 	}
 	void slowConversionCallback(void) {
 
+
+		#ifdef BUILD_F373
 		rawButton2Reading = __USAT(MyTKeys[0].p_ChD->Ref - MyTKeys[0].p_ChD->Meas, 8) << 4;
+		#endif
 
 		setRedLED(button2Reading);
 

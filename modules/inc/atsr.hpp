@@ -21,7 +21,7 @@ void atsrTouchLink (void *);
 /// Calibration/template module class.
 
 /** A simple self calibration tool that doubles as an introductory template.*/
-class ViaAtsr : public ViaModule {
+class ViaAtsr : public TARGET_VIA {
 
 public:
 

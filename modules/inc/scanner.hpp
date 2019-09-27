@@ -288,7 +288,7 @@ enum aux4Modes {
 
 void scannerTouchLink (void *);
 
-class ViaScanner : public ViaModule {
+class ViaScanner : public TARGET_VIA {
 
 	int32_t readIndex = 0;
 

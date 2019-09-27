@@ -12,10 +12,12 @@
 
 #ifdef BUILD_F373
 #include "via_f373_module.hpp"
+#define TARGET_VIA ViaModuleF373
 #endif
 
 #ifdef BUILD_VIRTUAL
 #include "via_virtual_module.hpp"
+#define TARGET_VIA ViaModuleGeneric
 #endif
 
 

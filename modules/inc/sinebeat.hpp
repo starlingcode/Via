@@ -5,8 +5,6 @@
 #include <via_platform_binding.hpp>
 #include <dsp.hpp>
 
-#ifdef BUILD_F373
-
 /// Macro used to specify the number of samples to per DAC transfer.
 #define SINEBEAT_BUFFER_SIZE 1
 
@@ -14,7 +12,7 @@
 void sinebeatTouchLink (void *);
 
 /// From https://gist.github.com/Skoddiethecat/174d4d9d35ea1a80f94da899a2c2075d
-class ViaSinebeat : public ViaModule {
+class ViaSinebeat : public TARGET_VIA {
 
 public:
 
@@ -320,7 +318,9 @@ public:
 			setBlueLED(4095);
 		}
 		int32_t srMod = inputs.cv2Samples[0];
+		#ifdef BUILD_F373
 		TIM6->ARR = 1440 + controls.knob2Value + (srMod >> 4) + 2048;
+		#endif
 	}
 	void auxTimer1InterruptCallback(void) {
 
@@ -353,7 +353,5 @@ public:
 	}
 
 };
-
-#endif
 
 #endif /* INC_Calib_HPP_ */

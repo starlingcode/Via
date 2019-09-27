@@ -635,6 +635,13 @@ static inline int32_t fast_15_16_lerp(int32_t in0, int32_t in1, int32_t frac) {
 	return in0 + (((in1 - in0) * frac) >> 16);
 }
 
+// kludged to hard code a half word swap
+static inline uint32_t __ROR(uint32_t in, uint32_t rotate) {
+
+	return (in >> 16) | ((in & 0xFFFF) << 16);
+
+}
+
 // same value ranges
 
 // lower quality but faster?

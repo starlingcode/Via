@@ -235,7 +235,7 @@ enum meta_aux4Modes {phasor, contour};
 
 void metaTouchLink (void *);
 
-class ViaMeta : public ViaModule {
+class ViaMeta : public TARGET_VIA {
 
 public:
 

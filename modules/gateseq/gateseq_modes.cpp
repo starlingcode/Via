@@ -57,10 +57,10 @@ void ViaGateseq::handleButton3ModeChange(int32_t mode) {
 
 
 	if (mode == 1 || mode == 3) {
-		SET_BLUE_LED_ONOFF(1);
+		setBlueLEDAlt(1);
 
 	} else {
-		SET_BLUE_LED_ONOFF(0);
+		setBlueLEDAlt(0);
 
 	}
 

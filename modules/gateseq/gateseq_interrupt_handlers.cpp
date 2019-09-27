@@ -248,7 +248,7 @@ void ViaGateseq::halfTransferCallback() {
 #ifdef BUILD_F373
 
 	if (runtimeDisplay) {
-		SET_BLUE_LED_ONOFF((outputs.dac2Samples[0] >> 7) > pwmCounter);
+		setBlueLEDAlt((outputs.dac2Samples[0] >> 7) > pwmCounter);
 	}
 
 	pwmCounter ++;

@@ -20,7 +20,7 @@ void osc3TouchLink (void *);
 /// Calibration/template module class.
 
 /** A simple self calibration tool that doubles as an introductory template.*/
-class ViaOsc3 : public ViaModule {
+class ViaOsc3 : public TARGET_VIA {
 
 public:
 
@@ -685,13 +685,19 @@ public:
 			unity = !clockedBeat;
 		}
 		auxLogicHigh = 1;
-
+		#ifdef BUILD_F373
 		int32_t beatTime = TIM2->CNT;
+		#endif
+		#ifdef BUILD_VIRTUAL
+		int32_t beatTime = 0;
+		#endif
 		pllPileup += 1;
 
 		if (beatTime > (45 * 128)) {
 
+			#ifdef BUILD_F373
 			TIM2->CNT = 0;
+			#endif
 
 			int32_t error = aPhase - bPhase;
 

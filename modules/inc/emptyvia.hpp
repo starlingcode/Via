@@ -15,7 +15,7 @@
 /// Callback to link to the C code in the STM32 Touch Sense Library.
 void emptyviaTouchLink (void * uiVoid);
 
-class ViaEmptyvia : public ViaModule {
+class ViaEmptyvia : public TARGET_VIA {
 
 public:
 
