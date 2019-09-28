@@ -190,4 +190,34 @@ void ViaControls::updateSlowExtra(void) {
 
 }
 
+void ViaControls::updateNoAverage(void) {
+
+#ifdef BUILD_F373
+
+	int32_t cv1Average = 0;
+	int32_t knob1Average = 0;
+	int32_t knob2Average = 0;
+	int32_t knob3Average = 0;
+
+	for (int i = 0; i < 16; i = i + 4) {
+		cv1Average += controlRateInputs[i];
+		knob1Average += controlRateInputs[i + 2];
+		knob2Average += controlRateInputs[i + 3];
+		knob3Average += controlRateInputs[i + 1];
+	}
+
+	cv1Value = ((4095 << 2) - cv1Average) >> 2;
+	knob1Value = knob1Average >> 2;
+	knob2Value = knob2Average >> 2;
+	knob3Value = knob3Average >> 2;
+#endif
+#ifdef BUILD_VIRTUAL
+	cv1Average = cv1;
+	knob1Average = knob1;
+	knob2Average = knob2;
+	knob3Average = knob3;
+#endif
+
+}
+
 

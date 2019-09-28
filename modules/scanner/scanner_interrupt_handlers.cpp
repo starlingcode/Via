@@ -38,16 +38,6 @@ void ViaScanner::buttonReleasedCallback(void) {
 
 void ViaScanner::ioProcessCallback(void) {
 
-//	setLogicOut(readIndex, runtimeDisplay);
-//	inputs.trigSamples[readIndex] = inputs.trigInput;
-//	inputs.trigInput = 1;
-//	reverseBuffer[readIndex] = reverseSignal;
-//	inputs.auxTrigSamples[readIndex] = inputs.auxTrigInput;
-//
-//	readIndex++;
-//
-//	readIndex &= SCANNER_BUFFER_SIZE*2 - 1;
-
 }
 
 void ViaScanner::halfTransferCallback(void) {

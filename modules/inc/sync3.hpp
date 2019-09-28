@@ -268,6 +268,7 @@ public:
 
 	int32_t tapTempo = 0;
 	int32_t lastTap = 0;
+	uint32_t measurementDivider = 1;
 
 	int32_t ratioRoundRobin = 0;
 
@@ -525,6 +526,8 @@ public:
 			phaseSpan /= denominator3Select;
 			increment4 = (60 * (phaseSpan + error))/(periodCount);
 
+			measurementDivider = errorPileup + 1;
+
 			errorPileup = 0;
 
 			uint32_t ratioDelta = (key1 != lastKey1) | (key2 != lastKey2) | (key3 != lastKey3);
@@ -578,6 +581,7 @@ public:
 		tapTempo = 1;
 		periodCount = __USAT((reading + lastTap) >> 1, 28);
 		lastTap = reading;
+		measurementDivider = 1;
 		TIM17->CNT = 0;
 		TIM17->CR1 |= TIM_CR1_CEN;
 		TIM17->ARR = periodCount >> 12;
@@ -661,6 +665,19 @@ public:
 
 		ratioRoundRobin = (ratioRoundRobin >= 2) ? 0 : ratioRoundRobin + 1;
 
+		if (!tapTempo && (TIM2->CNT > periodCount * 4)) {
+			tapTempo = 1;
+			TIM17->CNT = 0;
+			TIM17->CR1 |= TIM_CR1_CEN;
+			TIM17->ARR = periodCount >> 12;
+			TIM18->CNT = 0;
+			TIM18->CR1 |= TIM_CR1_CEN;
+			TIM18->ARR = periodCount >> 13;
+			if (runtimeDisplay) {
+				setLEDB(1);
+			}
+		}
+
 	}
 	void auxTimer1InterruptCallback(void) {
 
@@ -680,26 +697,26 @@ public:
 
 			advanceSubharm();
 
-			divCount2 += errorPileup + 1;
+			divCount2 += measurementDivider;
 			divCount2 %= denominator1Select;
 			int32_t error = (divCount2 * sync1Div * numerator1Alt) - phases2[playbackPosition];
-			uint64_t phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator1Alt;
+			uint64_t phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator1Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator1Select;
 			increment2 = (60 * (phaseSpan + error))/(periodCount);
 
-			divCount3 += errorPileup + 1;
+			divCount3 += measurementDivider;
 			divCount3 %= denominator2Select;
 			error = (divCount3 * sync2Div * numerator2Alt) - phases3[playbackPosition] + (1 << 30) + phaseModTracker2;
-			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator2Alt;
+			phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator2Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator2Select;
 			increment3 = (60 * (phaseSpan + error))/(periodCount);
 
-			divCount4 += errorPileup + 1;
+			divCount4 += measurementDivider;
 			divCount4 %= denominator3Select;
 			error = (divCount4 * sync3Div * numerator3Alt) - phases4[playbackPosition] + (1 << 31) + phaseModTracker2;
-			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator3Alt;
+			phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator3Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator3Select;
 			increment4 = (60 * (phaseSpan + error))/(periodCount);

@@ -6,6 +6,69 @@ struct ViaModuleTest {
 
 public:
 
+	ViaControls controls;
+
+	int32_t inputBufferSize;
+	ViaInputStreams inputs;
+
+	int32_t outputBufferSize;
+	ViaOutputStreams outputs;
+
+	inline int32_t getCV1(void) {
+		return __USAT(controls.cv1Value - cv1Calibration, 12);
+	}
+
+	inline int32_t getCV2(void) {
+		int32_t sample = inputs.cv2Samples[0];
+		return -sample + cv2Calibration;
+	}
+
+	inline int32_t getCV3(void) {
+		int32_t sample = inputs.cv2Samples[0];
+		return -sample + cv2Calibration;
+	}
+
+	inline int32_t getKnob1(void) {
+		return controls.knob1Value;
+	}
+
+	inline int32_t getKnob2(void) {
+		return controls.knob1Value;
+	}
+
+	inline int32_t getKnob3(void) {
+		return controls.knob1Value;
+	}
+
+	inline void writeALevel(uint32_t value, uint32_t index) {
+		outputs.dac1Samples[index] = value;
+	}
+
+	inline void writeBLevel(uint32_t value, uint32_t index) {
+		outputs.dac2Samples[index] = value;
+	}
+
+	inline void writeAuxLevel(uint32_t value, uint32_t index) {
+		outputs.dac2Samples[index] = 4095 - value;
+	}
+
+	inline void writeAuxLevelCalibrated(uint32_t value, uint32_t index) {
+		outputs.dac3Samples[index] = __USAT((4095 - value) + dac3Calibration, 12);
+	}
+
+	void ioStreamInit(void) {
+
+		static_cast<Target*>(this)->ioStreamInitAction();
+		
+	} 
+
+	int32_t cv2Calibration = 0;
+	int32_t cv3Calibration = 0;
+	int32_t cv1Calibration = 0;
+	int32_t dac3Calibration = 0;
+
+	int32_t calibrationPacket = 0;
+
 	void decodeCalibrationPacket(void) {
 
 		static_cast<Target*>(this)->decodeCalibrationPacketAction();
@@ -24,18 +87,32 @@ public:
 		
 	}
 
-	void ioStreamInit(void) {
+	volatile uint32_t * aLogicOutput;
+	volatile uint32_t * auxLogicOutput;
+	volatile uint32_t * shAOutput;
+	volatile uint32_t * shBOutput;
 
-		static_cast<Target*>(this)->ioStreamInitAction();
-		
-	}
+	volatile uint32_t * redLevel;
+	volatile uint32_t * greenLevel;
+	volatile uint32_t * blueLevel;
 
+	volatile uint32_t * ledAOutput;
+	volatile uint32_t * ledBOutput;
+	volatile uint32_t * ledCOutput;
+	volatile uint32_t * ledDOutput;
 
 	void initializeAuxOutputs(void) {
 
 		static_cast<Target*>(this)->initializeAuxOutputsAction();
 		
 	}
+
+	int32_t button1Input;
+	int32_t button2Input;
+	int32_t button3Input;
+	int32_t button4Input;
+	int32_t button5Input;
+	int32_t button6Input;
 
 	/// Set main logic output with 1, reset with 0. Accepts 0 or 1, other values will not work, for safety pass (value != 0).
 	inline void setLogicA(int32_t high) {
@@ -87,29 +164,6 @@ public:
 
 	}
 
-	inline void setLogicOutputsLEDOnNoA(uint32_t logicA, uint32_t auxLogic,
-			uint32_t shA, uint32_t shB) {
-
-		// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
-		// LEDB_HIGH_MASK -> SH_B_SAMPLE_MASK >> 16 << 5 (pin 9 to pin 14, C)
-		// LEDC_HIGH_MASK -> ALOGIC_HIGH_MASK >> 16 >> 11 (pin 13 to pin 2, A)
-		// LEDD_HIGH_MASK -> BLOGIC_HIGH_MASK >> 16 >> 13 (pin 15 to pin 2, B)
-
-	#define LEDA_MASK (__ROR(shA, 16) >> 1)
-	#define LEDB_MASK (__ROR(shB, 16) << 5)
-	#define LEDC_MASK (__ROR(logicA, 16) >> 11)
-
-		//combine the mask variables for a shared GPIO group with a bitwise or
-		*aLogicOutput = (logicA | LEDB_MASK);
-
-		*auxLogicOutput = (auxLogic | LEDC_MASK);
-
-		*shAOutput = (shA | shB);
-
-		// *ledAOutput = LEDA_MASK;
-
-	}
-
 	/**
 	 * \brief Set all GPIO outputs at once.
 	 *
@@ -147,16 +201,6 @@ public:
 
 	}
 
-	inline void setLogicOutNoA(int32_t writeIndex, int32_t runtimeDisplay) {
-
-		if (runtimeDisplay) {
-			setLogicOutputsLEDOnNoA(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
-		} else {
-			setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
-		}
-
-	}
-
 	/**
 	 *
 	 * \brief Same as setLogicOut, but never set the LEDs.
@@ -167,62 +211,6 @@ public:
 		setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
 
 	}
-
-
-	//@{
-	/// Pointer to GPIO control registers. See setLogicOut() for value information.
-	volatile uint32_t * aLogicOutput;
-	volatile uint32_t * auxLogicOutput;
-	volatile uint32_t * shAOutput;
-	volatile uint32_t * shBOutput;
-	//@}
-
-	//@{
-	/// Pointer to RGB LED timer PWM control registers. Valid range 0 - 4095.
-	volatile uint32_t * redLevel;
-	volatile uint32_t * greenLevel;
-	volatile uint32_t * blueLevel;
-	//@}
-
-	//@{
-	/// Pointer to the LED control register, see setLEDA() for value information.
-	volatile uint32_t * ledAOutput;
-	volatile uint32_t * ledBOutput;
-	volatile uint32_t * ledCOutput;
-	volatile uint32_t * ledDOutput;
-	//@}
-
-	//@{
-	/// Pointer to touch button state from the touch sense library.
-	int32_t button1Input;
-	int32_t button2Input;
-	int32_t button3Input;
-	int32_t button4Input;
-	int32_t button5Input;
-	int32_t button6Input;
-	//@}
-
-	/// Set LED on with a non zero value and off with 0.
-
-	inline void setLEDA(int32_t on) {
-		*ledAOutput = ((uint32_t) GPIO_PIN_7) << (16 * (!on));
-	}
-
-	inline void setLEDB(int32_t on) {
-		*ledBOutput = ((uint32_t) GPIO_PIN_14) << (16 * (!on));
-	}
-
-	inline void setLEDC(int32_t on) {
-		*ledCOutput = ((uint32_t) GPIO_PIN_2) << (16 * (!on));
-	}
-
-	inline void setLEDD(int32_t on) {
-		*ledDOutput = ((uint32_t) GPIO_PIN_2) << (16 * (!on));
-	}
-
-	/// 16 samples from the hue space as RGB values with 12 bits per color channel.
-	rgb hueSpace[16] = {{4095, 0, 0}, {4095, 1228, 0}, {4095, 2457, 0}, {4095, 3685, 0}, {2047, 4095, 0}, {819, 4095, 0}, {0, 4095, 409}, {0, 4095, 1638}, {0, 4095, 4095}, {0, 2866, 4095}, {0, 1638, 4095}, {0, 409, 4095}, {2047, 0, 4095}, {3276, 0, 4095}, {4095, 0, 3685}, {4095, 0, 2456}};
-	rgb presetHues[6] = {{4095, 0, 0}, {0, 4095, 0}, {0, 0, 4095}, {2048, 2048, 0}, {0, 2048, 2048}, {2048, 0, 2048}};
 
 
 	/// Update red LED, 4095 fully on, 0 off.
@@ -247,6 +235,27 @@ public:
 		}
 	}
 
+	/// Update rbg with values 4095 fully on, 0 off. No disable variable.
+	void setRGB(rgb color) {
+		setRedLED(color.r);
+		setGreenLED(color.g);
+		setBlueLED(color.b);
+	}
+
+	/// Update rbg with values 4095 fully on, 0 off. Scale each value with a 16 bit int, 65535 fully on, 0 off.
+	void setRGBScaled(rgb color, int32_t scale) {
+		setRedLED((color.r * scale) >> 16);
+		setGreenLED((color.g * scale) >> 16);
+		setBlueLED((color.b * scale) >> 16);
+	}
+
+		/// Set RGB LED to 0.
+	void clearRGB() {
+		static_cast<Target*>(this)->setBlueLEDAlt(0);
+		setRGB({0, 0, 0});
+	}
+
+		// Used for preset behavior
 	void updateRGBPreset(int32_t uiTimer, int32_t presetNumber) {
 
 		int32_t hue = presetNumber;
@@ -262,24 +271,27 @@ public:
 
 	}
 
-	/// Update rbg with values 4095 fully on, 0 off. No disable variable.
-	void setRGB(rgb color) {
-		setRedLED(color.r);
-		setGreenLED(color.g);
-		setBlueLED(color.b);
+		/// 16 samples from the hue space as RGB values with 12 bits per color channel.
+	rgb hueSpace[16] = {{4095, 0, 0}, {4095, 1228, 0}, {4095, 2457, 0}, {4095, 3685, 0}, {2047, 4095, 0}, {819, 4095, 0}, {0, 4095, 409}, {0, 4095, 1638}, {0, 4095, 4095}, {0, 2866, 4095}, {0, 1638, 4095}, {0, 409, 4095}, {2047, 0, 4095}, {3276, 0, 4095}, {4095, 0, 3685}, {4095, 0, 2456}};
+	rgb presetHues[6] = {{4095, 0, 0}, {0, 4095, 0}, {0, 0, 4095}, {2048, 2048, 0}, {0, 2048, 2048}, {2048, 0, 2048}};
+
+
+	/// Set LED on with a non zero value and off with 0.
+
+	inline void setLEDA(int32_t on) {
+		*ledAOutput = ((uint32_t) GPIO_PIN_7) << (16 * (!on));
 	}
 
-	/// Update rbg with values 4095 fully on, 0 off. Scale each value with a 16 bit int, 65535 fully on, 0 off.
-	void setRGBScaled(rgb color, int32_t scale) {
-		setRedLED((color.r * scale) >> 16);
-		setGreenLED((color.g * scale) >> 16);
-		setBlueLED((color.b * scale) >> 16);
+	inline void setLEDB(int32_t on) {
+		*ledBOutput = ((uint32_t) GPIO_PIN_14) << (16 * (!on));
 	}
 
-	/// Set RGB LED to 0.
-	void clearRGB() {
-		static_cast<Target*>(this)->setBlueLEDAlt(0);
-		setRGB({0, 0, 0});
+	inline void setLEDC(int32_t on) {
+		*ledCOutput = ((uint32_t) GPIO_PIN_2) << (16 * (!on));
+	}
+
+	inline void setLEDD(int32_t on) {
+		*ledDOutput = ((uint32_t) GPIO_PIN_2) << (16 * (!on));
 	}
 
 	/// Set an enumerated pattern for 8 digits on the white LEDs. The LEDs increment clockwise from top left, with one LED on for 1-4 and 2 LEDs on for 5-8.
@@ -343,20 +355,6 @@ public:
 		setLEDC(0);
 		setLEDD(0);
 	}
-
-	int32_t cv2Calibration = 0;
-	int32_t cv3Calibration = 0;
-	int32_t cv1Calibration = 0;
-	int32_t dac3Calibration = 0;
-
-	int32_t calibrationPacket = 0;
-
-	ViaControls controls;
-
-	int32_t inputBufferSize;
-	int32_t outputBufferSize;
-	ViaInputStreams inputs;
-	ViaOutputStreams outputs;
 
 };
 

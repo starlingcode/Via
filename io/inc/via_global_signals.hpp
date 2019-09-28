@@ -63,12 +63,14 @@ public:
 	//@}
 
 
-	/// Update the average for each ADC with the latest value. TODO add methods to update values independently.
+	/// Update the average for each ADC with the latest value.
+	/// Should be easier to roll your own filter...
 	void update(void);
 	void updateSlow(void);
 	void updateExtra(void);
 	void updateSlowExtra(void);
 	void updateExtraNoCV1(void);
+	void updateNoAverage(void);
 
 };
 
@@ -84,6 +86,7 @@ public:
 	//@}
 	//@{
 	/// Value of the CV when no signal connected. Store an offset value for the SDADC.
+	/// Old and rickety, only used in SYNC
 	int16_t * cv2VirtualGround;
 	int16_t * cv3VirtualGround;
 	//@}
@@ -94,21 +97,12 @@ public:
 	 * No modules use a buffer because the DAC is updated at 50k so there is no need to store samples.
 	 * Instead, they just process the latest input value then set it to 1.
 	 */
-	int32_t * trigSamples;
+	// Old and rickety, only used in scanner
+	// int32_t * trigSamples;
 	int32_t trigInput;
-	int32_t * auxTrigSamples;
+	// int32_t * auxTrigSamples;
 	int32_t auxTrigInput;
 	//@}
-
-	inline int32_t getCV2(void) {
-		int32_t sample = cv2Samples[0];
-		return -sample;
-	}
-
-	inline int32_t getCV3(void) {
-		int32_t sample = cv3Samples[0];
-		return -sample;
-	}
 
 	/// Allocate memory acccording to the input buffer size
 	int32_t bufferSize;
@@ -121,13 +115,16 @@ public:
 		trigInput = 1;
 		auxTrigInput = 1;
 
+		// Currently only using the first index, can't figure out how to stream 32 bit words...
 		cv2Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int32_t));
 		cv3Samples = (int16_t*) malloc(2 * bufferSize * sizeof(int32_t));
+
 		cv2VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int32_t));
 		cv3VirtualGround = (int16_t*) malloc(2 * bufferSize * sizeof(int32_t));
 
-		trigSamples = (int32_t*) malloc(2 * bufferSize * sizeof(int32_t));
-		auxTrigSamples = (int32_t*) malloc(2 * bufferSize * sizeof(int32_t));
+		// theoretically used to collect trigger inputs at audio rate
+		// trigSamples = (int32_t*) malloc(2 * bufferSize * sizeof(int32_t));
+		// auxTrigSamples = (int32_t*) malloc(2 * bufferSize * sizeof(int32_t));
 
 		for (int32_t i = 0; i < bufferSize; i++) {
 
@@ -136,8 +133,8 @@ public:
 			cv2VirtualGround[i] = 0;
 			cv3VirtualGround[i] = 0;
 
-			trigSamples[i] = 0;
-			auxTrigSamples[i] = 0;
+			// trigSamples[i] = 0;
+			// auxTrigSamples[i] = 0;
 
 		}
 
@@ -157,6 +154,7 @@ public:
 	//@{
 	/// Memory address used to store a buffer of GPIO output.
 	/* Data stored as masks (see ViaModule::setLogicOut()). All current modules use a buffer of length 1 because the GPIO and synthesis methods are updated at 50k. */
+	/// Old and rickety, should be DMA or bust
 	uint32_t * shA;
 	uint32_t * shB;
 	uint32_t * logicA;
