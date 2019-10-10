@@ -505,6 +505,9 @@ public:
 			divCount2 += errorPileup + 1;
 			divCount2 %= denominator1Select;
 			int32_t error = (divCount2 * sync1Div * numerator1Alt) - phases2[playbackPosition];
+			if (reading < 2400000) {
+//				error = __SSAT(error, 27);
+			}
 			uint64_t phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator1Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator1Select;
@@ -513,6 +516,9 @@ public:
 			divCount3 += errorPileup + 1;
 			divCount3 %= denominator2Select;
 			error = (divCount3 * sync2Div * numerator2Alt) - phases3[playbackPosition] + (1 << 30) + phaseModTracker2;
+			if (reading < 2400000) {
+//				error = __SSAT(error, 27);
+			}
 			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator2Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator2Select;
@@ -521,6 +527,9 @@ public:
 			divCount4 += errorPileup + 1;
 			divCount4 %= denominator3Select;
 			error = (divCount4 * sync3Div * numerator3Alt) - phases4[playbackPosition] + (1 << 31) + phaseModTracker2;
+			if (reading < 2400000) {
+//				error = __SSAT(error, 27);
+			}
 			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator3Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator3Select;

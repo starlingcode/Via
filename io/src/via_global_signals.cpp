@@ -212,10 +212,10 @@ void ViaControls::updateNoAverage(void) {
 	knob3Value = knob3Average >> 2;
 #endif
 #ifdef BUILD_VIRTUAL
-	cv1Average = cv1;
-	knob1Average = knob1;
-	knob2Average = knob2;
-	knob3Average = knob3;
+	cv1Value = cv1;
+	knob1Value = knob1;
+	knob2Value = knob2;
+	knob3Value = knob3;
 #endif
 
 }
