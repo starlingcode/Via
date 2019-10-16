@@ -186,6 +186,18 @@ public:
 	int32_t cBasePitch = 0;
 	int32_t chordTranspose = 0;
 
+	#ifdef BUILD_F373
+
+	static const int32_t absoluteTune = 43900;
+
+	#endif
+
+	#ifdef BUILD_VIRTUAL
+
+	int32_t absoluteTune = 45729;
+
+	#endif
+
 	int32_t octave = 0;
 	int32_t octaveRange = 0;
 	int32_t octaveMult = 1;
@@ -363,19 +375,19 @@ public:
 
 			cBasePitch = fix16_mul(coarseTune,
 					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 43900);
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, fineTune);
 
 			int32_t chordMultiplier = scale[64 + octaveOffset + intervals[14 + scaleDegree + chords[chord][1]]] << 5;
 
 			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			aBasePitch = fix16_mul(aBasePitch, 43900);
+			aBasePitch = fix16_mul(aBasePitch, absoluteTune);
 			aBasePitch = fix16_mul(aBasePitch, fineTune) << chordTranspose;
 
 			chordMultiplier = scale[64 + octaveOffset + intervals[14 + scaleDegree + chords[chord][0]]] << 5;
 
 			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			bBasePitch = fix16_mul(bBasePitch, 43900);
+			bBasePitch = fix16_mul(bBasePitch, absoluteTune);
 			bBasePitch = fix16_mul(bBasePitch, fineTune) << chordTranspose;
 
 			detuneBase = 0;
@@ -394,7 +406,7 @@ public:
 			
 			cBasePitch = fix16_mul(expo.convert(root << 5) >> 3,
 					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 43900);
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
 			detuneBase = clockedBeat + (controls.knob3Value << 4);
 
@@ -454,19 +466,19 @@ public:
 
 			cBasePitch = fix16_mul(coarseTune,
 					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 43900);
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, fineTune);
 
 			int32_t chordMultiplier = scale[64 + octaveOffset + intervals[14 + chords[chord][1]]] << 5;
 
 			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			aBasePitch = fix16_mul(aBasePitch, 43900);
+			aBasePitch = fix16_mul(aBasePitch, absoluteTune);
 			aBasePitch = fix16_mul(aBasePitch, fineTune) << chordTranspose;
 
 			chordMultiplier = scale[64 + octaveOffset + intervals[14 + chords[chord][0]]] << 5;
 
 			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			bBasePitch = fix16_mul(bBasePitch, 43900);
+			bBasePitch = fix16_mul(bBasePitch, absoluteTune);
 			bBasePitch = fix16_mul(bBasePitch, fineTune) << chordTranspose;
 
 			detuneBase = 0;
@@ -485,7 +497,7 @@ public:
 
 			cBasePitch = fix16_mul(expo.convert(root << 5) >> 3,
 					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 43900);
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
 			detuneBase = clockedBeat + (controls.knob3Value << 4);
 
@@ -525,31 +537,27 @@ public:
 
 			cBasePitch = fix16_mul(coarseTune,
 					expo.convert(offset) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 43900);
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, fineTune);
 
-			int32_t chordMultiplier = scale[64 + intervals[14 + chords[chord][0]]] << 5;
-			int32_t chordMultiplier1 = scale[64 + intervals[14 + chords[chord + 1][0]]] << 5;
+			int32_t chordMultiplier = scale[64 + intervals[14 + chords[chord][1]]] << 5;
+			int32_t chordMultiplier1 = scale[64 + intervals[14 + chords[chord + 1][1]]] << 5;
 			chordMultiplier = chordMultiplier + (((chordMultiplier1 - chordMultiplier) * chordFrac) >> 12);
 
 			aBasePitch = fix16_mul(cBasePitch, expo.convert(chordMultiplier) >> 5);
-			aBasePitch = fix16_mul(aBasePitch, 43900);
-			aBasePitch = fix16_mul(aBasePitch, fineTune);
 
-			chordMultiplier = scale[64 + intervals[14 + chords[chord][1]]] << 5;
-			chordMultiplier1 = scale[64 + intervals[14 + chords[chord + 1][1]]] << 5;
+			chordMultiplier = scale[64 + intervals[14 + chords[chord][0]]] << 5;
+			chordMultiplier1 = scale[64 + intervals[14 + chords[chord + 1][0]]] << 5;
 			chordMultiplier = chordMultiplier + (((chordMultiplier1 - chordMultiplier) * chordFrac) >> 12);
 
 			bBasePitch = fix16_mul(cBasePitch, expo.convert(chordMultiplier) >> 5);
-			bBasePitch = fix16_mul(bBasePitch, 43900);
-			bBasePitch = fix16_mul(bBasePitch, fineTune);
 
-			detuneBase = 1;
+			detuneBase = 0;
 
 		} else {
 			cBasePitch = fix16_mul(expo.convert(knob1Index) >> 3,
 					expo.convert(offset) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 43900);
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
 			detuneBase = clockedBeat + (controls.knob3Value << 4);
 		}
@@ -626,19 +634,6 @@ public:
 		(this->*doDetune)(detuneMod);
 
 		cFreq = cBasePitch * octaveMult;
-
-		#ifdef BUILD_VIRTUAL
-
-		float aFreqFudge = (float) aFreq * (50.0f/48.0f);
-		aFreq = (int32_t) aFreqFudge;
-
-		float bFreqFudge = (float) bFreq * (50.0f/48.0f);
-		bFreq = (int32_t) bFreqFudge;
-
-		float cFreqFudge = (float) cFreq * (50.0f/48.0f);
-		cFreq = (int32_t) cFreqFudge;
-
-		#endif
 
 		int32_t pmInput = inputs.cv2Samples[0];
 		pmInput -= cv2Calibration;
