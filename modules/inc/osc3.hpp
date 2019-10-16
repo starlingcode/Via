@@ -613,6 +613,19 @@ public:
 
 		cFreq = cBasePitch * octaveMult;
 
+		#ifdef BUILD_VIRTUAL
+
+		float aFreqFudge = (float) aFreq * (50.0f/48.0f);
+		aFreq = (int32_t) aFreqFudge;
+
+		float bFreqFudge = (float) bFreq * (50.0f/48.0f);
+		bFreq = (int32_t) bFreqFudge;
+
+		float cFreqFudge = (float) cFreq * (50.0f/48.0f);
+		cFreq = (int32_t) cFreqFudge;
+
+		#endif
+
 		int32_t pmInput = inputs.cv2Samples[0];
 		pmInput -= cv2Calibration;
 
@@ -722,7 +735,7 @@ public:
 		int32_t beatTime = TIM2->CNT;
 		#endif
 		#ifdef BUILD_VIRTUAL
-		int32_t beatTime = 0;
+		int32_t beatTime = readMeasurementTimer();
 		#endif
 		pllPileup += 1;
 
@@ -730,6 +743,9 @@ public:
 
 			#ifdef BUILD_F373
 			TIM2->CNT = 0;
+			#endif
+			#ifdef BUILD_VIRTUAL
+			resetMeasurementTimer();
 			#endif
 
 			int32_t error = aPhase - bPhase;

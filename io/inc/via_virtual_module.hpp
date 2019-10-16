@@ -76,6 +76,68 @@ struct ViaModuleGeneric: ViaModuleTest<ViaModuleGeneric> {
 
 	}
 
+	uint32_t measurementTimerCount = 0;
+	uint32_t measurementTimerFractional = 0;
+	inline void advanceMeasurementTimer(void) {
+		measurementTimerCount += 1440;
+	}
+	inline void resetMeasurementTimer(void) {
+		measurementTimerCount = -measurementTimerFractional;
+	}
+	inline uint32_t readMeasurementTimer(void) {
+		return measurementTimerCount + measurementTimerFractional;
+	}
+
+	float timer1Count = 0.0f;
+	float timer1Prescaler = 0.3515625f;
+	float timer1Reload = 65536.0f;
+	float timer1Enable = 0.0f;
+
+	inline void advanceTimer1(void) {
+		timer1Count += timer1Prescaler * timer1Enable;
+		if (timer1Count >= timer1Reload) {
+			timer1Count = 0.0f;
+			auxTimer1InterruptCallback();
+		}
+	}
+	inline void resetTimer1(void) {
+		timer1Count = 0.0f;
+	}
+	inline float readTimer1(void) {
+		return timer1Count;
+	}
+	inline void enableTimer1(void) {
+		timer1Enable = 1.0f;
+	}
+	inline void disableTimer1(void) {
+		timer1Enable = 0.0f;
+	}
+
+	float timer2Count = 0.0f;
+	float timer2Prescaler = 0.3515625f;
+	float timer2Reload = 65536.0f;
+	float timer2Enable = 0.0f;
+
+	inline void advanceTimer2(void) {
+		timer2Count += timer2Prescaler * timer2Enable;
+		if (timer2Count >= timer2Reload) {
+			timer2Count = 0.0;
+			auxTimer2InterruptCallback();
+		}
+	}
+	inline void resetTimer2(void) {
+		timer2Count = 0.0f;
+	}
+	inline float readTimer2(void) {
+		return timer2Count;
+	}
+	inline void enableTimer2(void) {
+		timer2Enable = 1.0f;
+	}
+	inline void disableTimer2(void) {
+		timer2Enable = 0.0f;
+	}
+
 	/// Handle a rising edge at the main logic input
 	virtual void mainRisingEdgeCallback(void) {};
 	/// Handle a falling edge at the main logic input
