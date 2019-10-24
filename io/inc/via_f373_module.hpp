@@ -12,6 +12,28 @@
 
 struct ViaModuleF373: ViaModuleTest<ViaModuleF373> {
 
+	void processALogic(void) {
+
+	}
+	void processAuxLogic(void) {
+
+	}
+	void processSH(void) {
+
+	}
+	void processLEDA(void) {
+
+	}
+	void processLEDB(void) {
+
+	}
+	void processLEDC(void) {
+
+	}
+	void processLEDD(void) {
+
+	}
+
 	/// Connect module hardware IO
 	/** Connect the virtual module sample data streams to the DMA controller on the hardware. */
 	void ioStreamInitAction() {

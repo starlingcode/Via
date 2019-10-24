@@ -117,11 +117,13 @@ public:
 	/// Set main logic output with 1, reset with 0. Accepts 0 or 1, other values will not work, for safety pass (value != 0).
 	inline void setLogicA(int32_t high) {
 		*aLogicOutput = GET_ALOGIC_MASK(high);
+		static_cast<Target*>(this)->processALogic();
 	}
 
 	/// Set aux logic output with 1, reset with 0. Accepts 0 or 1, other values will not work, for safety pass (value != 0)
 	inline void setAuxLogic(int32_t high) {
 		*auxLogicOutput = GET_EXPAND_LOGIC_MASK(high);
+		static_cast<Target*>(this)->processAuxLogic();
 	}
 
 	/// Set aux logic output with 1, reset with 0. Accepts 0 or 1, other values will not work, for safety pass (value != 0)
@@ -131,6 +133,8 @@ public:
 		mask |= GET_SH_B_MASK(sampleB);
 
 		*shAOutput = mask;
+
+		static_cast<Target*>(this)->processSH();
 
 	}
 
@@ -162,6 +166,14 @@ public:
 
 		*ledAOutput = LEDA_MASK;
 
+		static_cast<Target*>(this)->processALogic();
+		static_cast<Target*>(this)->processAuxLogic();
+		static_cast<Target*>(this)->processSH();
+		static_cast<Target*>(this)->processLEDA();
+		static_cast<Target*>(this)->processLEDB();
+		static_cast<Target*>(this)->processLEDC();
+		static_cast<Target*>(this)->processLEDD();
+
 	}
 
 	/**
@@ -180,6 +192,10 @@ public:
 		*auxLogicOutput = (auxLogic);
 
 		*shAOutput = (shA | shB);
+
+		static_cast<Target*>(this)->processALogic();
+		static_cast<Target*>(this)->processAuxLogic();
+		static_cast<Target*>(this)->processSH();
 
 	}
 
@@ -280,18 +296,22 @@ public:
 
 	inline void setLEDA(int32_t on) {
 		*ledAOutput = ((uint32_t) GPIO_PIN_7) << (16 * (!on));
+		static_cast<Target*>(this)->processLEDA();
 	}
 
 	inline void setLEDB(int32_t on) {
 		*ledBOutput = ((uint32_t) GPIO_PIN_14) << (16 * (!on));
+		static_cast<Target*>(this)->processLEDB();
 	}
 
 	inline void setLEDC(int32_t on) {
 		*ledCOutput = ((uint32_t) GPIO_PIN_2) << (16 * (!on));
+		static_cast<Target*>(this)->processLEDC();
 	}
 
 	inline void setLEDD(int32_t on) {
 		*ledDOutput = ((uint32_t) GPIO_PIN_2) << (16 * (!on));
+		static_cast<Target*>(this)->processLEDD();
 	}
 
 	/// Set an enumerated pattern for 8 digits on the white LEDs. The LEDs increment clockwise from top left, with one LED on for 1-4 and 2 LEDs on for 5-8.

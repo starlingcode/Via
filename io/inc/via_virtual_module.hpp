@@ -25,6 +25,73 @@ struct ViaModuleGeneric: ViaModuleTest<ViaModuleGeneric> {
 	uint32_t blueLevelOut = 0;
 	uint32_t greenLevelOut = 0;
 
+	int32_t logicAState = 0;
+	int32_t auxLogicState = 0;
+	int32_t shAState = 0;
+	int32_t shBState = 0;
+	int32_t ledAState = 0;
+	int32_t ledBState = 0;
+	int32_t ledCState = 0;
+	int32_t ledDState = 0;
+
+	// 2 sets the "GPIO" high, 1 sets it low, 0 is a no-op
+    inline int32_t virtualLogicOut(int32_t logicOut, int32_t GPIO, uint32_t reg) {
+        uint32_t on = (((GPIO >> (reg + 16))) & 1);
+        uint32_t off = (((GPIO >> (reg))) & 1);
+        logicOut = logicOut + (on * 2) - off;
+        if (logicOut > 1) {
+        	return 1;
+        } else if (logicOut < 0) {
+        	return 0;
+        } else {
+        	return logicOut;
+        }
+    }
+
+	void processALogic(void) {
+
+		logicAState = virtualLogicOut(logicAState, GPIOC, 13);
+		GPIOC = 0;
+
+	}
+	void processAuxLogic(void) {
+
+		auxLogicState = virtualLogicOut(auxLogicState, GPIOA, 12);
+		GPIOA = 0;
+
+	}
+	void processSH(void) {
+
+		shAState = virtualLogicOut(shAState, GPIOB, 8);
+		shBState = virtualLogicOut(shBState, GPIOB, 9);
+		GPIOB = 0;
+
+	}
+	void processLEDA(void) {
+
+		ledAState = virtualLogicOut(ledAState, GPIOF, 7);
+		GPIOF = 0;
+
+	}
+	void processLEDB(void) {
+
+		ledBState = virtualLogicOut(ledBState, GPIOC, 14);
+		GPIOC = 0;
+
+	}
+	void processLEDC(void) {
+
+		ledCState = virtualLogicOut(ledCState, GPIOA, 2);
+		GPIOA = 0;
+
+	}
+	void processLEDD(void) {
+
+		ledDState = virtualLogicOut(ledDState, GPIOB, 2);
+		GPIOB = 0;		
+
+	}
+
 	/// Unused; currently the VCVRack plugin just writes and read values directly into and out of the module stream memory.
 	void ioStreamInitAction() {
 
