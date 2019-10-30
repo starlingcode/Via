@@ -8,9 +8,63 @@
 
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
-#include <signal_processors.hpp>
 
-#ifdef BUILD_F373
+class Delay {
+
+private:
+	int32_t * delayLine;
+	int32_t delayWrite = 0;
+	// int32_t lastReadPosition = 0;
+	// int32_t lastSample = 0;
+
+public:
+
+	int32_t delayLength = 4096;
+
+	void init(void) {
+		delayLine = (int32_t *) malloc(sizeof(int32_t) * delayLength);
+	}
+
+	// DC blocker from https://github.com/pichenettes/stmlib/blob/master/dsp/filter.h
+	// and https://www.dsprelated.com/freebooks/filters/DC_Blocker.html
+
+	int32_t dcBlockLastIn;
+	int32_t dcBlockLastOut;
+#define DC_BLOCK_COEFFICIENT 65208
+
+	int32_t processDCBlocker(int32_t input) {
+		int32_t output = input - dcBlockLastIn + fix16_mul(DC_BLOCK_COEFFICIENT, dcBlockLastOut);
+		dcBlockLastIn = input;
+		dcBlockLastOut = output;
+		return output;
+	}
+
+
+	int32_t delayTime = 65536;
+	int32_t feedback = 0;
+
+	inline int32_t read() {
+		int32_t readPosition = ((delayWrite) << 16) - delayTime;
+		readPosition &= (delayLength << 16) - 1;
+
+		int32_t readIndex = readPosition >> 16;
+		int32_t readFractional = readPosition & 0xFFFF;
+
+		return fast_15_16_lerp(delayLine[readIndex], delayLine[(readIndex + 1) & (delayLength - 1)], readFractional);
+
+	}
+
+	inline void write(int32_t input, int32_t feedbackSample) {
+		delayWrite += 1;
+		delayWrite &= delayLength - 1;
+
+		delayLine[delayWrite] = __SSAT(input +
+									fix16_mul(processDCBlocker(feedbackSample),
+											feedback),
+												15);
+	}
+
+};
 
 /// Macro used to specify the number of samples to per DAC transfer.
 #define DELAY_BUFFER_SIZE 1
@@ -20,7 +74,7 @@ void delayTouchLink (void *);
 
 /// Calibration/template module class.
 /** A simple self calibration tool that doubles as an introductory template.*/
-class ViaDelay : public ViaModule {
+class ViaDelay : public TARGET_VIA {
 
 public:
 
@@ -213,7 +267,6 @@ public:
 		render(DELAY_BUFFER_SIZE);
 	}
 	void slowConversionCallback(void) {
-		LOGICA_HIGH;
 		upsamplesLeft = 8;
 		controls.updateExtra();
 		int32_t rawControls = 4095 - __USAT(controls.cv1Value - 2048 + controls.knob1Value, 12);
@@ -221,7 +274,6 @@ public:
 		delayTimeTarget = revExpo.convert(rawControls);
 		delayTimeTarget = fix16_mul(delayTimeTarget, 160000);
 		slewFactor = (delayTimeTarget - lastTarget) >> 3;
-		LOGICA_LOW;
 
 	}
 	void auxTimer1InterruptCallback(void) {
@@ -254,7 +306,5 @@ public:
 	}
 
 };
-
-#endif
 
 #endif /* INC_Calib_HPP_ */

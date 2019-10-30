@@ -10,7 +10,8 @@
 
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
-#include "oscillators.hpp"
+#include "dsp.hpp"
+#include "stdio.h"
 
 /// Macro used to specify the number of samples to per DAC transfer.
 #define VIA_SYNC3_BUFFER_SIZE 24
@@ -18,7 +19,7 @@
 /// Callback to link to the C code in the STM32 Sync3 Sense Library.
 void sync3TouchLink (void * uiVoid);
 
-class ViaSync3 : public ViaModule {
+class ViaSync3 : public TARGET_VIA {
 
 public:
 
@@ -194,7 +195,7 @@ public:
 	uint32_t phaseModTracker2 = 0;
 	uint32_t phaseModTracker3 = 0;
 
-	uint32_t periodCount = 0;
+	uint32_t periodCount = 1000;
 	int32_t errorPileup = 0;
 	int32_t phaseLockOn = 0;
 	int32_t hardSync = 0;
@@ -268,6 +269,7 @@ public:
 
 	int32_t tapTempo = 0;
 	int32_t lastTap = 0;
+	uint32_t measurementDivider = 1;
 
 	int32_t ratioRoundRobin = 0;
 
@@ -365,14 +367,16 @@ public:
 		return ((int64_t) frac * (int64_t) in) >> 32;
 	}
 
+	int32_t lastPhaseModTracker = 0;
+
 	inline void phaseMod() {
 
 		int32_t phaseMod = -inputs.cv3Samples[0];
-		int32_t phaseModIncrement = (phaseMod - lastPhaseMod) << 11;
+		int32_t phaseModIncrement = (phaseMod - lastPhaseMod) << 12;
 		lastPhaseMod = phaseMod;
 		phaseModIncrement *= phaseModOn;
 		phaseModIncrement2 = phaseModIncrement;
-		phaseModTracker2 += (phaseModIncrement2 << 5);
+		phaseModTracker2 += (phaseModIncrement2 * 24);
 	}
 
 	void (ViaSync3::*updateOutputs)(int32_t writePosition);
@@ -470,8 +474,12 @@ public:
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
-
+		#ifdef BUILD_F373
 		int32_t reading = TIM2->CNT;
+		#endif
+		#ifdef BUILD_VIRTUAL
+		int32_t reading = readMeasurementTimer();
+		#endif
 
 		tapTempo = 0;
 
@@ -479,16 +487,27 @@ public:
 			errorPileup ++;
 			advanceSubharm();
 		} else {
+			#ifdef BUILD_F373
 			TIM2->CNT = 0;
 			int32_t playbackPosition = (VIA_SYNC3_BUFFER_SIZE * 2) - DMA1_Channel5->CNDTR;
+			#endif
+			#ifdef BUILD_VIRTUAL
+			resetMeasurementTimer();
+			int32_t playbackPosition = (reading % 1440)/60;
+			#endif
 
 			periodCount = reading;
 
 			advanceSubharm();
 
+			int32_t phaseModTracker = phaseModTracker2;
+
 			divCount2 += errorPileup + 1;
 			divCount2 %= denominator1Select;
 			int32_t error = (divCount2 * sync1Div * numerator1Alt) - phases2[playbackPosition];
+			if (reading < 2400000) {
+//				error = __SSAT(error, 27);
+			}
 			uint64_t phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator1Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator1Select;
@@ -496,7 +515,10 @@ public:
 
 			divCount3 += errorPileup + 1;
 			divCount3 %= denominator2Select;
-			error = (divCount3 * sync2Div * numerator2Alt) - phases3[playbackPosition] + (1 << 30) + phaseModTracker2;
+			error = (divCount3 * sync2Div * numerator2Alt) - phases3[playbackPosition] + (1 << 30) + phaseModTracker;
+			if (reading < 2400000) {
+//				error = __SSAT(error, 27);
+			}
 			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator2Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator2Select;
@@ -504,11 +526,16 @@ public:
 
 			divCount4 += errorPileup + 1;
 			divCount4 %= denominator3Select;
-			error = (divCount4 * sync3Div * numerator3Alt) - phases4[playbackPosition] + (1 << 31) + phaseModTracker2;
+			error = (divCount4 * sync3Div * numerator3Alt) - phases4[playbackPosition] + (1 << 31) + phaseModTracker;
+			if (reading < 2400000) {
+//				error = __SSAT(error, 27);
+			}
 			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator3Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator3Select;
 			increment4 = (60 * (phaseSpan + error))/(periodCount);
+
+			measurementDivider = errorPileup + 1;
 
 			errorPileup = 0;
 
@@ -556,11 +583,14 @@ public:
 	}
 	void buttonPressedCallback(void) {
 
+		#ifdef BUILD_F373
+
 		int32_t reading = TIM2->CNT;
 		TIM2->CNT = 0;
 		tapTempo = 1;
 		periodCount = __USAT((reading + lastTap) >> 1, 28);
 		lastTap = reading;
+		measurementDivider = 1;
 		TIM17->CNT = 0;
 		TIM17->CR1 |= TIM_CR1_CEN;
 		TIM17->ARR = periodCount >> 12;
@@ -570,6 +600,28 @@ public:
 		if (runtimeDisplay) {
 			setLEDB(1);
 		}
+
+		#endif
+		#ifdef BUILD_VIRTUAL
+
+		uint32_t reading = readMeasurementTimer();
+		resetMeasurementTimer();
+		tapTempo = 1;
+		periodCount = __USAT((reading + lastTap) >> 1, 28);
+		lastTap = reading;
+		measurementDivider = 1;
+		resetTimer1();
+		enableTimer1();
+		timer1Reload = (float) (periodCount/4096.0f);
+		resetTimer2();
+		enableTimer2();
+		timer2Reload = (float) (periodCount/8192.0f);
+		if (runtimeDisplay) {
+			setLEDB(1);
+		}
+
+		#endif
+
 
 	}
 	void buttonReleasedCallback(void) {
@@ -642,35 +694,79 @@ public:
 
 		ratioRoundRobin = (ratioRoundRobin >= 2) ? 0 : ratioRoundRobin + 1;
 
+		#ifdef BUILD_F373
+
+		if (!tapTempo && (TIM2->CNT > periodCount * 4)) {
+			tapTempo = 1;
+			TIM17->CNT = 0;
+			TIM17->CR1 |= TIM_CR1_CEN;
+			TIM17->ARR = periodCount >> 12;
+			TIM18->CNT = 0;
+			TIM18->CR1 |= TIM_CR1_CEN;
+			TIM18->ARR = periodCount >> 13;
+			if (runtimeDisplay) {
+				setLEDB(1);
+			}
+		}
+
+		#endif
+
+		#ifdef BUILD_VIRTUAL
+
+		if (!tapTempo && (readMeasurementTimer() > periodCount * 4)) {
+			tapTempo = 1;
+			resetTimer1();
+			enableTimer1();
+			timer1Reload = (float)periodCount/4096;
+			resetTimer2();
+			enableTimer2();
+			timer2Reload = (float)periodCount/8192;
+			if (runtimeDisplay) {
+				setLEDB(1);
+			}
+		}
+
+		#endif
+
 	}
 	void auxTimer1InterruptCallback(void) {
 
 		if (tapTempo) {
 
+			#ifdef BUILD_F373
+
 			int32_t playbackPosition = (VIA_SYNC3_BUFFER_SIZE * 2) - DMA1_Channel5->CNDTR;
+
+			#endif
+
+			#ifdef BUILD_VIRTUAL
+
+			int32_t playbackPosition = 0;
+
+			#endif
 
 			advanceSubharm();
 
-			divCount2 += errorPileup + 1;
+			divCount2 += measurementDivider;
 			divCount2 %= denominator1Select;
 			int32_t error = (divCount2 * sync1Div * numerator1Alt) - phases2[playbackPosition];
-			uint64_t phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator1Alt;
+			uint64_t phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator1Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator1Select;
 			increment2 = (60 * (phaseSpan + error))/(periodCount);
 
-			divCount3 += errorPileup + 1;
+			divCount3 += measurementDivider;
 			divCount3 %= denominator2Select;
 			error = (divCount3 * sync2Div * numerator2Alt) - phases3[playbackPosition] + (1 << 30) + phaseModTracker2;
-			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator2Alt;
+			phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator2Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator2Select;
 			increment3 = (60 * (phaseSpan + error))/(periodCount);
 
-			divCount4 += errorPileup + 1;
+			divCount4 += measurementDivider;
 			divCount4 %= denominator3Select;
 			error = (divCount4 * sync3Div * numerator3Alt) - phases4[playbackPosition] + (1 << 31) + phaseModTracker2;
-			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator3Alt;
+			phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator3Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator3Select;
 			increment4 = (60 * (phaseSpan + error))/(periodCount);
@@ -689,10 +785,20 @@ public:
 			lastKey1 = key1;
 			lastKey2 = key2;
 			lastKey3 = key3;
+			#ifdef BUILD_F373
 			TIM18->CR1 |= TIM_CR1_CEN;
+			#endif
+			#ifdef BUILD_VIRTUAL
+			enableTimer2();
+			#endif
 
 		} else {
+			#ifdef BUILD_F373
 			TIM17->CR1 &= ~TIM_CR1_CEN;
+			#endif
+			#ifdef BUILD_VIRTUAL
+			disableTimer1();
+			#endif
 		}
 
 	}
@@ -704,13 +810,17 @@ public:
 			setLEDB(0);
 		}
 
+		#ifdef BUILD_VIRTUAL 
+		disableTimer2();
+		#endif
+
 	}
 
 	int32_t numButton1Modes = 3;
 	int32_t numButton2Modes = 8;
 	int32_t numButton3Modes = 3;
 	int32_t numButton4Modes = 2;
-	int32_t numButton5Modes = 0;
+	int32_t numButton5Modes = 1;
 	int32_t numButton6Modes = 3;
 
 	void handleButton1ModeChange(int32_t);

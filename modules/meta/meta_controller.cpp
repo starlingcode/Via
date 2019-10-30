@@ -5,7 +5,7 @@
  *      Author: willmitchell
  */
 
-#include "oscillators.hpp"
+#include "meta.hpp"
 
 /// defined for linkage
 constexpr uint32_t ExpoConverter::expoTable[];

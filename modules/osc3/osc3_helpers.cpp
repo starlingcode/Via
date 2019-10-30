@@ -5,9 +5,9 @@
  *      Author: willmitchell
  */
 
-#include <osc.hpp>
+#include <osc3.hpp>
 
-void ViaOsc::renderSaw(int32_t writePosition) {
+void ViaOsc3::renderSaw(int32_t writePosition) {
 
 	updateFrequencies();
 
@@ -25,7 +25,7 @@ void ViaOsc::renderSaw(int32_t writePosition) {
 	uint32_t bLevel;
 	uint32_t cLevel;
 
-	int32_t samplesRemaining = OSC_BUFFER_SIZE;
+	int32_t samplesRemaining = OSC3_BUFFER_SIZE;
 
 	while (samplesRemaining) {
 
@@ -49,7 +49,7 @@ void ViaOsc::renderSaw(int32_t writePosition) {
 
 }
 
-void ViaOsc::renderSquare(int32_t writePosition) {
+void ViaOsc3::renderSquare(int32_t writePosition) {
 
 	updateFrequencies();
 
@@ -67,7 +67,7 @@ void ViaOsc::renderSquare(int32_t writePosition) {
 	uint32_t bLevel;
 	uint32_t cLevel;
 
-	int32_t samplesRemaining = OSC_BUFFER_SIZE;
+	int32_t samplesRemaining = OSC3_BUFFER_SIZE;
 
 	while (samplesRemaining) {
 
@@ -91,7 +91,7 @@ void ViaOsc::renderSquare(int32_t writePosition) {
 
 }
 
-void ViaOsc::renderTri(int32_t writePosition) {
+void ViaOsc3::renderTri(int32_t writePosition) {
 
 	updateFrequencies();
 
@@ -109,7 +109,7 @@ void ViaOsc::renderTri(int32_t writePosition) {
 	uint32_t bLevel;
 	uint32_t cLevel;
 
-	int32_t samplesRemaining = OSC_BUFFER_SIZE;
+	int32_t samplesRemaining = OSC3_BUFFER_SIZE;
 
 	while (samplesRemaining) {
 
@@ -134,7 +134,7 @@ void ViaOsc::renderTri(int32_t writePosition) {
 
 }
 
-void ViaOsc::renderTrap(int32_t writePosition) {
+void ViaOsc3::renderTrap(int32_t writePosition) {
 
 	updateFrequencies();
 
@@ -152,7 +152,7 @@ void ViaOsc::renderTrap(int32_t writePosition) {
 	uint32_t bLevel;
 	uint32_t cLevel;
 
-	int32_t samplesRemaining = OSC_BUFFER_SIZE >> 1;
+	int32_t samplesRemaining = OSC3_BUFFER_SIZE >> 1;
 
 	while (samplesRemaining) {
 
@@ -160,9 +160,9 @@ void ViaOsc::renderTrap(int32_t writePosition) {
 		bPhaseWorker += bFreqHere + pmHere;
 		cPhaseWorker += cFreqHere;
 
-		aLevel = __SSAT((abs((int32_t) aPhaseWorker) >> 18) - 4095, 12);
-		bLevel = __SSAT((abs((int32_t) bPhaseWorker) >> 18) - 4095, 12);
-		cLevel = __SSAT((abs((int32_t) cPhaseWorker) >> 18) - 4095, 12);
+		aLevel = __SSAT((abs((int32_t) aPhaseWorker) >> 18) - 4096, 12);
+		bLevel = __SSAT((abs((int32_t) bPhaseWorker) >> 18) - 4096, 12);
+		cLevel = __SSAT((abs((int32_t) cPhaseWorker) >> 18) - 4096, 12);
 
 		outputs.dac1Samples[writePosition] = aLevel + 2048;
 		outputs.dac1Samples[writePosition + 1] = aLevel + 2048;

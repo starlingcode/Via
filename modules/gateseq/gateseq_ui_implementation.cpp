@@ -117,19 +117,9 @@ void ViaGateseq::ViaGateseqUI::button3EnterMenuCallback(void) {
 	this_module.setRedLED((button3Mode >> 1) * 4095);
 	this_module.setGreenLED(!(button3Mode >> 1) * 4095);
 	if (button3Mode == 1 || button3Mode == 3) {
-#ifdef BUILD_F373	
-		SET_BLUE_LED_ONOFF(1);
-#endif
-#ifdef BUILD_VIRTUAL
-		this_module.SET_BLUE_LED_ONOFF(1);
-#endif
+		this_module.setBlueLEDAlt(1);
 	} else {
-#ifdef BUILD_F373	
-	SET_BLUE_LED_ONOFF(0);
-#endif
-#ifdef BUILD_VIRTUAL
-		this_module.SET_BLUE_LED_ONOFF(0);
-#endif
+		this_module.setBlueLEDAlt(0);
 	}
 	resetTimerMenu();
 }

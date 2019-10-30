@@ -8,9 +8,7 @@
 
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
-#include <oscillators.hpp>
-
-#ifdef BUILD_F373
+#include <dsp.hpp>
 
 /// Macro used to specify the number of samples to per DAC transfer.
 #define CALIB_BUFFER_SIZE 8
@@ -20,7 +18,7 @@ void calibTouchLink (void *);
 
 /// Calibration/template module class.
 /** A simple self calibration tool that doubles as an introductory template.*/
-class ViaCalib : public ViaModule {
+class ViaCalib : public TARGET_VIA {
 
 public:
 
@@ -144,6 +142,16 @@ public:
 	void ui_dispatch(int32_t sig) {
 		this->calibUI.dispatch(sig);
 	};
+
+	/// Pack calibration values into 32 bit word
+	void encodeCalibrationPacket(uint32_t cv2Calibration, uint32_t cv3Calibration,
+			uint32_t cv1Calibration, uint32_t dac3Calibration) {
+
+		// from lsb, first 10 bits are cv2Calibration, next 10 are cv3Calibration, next 5 are cv1Calibration, last 7 are dac3 calibration
+		calibrationPacket = (cv2Calibration >> 1) | ((cv3Calibration >> 1) << 9) |
+				((cv1Calibration & 0b1111111) << 18) | ((dac3Calibration >> 2) << 25);
+
+	}
 
 	/// Base class for the implementation of different calibration stages.
 	/**
@@ -501,7 +509,5 @@ public:
 	}
 
 };
-
-#endif
 
 #endif /* INC_Calib_HPP_ */

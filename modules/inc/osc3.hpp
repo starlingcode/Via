@@ -5,22 +5,22 @@
  */
 
 /// Macro used to specify the number of samples to per DAC transfer.
-#define OSC_BUFFER_SIZE 32
+#define OSC3_BUFFER_SIZE 32
 
 /// Callback to link to the C code in the STM32 Touch Sense Library.
-void oscTouchLink (void *);
+void osc3TouchLink (void *);
 
 #ifndef INC_Calib_HPP_
 #define INC_Calib_HPP_
 
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
-#include <oscillators.hpp>
+#include <dsp.hpp>
 
 /// Calibration/template module class.
 
 /** A simple self calibration tool that doubles as an introductory template.*/
-class ViaOsc : public ViaModule {
+class ViaOsc3 : public TARGET_VIA {
 
 public:
 
@@ -31,7 +31,7 @@ public:
 	 * One C++ trick at a time for now.
 	 **/
 
-	class ViaOscUI: public ViaUI {
+	class ViaOsc3UI: public ViaUI {
 
 	public:
 
@@ -39,7 +39,7 @@ public:
 		 * Pointer to the outer class to allow access to data and methods.
 		 * See constructor and outer class constructor for details.
 		 */
-		ViaOsc& this_module;
+		ViaOsc3& this_module;
 
 
 		//@{
@@ -115,8 +115,8 @@ public:
 		void writeStockPresets(void) override {}
 
 		/// On construction, link the calibTouchLink callback to the STM32 touch sense library.
-		ViaOscUI(ViaOsc& x): this_module(x) {
-			linkUI((void *) &oscTouchLink, (void *) this);
+		ViaOsc3UI(ViaOsc3& x): this_module(x) {
+			linkUI((void *) &osc3TouchLink, (void *) this);
 		}
 
 		void blinkOnCallback(void) override {
@@ -144,7 +144,7 @@ public:
 	};
 
 	/// An instance of the UI implementation.
-	ViaOscUI oscUI;
+	ViaOsc3UI osc3UI;
 
 	/// A member that the UI implementation can use to turn the module's runtime display off.
 	int32_t runtimeDisplay = 1;
@@ -154,7 +154,7 @@ public:
 	/// For some reason I have it wrapped like this?
 	/// Perhaps the C code in the hardware executable mangled the namespace? Gotta check.
 	void ui_dispatch(int32_t sig) {
-		this->oscUI.dispatch(sig);
+		this->osc3UI.dispatch(sig);
 	};
 
 
@@ -164,7 +164,7 @@ public:
 	 *
 	 */
 
-	void (ViaOsc::*render)(int32_t writePosition);
+	void (ViaOsc3::*render)(int32_t writePosition);
 
 	void renderSaw(int32_t writePosition);
 	void renderSquare(int32_t writePosition);
@@ -185,6 +185,18 @@ public:
 	int32_t bBasePitch = 0;
 	int32_t cBasePitch = 0;
 	int32_t chordTranspose = 0;
+
+	#ifdef BUILD_F373
+
+	static const int32_t absoluteTune = 43900;
+
+	#endif
+
+	#ifdef BUILD_VIRTUAL
+
+	int32_t absoluteTune = 45729;
+
+	#endif
 
 	int32_t octave = 0;
 	int32_t octaveRange = 0;
@@ -278,24 +290,28 @@ public:
 	}
 
 
-	int32_t vOctStable = 0;
-	int32_t vOctTransitionPoint = 0;
-	int32_t lastStableVOct = 0;
+	int32_t vOctStableSemi = 0;
+	int32_t vOctTransitionPointSemi = 0;
+	int32_t lastStableVOctSemi = 0;
 
 	int32_t vOctHysterisisSemi(int32_t offset, int32_t control) {
 
-		if (vOctStable) {
-			vOctStable = ((offset - lastStableVOct) == 0);
-			vOctTransitionPoint = (offset > lastStableVOct) ? control & 0b1111111111100000 : lastStableVOct << 5;
-			lastStableVOct = offset;
+		if (vOctStableSemi) {
+			vOctStableSemi = ((offset - lastStableVOctSemi) == 0);
+			vOctTransitionPointSemi = (offset > lastStableVOctSemi) ? control & 0b1111111111100000 : lastStableVOctSemi << 5;
+			lastStableVOctSemi = offset;
 			return offset;
 		} else {
-			vOctStable = abs(control - vOctTransitionPoint) > 8;
-			lastStableVOct = vOctStable ? offset : lastStableVOct;
-			return lastStableVOct;
+			vOctStableSemi = abs(control - vOctTransitionPointSemi) > 8;
+			lastStableVOctSemi = vOctStableSemi ? offset : lastStableVOctSemi;
+			return lastStableVOctSemi;
 		}
 
 	}
+
+	int32_t vOctStable = 0;
+	int32_t vOctTransitionPoint = 0;
+	int32_t lastStableVOct = 0;
 
 	int32_t vOctHysterisisScale(int32_t offset, int32_t control) {
 
@@ -312,7 +328,7 @@ public:
 
 	}
 
-	void (ViaOsc::*updateBaseFreqs)(void) = &ViaOsc::updateBaseFreqsSmooth;
+	void (ViaOsc3::*updateBaseFreqs)(void) = &ViaOsc3::updateBaseFreqsSmooth;
 
 	void updateBaseFreqsScale(void) {
 
@@ -359,19 +375,19 @@ public:
 
 			cBasePitch = fix16_mul(coarseTune,
 					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, fineTune);
 
 			int32_t chordMultiplier = scale[64 + octaveOffset + intervals[14 + scaleDegree + chords[chord][1]]] << 5;
 
 			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			aBasePitch = fix16_mul(aBasePitch, 65762) >> 1;
+			aBasePitch = fix16_mul(aBasePitch, absoluteTune);
 			aBasePitch = fix16_mul(aBasePitch, fineTune) << chordTranspose;
 
 			chordMultiplier = scale[64 + octaveOffset + intervals[14 + scaleDegree + chords[chord][0]]] << 5;
 
 			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			bBasePitch = fix16_mul(bBasePitch, 65762) >> 1;
+			bBasePitch = fix16_mul(bBasePitch, absoluteTune);
 			bBasePitch = fix16_mul(bBasePitch, fineTune) << chordTranspose;
 
 			detuneBase = 0;
@@ -390,7 +406,7 @@ public:
 			
 			cBasePitch = fix16_mul(expo.convert(root << 5) >> 3,
 					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
 			detuneBase = clockedBeat + (controls.knob3Value << 4);
 
@@ -419,7 +435,17 @@ public:
 		root = knob1Index >> 5;
 		root = rootHysterisis(root, knob1Index);
 		// quanitzied
-		offset = scale[vOctHysterisisSemi(cv1Index >> 5, cv1Index)];
+		int32_t offsetIndex = vOctHysterisisScale(cv1Index >> 4, cv1Index);
+		offset = scale[offsetIndex >> 1];
+		int32_t next = scale[__USAT((offsetIndex >> 1) + 1, 7)];
+		int32_t distance = offset - next;
+		int32_t remainder = offsetIndex & 1;
+
+		if (distance == 2) {
+			offset = next;
+		} else if (remainder) {
+			offset = next;
+		} // else truncate
 
 		if (chordMode) {
 
@@ -440,19 +466,19 @@ public:
 
 			cBasePitch = fix16_mul(coarseTune,
 					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, fineTune);
 
 			int32_t chordMultiplier = scale[64 + octaveOffset + intervals[14 + chords[chord][1]]] << 5;
 
 			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			aBasePitch = fix16_mul(aBasePitch, 65762) >> 1;
+			aBasePitch = fix16_mul(aBasePitch, absoluteTune);
 			aBasePitch = fix16_mul(aBasePitch, fineTune) << chordTranspose;
 
 			chordMultiplier = scale[64 + octaveOffset + intervals[14 + chords[chord][0]]] << 5;
 
 			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			bBasePitch = fix16_mul(bBasePitch, 65762) >> 1;
+			bBasePitch = fix16_mul(bBasePitch, absoluteTune);
 			bBasePitch = fix16_mul(bBasePitch, fineTune) << chordTranspose;
 
 			detuneBase = 0;
@@ -471,7 +497,7 @@ public:
 
 			cBasePitch = fix16_mul(expo.convert(root << 5) >> 3,
 					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
 			detuneBase = clockedBeat + (controls.knob3Value << 4);
 
@@ -511,31 +537,27 @@ public:
 
 			cBasePitch = fix16_mul(coarseTune,
 					expo.convert(offset) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, fineTune);
 
-			int32_t chordMultiplier = scale[64 + intervals[14 + chords[chord][0]]] << 5;
-			int32_t chordMultiplier1 = scale[64 + intervals[14 + chords[chord + 1][0]]] << 5;
+			int32_t chordMultiplier = scale[64 + intervals[14 + chords[chord][1]]] << 5;
+			int32_t chordMultiplier1 = scale[64 + intervals[14 + chords[chord + 1][1]]] << 5;
 			chordMultiplier = chordMultiplier + (((chordMultiplier1 - chordMultiplier) * chordFrac) >> 12);
 
 			aBasePitch = fix16_mul(cBasePitch, expo.convert(chordMultiplier) >> 5);
-			aBasePitch = fix16_mul(aBasePitch, 65762) >> 1;
-			aBasePitch = fix16_mul(aBasePitch, fineTune);
 
-			chordMultiplier = scale[64 + intervals[14 + chords[chord][1]]] << 5;
-			chordMultiplier1 = scale[64 + intervals[14 + chords[chord + 1][1]]] << 5;
+			chordMultiplier = scale[64 + intervals[14 + chords[chord][0]]] << 5;
+			chordMultiplier1 = scale[64 + intervals[14 + chords[chord + 1][0]]] << 5;
 			chordMultiplier = chordMultiplier + (((chordMultiplier1 - chordMultiplier) * chordFrac) >> 12);
 
 			bBasePitch = fix16_mul(cBasePitch, expo.convert(chordMultiplier) >> 5);
-			bBasePitch = fix16_mul(bBasePitch, 65762) >> 1;
-			bBasePitch = fix16_mul(bBasePitch, fineTune);
 
-			detuneBase = 1;
+			detuneBase = 0;
 
 		} else {
 			cBasePitch = fix16_mul(expo.convert(knob1Index) >> 3,
-					expo.convert(cv1Index) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, 65762) >> 1;
+					expo.convert(offset) >> 2);
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
 			detuneBase = clockedBeat + (controls.knob3Value << 4);
 		}
@@ -600,7 +622,7 @@ public:
 
 	}
 
-	void (ViaOsc::*doDetune)(int32_t detuneMod);
+	void (ViaOsc3::*doDetune)(int32_t detuneMod);
 
 	inline void updateFrequencies(void) {
 
@@ -685,13 +707,22 @@ public:
 			unity = !clockedBeat;
 		}
 		auxLogicHigh = 1;
-
+		#ifdef BUILD_F373
 		int32_t beatTime = TIM2->CNT;
+		#endif
+		#ifdef BUILD_VIRTUAL
+		int32_t beatTime = readMeasurementTimer();
+		#endif
 		pllPileup += 1;
 
 		if (beatTime > (45 * 128)) {
 
+			#ifdef BUILD_F373
 			TIM2->CNT = 0;
+			#endif
+			#ifdef BUILD_VIRTUAL
+			resetMeasurementTimer();
+			#endif
 
 			int32_t error = aPhase - bPhase;
 
@@ -735,7 +766,7 @@ public:
 	}
 	void transferCompleteCallback(void) {
 		setLogicOutNoA(0, runtimeDisplay);
-		(this->*render)(OSC_BUFFER_SIZE);
+		(this->*render)(OSC3_BUFFER_SIZE);
 	}
 	void slowConversionCallback(void) {
 
@@ -744,6 +775,9 @@ public:
 		(this->*updateBaseFreqs)();
 
 		setAuxLogic(noteChange);
+		if (runtimeDisplay) {
+			setLEDA(noteChange);
+		}
 
 		if (clockedBeat) {
 			int32_t multiplierCV = -inputs.cv3Samples[0];
@@ -764,7 +798,7 @@ public:
 
 	}
 
-	int32_t numButton1Modes = 5;
+	int32_t numButton1Modes = 6;
 	int32_t numButton2Modes = 4;
 	int32_t numButton3Modes = 2;
 	int32_t numButton4Modes = 5;
@@ -779,29 +813,29 @@ public:
 	void handleButton6ModeChange(int32_t);
 
 	void readCalibrationPacket(void) {
-		calibrationPacket = oscUI.loadFromMemory(7);
+		calibrationPacket = osc3UI.loadFromMemory(7);
 		decodeCalibrationPacket();
 	}
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
-	ViaOsc() : oscUI(*this) {
+	ViaOsc3() : osc3UI(*this) {
 
 		/// Link the module GPIO registers.
 		initializeAuxOutputs();
 
 		/// Initialize the input stream buffers.
-		inputs.init(OSC_BUFFER_SIZE);
+		inputs.init(OSC3_BUFFER_SIZE);
 		/// Initialize the output stream buffers.
-		outputs.init(OSC_BUFFER_SIZE);
+		outputs.init(OSC3_BUFFER_SIZE);
 		/// Set the data members that will be used to determine DMA stream initialization in the hardware executable.
-		outputBufferSize = OSC_BUFFER_SIZE;
+		outputBufferSize = OSC3_BUFFER_SIZE;
 		inputBufferSize = 1;
 
-		render = &ViaOsc::renderTri;
-		doDetune = &ViaOsc::linearDetune;
+		render = &ViaOsc3::renderTri;
+		doDetune = &ViaOsc3::linearDetune;
 
 		/// Call the UI initialization that needs to happen after outer class construction.
-		oscUI.initialize();
+		osc3UI.initialize();
 
 		uint32_t optionBytes = readOptionBytes();
 		uint32_t ob1Data = optionBytes & 0xFFFF;
@@ -809,7 +843,7 @@ public:
 
 		if (ob1Data == 254 && ob2Data == 255) {
 			readCalibrationPacket();
-			oscUI.writeStockPresets();
+			osc3UI.writeStockPresets();
 			writeOptionBytes(6, 1);
 		} else if (ob1Data == 6) {
 			readCalibrationPacket();

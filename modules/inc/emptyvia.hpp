@@ -4,7 +4,7 @@
 
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
-#include "oscillators.hpp"
+#include "dsp.hpp"
 
 /// By default, the DAC buffer update rate is exactly synchronous with the SDADC conversions
 /// This macro allows you to specify 2, 3, 4, 6, 8, 12, 16, 24, or 32x oversampling
@@ -15,7 +15,7 @@
 /// Callback to link to the C code in the STM32 Touch Sense Library.
 void emptyviaTouchLink (void * uiVoid);
 
-class ViaEmptyvia : public ViaModule {
+class ViaEmptyvia : public TARGET_VIA {
 
 public:
 

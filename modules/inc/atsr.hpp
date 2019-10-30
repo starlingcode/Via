@@ -10,7 +10,7 @@
 
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
-#include <oscillators.hpp>
+#include <dsp.hpp>
 
 /// Macro used to specify the number of samples to per DAC transfer.
 #define VIA_ATSR_BUFFER_SIZE 32
@@ -21,7 +21,7 @@ void atsrTouchLink (void *);
 /// Calibration/template module class.
 
 /** A simple self calibration tool that doubles as an introductory template.*/
-class ViaAtsr : public ViaModule {
+class ViaAtsr : public TARGET_VIA {
 
 public:
 
@@ -387,11 +387,11 @@ public:
 			phase += releaseIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
+				module.releasing = 0;
 				module.atsrState = &module.resting;
 				module.atsrState->phase = 0;
 				module.atsrState->aLevel = 0;
 				module.atsrState->bLevel = 0;
-				module.releasing = 0;
 			} else {
 				aLevel = fix16_mul(aScale, module.evaluateR(MAX_PHASE - phase));
 				bLevel = 0;
@@ -423,11 +423,11 @@ public:
 			phase += releaseIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
+				module.releasing = 0;
 				module.atsrState = &module.resting;
 				module.atsrState->phase = 0;
 				module.atsrState->aLevel = 0;
 				module.atsrState->bLevel = 0;
-				module.releasing = 0;
 			} else {
 				aLevel = fix16_mul(aScale, module.evaluateR(MAX_PHASE - phase));
 				bLevel = fix16_mul(bScale, module.evaluateR(MAX_PHASE - phase));
@@ -459,11 +459,11 @@ public:
 			phase += releaseIncrement;
 			if (phase > 0xFFFFFFF) {
 				phase = 0xFFFFFFF;
+				module.releasing = 0;
 				module.atsrState = &module.resting;
 				module.atsrState->phase = 0;
 				module.atsrState->aLevel = 0;
 				module.atsrState->bLevel = 0;
-				module.releasing = 0;
 			} else {
 				aLevel = 0;
 				bLevel = module.evaluateR(MAX_PHASE - phase);

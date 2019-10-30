@@ -52,16 +52,16 @@ void ViaAtsr::render(int32_t writePosition) {
 #ifdef BUILD_F373
 
 	int32_t samplesRemaining = VIA_ATSR_BUFFER_SIZE;
-	int32_t pwmCounter = 0;
+	int32_t ditherCounter = 0;
 
 	while (samplesRemaining) {
 
-		outputs.dac1Samples[writePosition] = __USAT(aLevel + (pwmCounter < aPulseWidth), 12);
-		outputs.dac2Samples[writePosition] = __USAT(bLevel + (pwmCounter < bPulseWidth), 12);
+		outputs.dac1Samples[writePosition] = __USAT(aLevel + (ditherCounter < aPulseWidth), 12);
+		outputs.dac2Samples[writePosition] = __USAT(bLevel + (ditherCounter < bPulseWidth), 12);
 		outputs.dac3Samples[writePosition] = loopGateOut;
 
-		pwmCounter ++;
-		pwmCounter &= 7;
+		ditherCounter ++;
+		ditherCounter &= 7;
 		samplesRemaining --;
 		writePosition ++;
 	}

@@ -18,6 +18,9 @@
 #define GPIO_PIN_12 (1 << 12)
 #define GPIO_PIN_8 (1 << 8)
 #define GPIO_PIN_9 (1 << 9)
+#define GPIO_PIN_2 (1 << 2)
+#define GPIO_PIN_7 (1 << 7)
+#define GPIO_PIN_14 (1 << 14)
 
 #define ALOGIC_LOW_MASK (uint32_t)GPIO_PIN_13
 #define EXPAND_LOGIC_LOW_MASK (uint32_t)GPIO_PIN_12
@@ -39,6 +42,9 @@
 #define GET_EXPAND_LOGIC_VIRTUAL_MASK(X) (((X >> 12) | (X >> 27)) & 0b11)
 #define GET_SH_A_VIRTUAL_MASK(X) (((X >> 8) | (X >> 23)) & 0b11)
 #define GET_SH_B_VIRTUAL_MASK(X) (((X >> 9) | (X >> 24)) & 0b11)
+
+#define GET_LED1_VIRTUAL_MASK(X) (((X >> 13) | (X >> 28)) & 0b11)
+
 
 //@}
 
