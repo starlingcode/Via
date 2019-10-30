@@ -166,13 +166,30 @@ public:
 
 		*ledAOutput = LEDA_MASK;
 
-		static_cast<Target*>(this)->processALogic();
-		static_cast<Target*>(this)->processAuxLogic();
-		static_cast<Target*>(this)->processSH();
-		static_cast<Target*>(this)->processLEDA();
-		static_cast<Target*>(this)->processLEDB();
-		static_cast<Target*>(this)->processLEDC();
-		static_cast<Target*>(this)->processLEDD();
+		static_cast<Target*>(this)->processAllGPIO();
+
+	}
+
+	inline void setLogicOutputsLEDOnNoA(uint32_t logicA, uint32_t auxLogic,
+			uint32_t shA, uint32_t shB) {
+
+		// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
+		// LEDB_HIGH_MASK -> SH_B_SAMPLE_MASK >> 16 << 5 (pin 9 to pin 14, C)
+		// LEDC_HIGH_MASK -> ALOGIC_HIGH_MASK >> 16 >> 11 (pin 13 to pin 2, A)
+		// LEDD_HIGH_MASK -> BLOGIC_HIGH_MASK >> 16 >> 13 (pin 15 to pin 2, B)
+
+	#define LEDA_MASK (__ROR(shA, 16) >> 1)
+	#define LEDB_MASK (__ROR(shB, 16) << 5)
+	#define LEDC_MASK (__ROR(logicA, 16) >> 11)
+
+		//combine the mask variables for a shared GPIO group with a bitwise or
+		*aLogicOutput = (logicA | LEDB_MASK);
+
+		*auxLogicOutput = (auxLogic | LEDC_MASK);
+
+		*shAOutput = (shA | shB);
+
+		static_cast<Target*>(this)->processAllGPIO();
 
 	}
 
@@ -225,6 +242,16 @@ public:
 	inline void setLogicOutNoLED(int32_t writeIndex) {
 
 		setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
+
+	}
+
+	inline void setLogicOutNoA(int32_t writeIndex, int32_t runtimeDisplay) {
+
+		if (runtimeDisplay) {
+			setLogicOutputsLEDOnNoA(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
+		} else {
+			setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
+		}
 
 	}
 

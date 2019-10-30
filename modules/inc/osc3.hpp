@@ -689,39 +689,6 @@ public:
 
 	int32_t beatMultiplier = 1;
 
-	inline void setLogicOutNoA(int32_t writeIndex, int32_t runtimeDisplay) {
-
-		if (runtimeDisplay) {
-			setLogicOutputsLEDOnNoA(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
-		} else {
-			setLogicOutputsLEDOff(outputs.logicA[writeIndex], outputs.auxLogic[writeIndex], outputs.shA[writeIndex], outputs.shB[writeIndex]);
-		}
-
-	}
-
-	inline void setLogicOutputsLEDOnNoA(uint32_t logicA, uint32_t auxLogic,
-			uint32_t shA, uint32_t shB) {
-
-		// LEDA_HIGH_MASK -> SH_A_SAMPLE_MASK >> 16 >> 1 (pin 8 to pin 7, F)
-		// LEDB_HIGH_MASK -> SH_B_SAMPLE_MASK >> 16 << 5 (pin 9 to pin 14, C)
-		// LEDC_HIGH_MASK -> ALOGIC_HIGH_MASK >> 16 >> 11 (pin 13 to pin 2, A)
-		// LEDD_HIGH_MASK -> BLOGIC_HIGH_MASK >> 16 >> 13 (pin 15 to pin 2, B)
-
-	#define LEDA_MASK (__ROR(shA, 16) >> 1)
-	#define LEDB_MASK (__ROR(shB, 16) << 5)
-	#define LEDC_MASK (__ROR(logicA, 16) >> 11)
-
-		//combine the mask variables for a shared GPIO group with a bitwise or
-		*aLogicOutput = (logicA | LEDB_MASK);
-
-		*auxLogicOutput = (auxLogic | LEDC_MASK);
-
-		*shAOutput = (shA | shB);
-
-		// *ledAOutput = LEDA_MASK;
-
-	}
-
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
@@ -808,6 +775,9 @@ public:
 		(this->*updateBaseFreqs)();
 
 		setAuxLogic(noteChange);
+		if (runtimeDisplay) {
+			setLEDA(noteChange);
+		}
 
 		if (clockedBeat) {
 			int32_t multiplierCV = -inputs.cv3Samples[0];
@@ -828,7 +798,7 @@ public:
 
 	}
 
-	int32_t numButton1Modes = 5;
+	int32_t numButton1Modes = 6;
 	int32_t numButton2Modes = 4;
 	int32_t numButton3Modes = 2;
 	int32_t numButton4Modes = 5;

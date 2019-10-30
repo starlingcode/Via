@@ -160,9 +160,9 @@ void ViaOsc3::renderTrap(int32_t writePosition) {
 		bPhaseWorker += bFreqHere + pmHere;
 		cPhaseWorker += cFreqHere;
 
-		aLevel = __SSAT((abs((int32_t) aPhaseWorker) >> 18) - 4095, 12);
-		bLevel = __SSAT((abs((int32_t) bPhaseWorker) >> 18) - 4095, 12);
-		cLevel = __SSAT((abs((int32_t) cPhaseWorker) >> 18) - 4095, 12);
+		aLevel = __SSAT((abs((int32_t) aPhaseWorker) >> 18) - 4096, 12);
+		bLevel = __SSAT((abs((int32_t) bPhaseWorker) >> 18) - 4096, 12);
+		cLevel = __SSAT((abs((int32_t) cPhaseWorker) >> 18) - 4096, 12);
 
 		outputs.dac1Samples[writePosition] = aLevel + 2048;
 		outputs.dac1Samples[writePosition + 1] = aLevel + 2048;

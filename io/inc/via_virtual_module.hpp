@@ -92,6 +92,23 @@ struct ViaModuleGeneric: ViaModuleTest<ViaModuleGeneric> {
 
 	}
 
+	void processAllGPIO(void) {
+
+		logicAState = virtualLogicOut(logicAState, GPIOC, 13);
+		auxLogicState = virtualLogicOut(auxLogicState, GPIOA, 12);
+		shAState = virtualLogicOut(shAState, GPIOB, 8);
+		shBState = virtualLogicOut(shBState, GPIOB, 9);
+		ledAState = virtualLogicOut(ledAState, GPIOF, 7);
+		ledBState = virtualLogicOut(ledBState, GPIOC, 14);
+		ledCState = virtualLogicOut(ledCState, GPIOA, 2);
+		ledDState = virtualLogicOut(ledDState, GPIOB, 2);
+		GPIOA = 0;
+		GPIOB = 0;	
+		GPIOC = 0;	
+		GPIOF = 0;			
+
+	}
+
 	/// Unused; currently the VCVRack plugin just writes and read values directly into and out of the module stream memory.
 	void ioStreamInitAction() {
 

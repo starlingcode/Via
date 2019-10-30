@@ -33,6 +33,9 @@ struct ViaModuleF373: ViaModuleTest<ViaModuleF373> {
 	void processLEDD(void) {
 
 	}
+	void processAllGPIO(void) {
+		
+	}
 
 	/// Connect module hardware IO
 	/** Connect the virtual module sample data streams to the DMA controller on the hardware. */
