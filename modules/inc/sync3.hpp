@@ -11,7 +11,6 @@
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
 #include "dsp.hpp"
-#include "stdio.h"
 
 /// Macro used to specify the number of samples to per DAC transfer.
 #define VIA_SYNC3_BUFFER_SIZE 24
@@ -505,10 +504,7 @@ public:
 			divCount2 += errorPileup + 1;
 			divCount2 %= denominator1Select;
 			int32_t error = (divCount2 * sync1Div * numerator1Alt) - phases2[playbackPosition];
-			if (reading < 2400000) {
-//				error = __SSAT(error, 27);
-			}
-			uint64_t phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator1Alt;
+			int64_t phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator1Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator1Select;
 			increment2 = (60 * (phaseSpan + error))/(periodCount);
@@ -516,24 +512,18 @@ public:
 			divCount3 += errorPileup + 1;
 			divCount3 %= denominator2Select;
 			error = (divCount3 * sync2Div * numerator2Alt) - phases3[playbackPosition] + (1 << 30) + phaseModTracker;
-			if (reading < 2400000) {
-//				error = __SSAT(error, 27);
-			}
 			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator2Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator2Select;
-			increment3 = (60 * (phaseSpan + error))/(periodCount);
+			increment3 = (60 * (phaseSpan + (int64_t)error))/(periodCount);
 
 			divCount4 += errorPileup + 1;
 			divCount4 %= denominator3Select;
 			error = (divCount4 * sync3Div * numerator3Alt) - phases4[playbackPosition] + (1 << 31) + phaseModTracker;
-			if (reading < 2400000) {
-//				error = __SSAT(error, 27);
-			}
 			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator3Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator3Select;
-			increment4 = (60 * (phaseSpan + error))/(periodCount);
+			increment4 = (60 * (phaseSpan + (int64_t)error))/(periodCount);
 
 			measurementDivider = errorPileup + 1;
 
