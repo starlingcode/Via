@@ -12,6 +12,7 @@
 #include <via_platform_binding.hpp>
 #include "sync_scale_defs.hpp"
 #include "sync_tables.hpp"
+#include "stdio.h"
 
 
 class PllController {
@@ -73,6 +74,28 @@ public:
 		} else {
 			spline(wavetable, phaseDistTable);
 		}
+	}
+
+	uint32_t fix32Mul(uint32_t in0, uint32_t in1) {
+		uint64_t result = (uint64_t) in0 * (uint64_t) in1;
+		return result >> 32;
+	}
+
+	inline uint32_t phaseDist(uint32_t phase, uint32_t bend) {
+
+		bend = bend << 16;
+
+		if (phase < bend) {
+			uint32_t bendFrac = ((uint64_t) phase << 31) / bend;
+			return bendFrac;
+
+		} else {
+
+			uint32_t bendFrac = ((uint64_t) (phase - bend) << 31) / (0xffffffff - bend);
+			return (1 << 31) + bendFrac;
+
+		}
+
 	}
 
 

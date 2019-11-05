@@ -46,6 +46,7 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 	phase = localPhase;
 
 	int32_t localPWM = (int32_t) pwm[0];
+	localPWM <<= 1;
 	localPWM = __USAT(localPWM + cv2Offset + 32768, 16);
 	uint32_t pwmIndex = (localPWM >> 11);
 	uint32_t pwmFrac = (localPWM & 0x7FF) << 4;
@@ -57,9 +58,11 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 #define SPLINE_PWM_PHASE_FRAC (localPhase & 0x3FFFFFF) >> 11
 		// use this with the precalculated pwm to perform bilinear interpolation
 		// this accomplishes the
-	int32_t	localGhostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
-				pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
-				SPLINE_PWM_PHASE_FRAC);
+	// int32_t	localGhostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
+	// 			pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
+	// 			SPLINE_PWM_PHASE_FRAC);
+
+	int32_t localGhostPhase = phaseDist(localPhase, localPWM) >> 7;
 
 
 	int32_t morph = (int32_t) -morphMod[0];
@@ -136,9 +139,11 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 #define OS_PWM_PHASE_FRAC (localPhase & 0x3FFFFFF) >> 11
 		// use this with the precalculated pwm to perform bilinear interpolation
 		// this accomplishes the
-		localGhostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
-				pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
-				OS_PWM_PHASE_FRAC);
+		// localGhostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
+		// 		pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
+		// 		OS_PWM_PHASE_FRAC);
+
+		localGhostPhase = phaseDist(localPhase, localPWM) >> 7;
 
 		// write phase out
 		phaseOut[writeIndex] = localGhostPhase;
@@ -157,9 +162,11 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 
 	leftSample = localPhase >> 26;
 
-	localGhostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
-			pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
-			OS_PWM_PHASE_FRAC);
+	// localGhostPhase = fix15_bilerp(pwmTable1[leftSample], pwmTable2[leftSample],
+	// 		pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
+	// 		OS_PWM_PHASE_FRAC);
+
+	localGhostPhase = phaseDist(localPhase, localPWM) >> 7;
 
 	phaseOut[writeIndex] = localGhostPhase;
 
