@@ -199,8 +199,14 @@ public:
 	int32_t phaseLockOn = 0;
 	int32_t hardSync = 0;
 	uint32_t subharm = 0;
+	int32_t error1 = 0;
+	int32_t error2 = 0;
+	int32_t error3 = 0;
+	int32_t freqCorrect = 0;
 
-	int32_t error = 0;
+	int32_t tapTempo = 0;
+	int32_t lastTap = 0;
+	uint32_t measurementDivider = 1;
 
 	inline void advanceSubharm(void) {
 		subharm = (subharm + 1) & 1;
@@ -266,11 +272,40 @@ public:
 	uint32_t key3 = 0;
 	uint32_t lastKey3 = 0;
 
-	int32_t tapTempo = 0;
-	int32_t lastTap = 0;
-	uint32_t measurementDivider = 1;
-
 	int32_t ratioRoundRobin = 0;
+
+	inline void updateFrequencies(void) {
+
+		if (freqCorrect == 0) {
+			divCount2 += measurementDivider;
+			divCount2 %= denominator1Select;
+			int32_t error = (divCount2 * sync1Div * numerator1Alt) - error1;
+			int64_t phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator1Alt;
+			phaseSpan <<= 32;
+			phaseSpan /= denominator1Select;
+			increment2 = (60 * (phaseSpan + error))/(periodCount);
+			freqCorrect = 1;
+		} else if (freqCorrect == 1) {
+			divCount3 += measurementDivider;
+			divCount3 %= denominator2Select;
+			int32_t error = (divCount3 * sync2Div * numerator2Alt) - error2 + (1 << 30) + phaseModTracker2;
+			int64_t phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator2Alt;
+			phaseSpan <<= 32;
+			phaseSpan /= denominator2Select;
+			increment3 = (60 * (phaseSpan + (int64_t)error))/(periodCount);
+			freqCorrect = 2;
+		} else if (freqCorrect == 2) {
+			divCount4 += measurementDivider;
+			divCount4 %= denominator3Select;
+			int32_t error = (divCount4 * sync3Div * numerator3Alt) - error3 + (1 << 31) + phaseModTracker2;
+			int64_t phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator3Alt;
+			phaseSpan <<= 32;
+			phaseSpan /= denominator3Select;
+			increment4 = (60 * (phaseSpan + (int64_t)error))/(periodCount);
+			freqCorrect = 3;
+		}
+
+	}
 
 	int32_t index1Stable = 0;
 	int32_t lastStableIndex1 = 0;
@@ -375,7 +410,8 @@ public:
 		lastPhaseMod = phaseMod;
 		phaseModIncrement *= phaseModOn;
 		phaseModIncrement2 = phaseModIncrement;
-		phaseModTracker2 += (phaseModIncrement2 * 24);
+		phaseModTracker3 = phaseModTracker2;
+		phaseModTracker2 += (phaseModIncrement * 24);
 	}
 
 	void (ViaSync3::*updateOutputs)(int32_t writePosition);
@@ -480,12 +516,10 @@ public:
 		int32_t reading = readMeasurementTimer();
 		#endif
 
-		tapTempo = 0;
-
 		if (reading < (1440 * 64)) {
 			errorPileup ++;
 			advanceSubharm();
-		} else {
+		} else if (reading > (periodCount >> 4)) {
 			#ifdef BUILD_F373
 			TIM2->CNT = 0;
 			int32_t playbackPosition = (VIA_SYNC3_BUFFER_SIZE * 2) - DMA1_Channel5->CNDTR;
@@ -499,31 +533,11 @@ public:
 
 			advanceSubharm();
 
-			int32_t phaseModTracker = phaseModTracker2;
+			error1 = phases2[playbackPosition];
+			error2 = phases3[playbackPosition];
+			error3 = phases4[playbackPosition];
 
-			divCount2 += errorPileup + 1;
-			divCount2 %= denominator1Select;
-			int32_t error = (divCount2 * sync1Div * numerator1Alt) - phases2[playbackPosition];
-			int64_t phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator1Alt;
-			phaseSpan <<= 32;
-			phaseSpan /= denominator1Select;
-			increment2 = (60 * (phaseSpan + error))/(periodCount);
-
-			divCount3 += errorPileup + 1;
-			divCount3 %= denominator2Select;
-			error = (divCount3 * sync2Div * numerator2Alt) - phases3[playbackPosition] + (1 << 30) + phaseModTracker;
-			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator2Alt;
-			phaseSpan <<= 32;
-			phaseSpan /= denominator2Select;
-			increment3 = (60 * (phaseSpan + (int64_t)error))/(periodCount);
-
-			divCount4 += errorPileup + 1;
-			divCount4 %= denominator3Select;
-			error = (divCount4 * sync3Div * numerator3Alt) - phases4[playbackPosition] + (1 << 31) + phaseModTracker;
-			phaseSpan = (uint64_t) (errorPileup + 1) * (uint64_t) numerator3Alt;
-			phaseSpan <<= 32;
-			phaseSpan /= denominator3Select;
-			increment4 = (60 * (phaseSpan + (int64_t)error))/(periodCount);
+			freqCorrect = 0;
 
 			measurementDivider = errorPileup + 1;
 
@@ -543,6 +557,8 @@ public:
 			lastKey3 = key3;
 
 		}
+
+		tapTempo = 0;
 
 	}
 	void mainFallingEdgeCallback(void) {
@@ -625,16 +641,20 @@ public:
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
 
-		(this->*updateOutputs)(0);
-
 		phaseMod();
+
+		updateFrequencies();
+
+		(this->*updateOutputs)(0);
 
 	}
 	void transferCompleteCallback(void) {
 
-		(this->*updateOutputs)(VIA_SYNC3_BUFFER_SIZE);
-
 		phaseMod();
+
+		updateFrequencies();
+
+		(this->*updateOutputs)(VIA_SYNC3_BUFFER_SIZE);
 
 	}
 	void slowConversionCallback(void) {
@@ -737,29 +757,11 @@ public:
 
 			advanceSubharm();
 
-			divCount2 += measurementDivider;
-			divCount2 %= denominator1Select;
-			int32_t error = (divCount2 * sync1Div * numerator1Alt) - phases2[playbackPosition];
-			uint64_t phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator1Alt;
-			phaseSpan <<= 32;
-			phaseSpan /= denominator1Select;
-			increment2 = (60 * (phaseSpan + error))/(periodCount);
+			error1 = phases2[playbackPosition];
+			error2 = phases3[playbackPosition];
+			error3 = phases4[playbackPosition];
 
-			divCount3 += measurementDivider;
-			divCount3 %= denominator2Select;
-			error = (divCount3 * sync2Div * numerator2Alt) - phases3[playbackPosition] + (1 << 30) + phaseModTracker2;
-			phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator2Alt;
-			phaseSpan <<= 32;
-			phaseSpan /= denominator2Select;
-			increment3 = (60 * (phaseSpan + error))/(periodCount);
-
-			divCount4 += measurementDivider;
-			divCount4 %= denominator3Select;
-			error = (divCount4 * sync3Div * numerator3Alt) - phases4[playbackPosition] + (1 << 31) + phaseModTracker2;
-			phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator3Alt;
-			phaseSpan <<= 32;
-			phaseSpan /= denominator3Select;
-			increment4 = (60 * (phaseSpan + error))/(periodCount);
+			freqCorrect = 0;
 
 			errorPileup = 0;
 

@@ -24,8 +24,8 @@
 #define __OP3SQUARE 	outputs.dac2Samples[writePosition] = (((phaseAccumulator4)) >> 31) * 4095;
 
 #define __OP1SAW 		outputs.dac3Samples[writePosition] = (phaseAccumulator2) >> 20;
-#define __OP2SAW 		outputs.dac1Samples[writePosition] = (-phaseAccumulator3) >> 20;
-#define __OP3SAW 		outputs.dac2Samples[writePosition] = (-phaseAccumulator4) >> 20;
+#define __OP2SAW 		outputs.dac1Samples[writePosition] = 4095 - ((phaseAccumulator3) >> 20);
+#define __OP3SAW 		outputs.dac2Samples[writePosition] = 4095 - ((phaseAccumulator4) >> 20);
 
 #define __END			writePosition ++; \
 						samplesRemaining --; \
