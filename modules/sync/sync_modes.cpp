@@ -27,7 +27,7 @@ void ViaSync::handleButton1ModeChange(int32_t mode) {
 
 void ViaSync::handleButton2ModeChange(int32_t mode) {
 
-	pllController.scale = (Scale *) scaleArray[syncUI.GROUP_MODE][mode];
+	selectedScale = (Scale *) scaleArray[syncUI.GROUP_MODE][mode];
 	scaleHue =  mode + syncUI.GROUP_MODE * 4;
 	scaleColor.r = hueSpace[scaleHue].r;
 	scaleColor.g = hueSpace[scaleHue].g;
@@ -41,14 +41,14 @@ void ViaSync::handleButton3ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case root:
-		pllController.rootMod = inputs.cv2Samples;
+		rootMod = inputs.cv2Samples;
 		syncWavetable.fm = inputs.cv2VirtualGround;
 		syncWavetable.pm = inputs.cv2VirtualGround;
 		syncWavetable.pwm = inputs.cv2VirtualGround;
 		showYChange = 1;
 		break;
 	case pm:
-		pllController.rootMod = inputs.cv2VirtualGround;
+		rootMod = inputs.cv2VirtualGround;
 		syncWavetable.fm = inputs.cv2VirtualGround;
 		syncWavetable.pm = inputs.cv2Samples;
 		syncWavetable.pwm = inputs.cv2VirtualGround;
@@ -56,7 +56,7 @@ void ViaSync::handleButton3ModeChange(int32_t mode) {
 		break;
 	case pwm:
 		syncWavetable.pm = 0;
-		pllController.rootMod = inputs.cv2VirtualGround;
+		rootMod = inputs.cv2VirtualGround;
 		syncWavetable.fm = inputs.cv2VirtualGround;
 		syncWavetable.pm = inputs.cv2VirtualGround;
 		syncWavetable.pwm = inputs.cv2Samples;
@@ -73,20 +73,20 @@ void ViaSync::handleButton4ModeChange(int32_t mode) {
 
 	// see pllMultiplierMeasureFrequency for why this is in range 1, 2, 3
 
-	pllController.nudgeSum = 0;
+	nudgeSum = 0;
 
 	for (int i = 0; i < 32; i ++) {
-		writeBuffer(&pllController.nudgeBuffer, 0);
+		writeBuffer(&nudgeBuffer, 0);
 	}
 
-	pllController.syncMode = mode + 1;
+	syncMode = mode + 1;
 
 }
 
 void ViaSync::handleButton5ModeChange(int32_t mode) {
 
 	syncUI.SCALE_MODE = 0;
-	pllController.scale = (Scale *) scaleArray[mode][syncUI.SCALE_MODE];
+	selectedScale = (Scale *) scaleArray[mode][syncUI.SCALE_MODE];
 	scaleHue = mode * 4 + syncUI.SCALE_MODE;
 	scaleColor.r = hueSpace[scaleHue].r;
 	scaleColor.g = hueSpace[scaleHue].g;
@@ -103,7 +103,7 @@ void ViaSync::handleButton5ModeChange(int32_t mode) {
 
 void ViaSync::handleButton5ModeInit(int32_t mode) {
 
-	pllController.scale = (Scale *) scaleArray[mode][syncUI.SCALE_MODE];
+	selectedScale = (Scale *) scaleArray[mode][syncUI.SCALE_MODE];
 	scaleHue = mode * 4 + syncUI.SCALE_MODE;
 	scaleColor.r = hueSpace[scaleHue].r;
 	scaleColor.g = hueSpace[scaleHue].g;
@@ -164,16 +164,16 @@ void ViaSync::handleAux3ModeChange(int32_t mode) {
 
 	switch (mode) {
 	case noOffset:
-		pllController.phaseOffset = 0;
+		phaseOffset = 0;
 		break;
 	case quarter:
-		pllController.phaseOffset = 1 << 23;
+		phaseOffset = 1 << 23;
 		break;
 	case half:
-		pllController.phaseOffset = 1 << 24;
+		phaseOffset = 1 << 24;
 		break;
 	case threeQuarters:
-		pllController.phaseOffset = (3 << 23);
+		phaseOffset = (3 << 23);
 		break;
 	default:
 		break;

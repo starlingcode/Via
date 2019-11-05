@@ -16,51 +16,51 @@ void ViaSync::mainRisingEdgeCallback(void) {
 #endif
 
 
-	pllController.measureFrequency();
-	pllController.phaseSignal = syncWavetable.phase;
-	pllController.phaseModSignal = syncWavetable.phaseMod;
-	pllController.doPLL();
-	pllController.generateFrequency();
+	measureFrequency();
+	phaseSignal = syncWavetable.phase;
+	phaseModSignal = syncWavetable.phaseMod;
+	doPLL();
+	generateFrequency();
 
 
 	// should these be initialized to point to the same address?
 
-	syncWavetable.increment = pllController.increment;
-	syncWavetable.phase = pllController.phaseSignal;
+	syncWavetable.increment = increment;
+	syncWavetable.phase = phaseSignal;
 
-	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
+	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(ratioChange);
 	if (runtimeDisplay & showYChange) {
-		setLEDD(pllController.yIndexChange);
+		setLEDD(yIndexChange);
 #ifdef BUILD_F373
 		TIM17->CR1 |= TIM_CR1_CEN;
 #endif
 	}
-	pllController.tapTempo = 0;
+	tapTempo = 0;
 
 }
 
 void ViaSync::mainFallingEdgeCallback(void) {
 
-	pllController.ratioChange = 0;
-	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
+	ratioChange = 0;
+	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(ratioChange);
 
 }
 
 void ViaSync::auxRisingEdgeCallback(void) {
 
 	if (!simultaneousTrigFlag) {
-		pllController.pllReset = 0;
+		pllReset = 0;
 	} else {
-		pllController.pllReset = 0;
-		pllController.phaseSignal = syncWavetable.phase;
-		pllController.phaseModSignal = syncWavetable.phaseMod;
-		pllController.doPLL();
-		pllController.generateFrequency();
+		pllReset = 0;
+		phaseSignal = syncWavetable.phase;
+		phaseModSignal = syncWavetable.phaseMod;
+		doPLL();
+		generateFrequency();
 
 		// should these be initialized to point to the same address?
 
-		syncWavetable.increment = pllController.increment;
-		syncWavetable.phase = pllController.phaseSignal;
+		syncWavetable.increment = increment;
+		syncWavetable.phase = phaseSignal;
 	}
 
 }
@@ -70,7 +70,7 @@ void ViaSync::auxFallingEdgeCallback(void) {
 
 void ViaSync::buttonPressedCallback(void) {
 
-	if (pllController.tapTempo != 0) {
+	if (tapTempo != 0) {
 		// store the length of the last period
 		// average against the current length
 
@@ -83,30 +83,30 @@ void ViaSync::buttonPressedCallback(void) {
 
 #ifdef BUILD_VIRTUAL
 
-		int32_t tap = pllController.virtualTimer;
+		int32_t tap = virtualTimer;
 		// reset the timer value
-		pllController.virtualTimer = 0;
+		virtualTimer = 0;
 #endif
 
 		tapSum += tap - readBuffer(&tapStore, 1);
 		writeBuffer(&tapStore, tap);
 
-		pllController.periodCount = tapSum >> 1;
+		periodCount = tapSum >> 1;
 
 		lastTap = tap;
 
-		// pllController.doPLL();
-		pllController.generateFrequency();
+		// doPLL();
+		generateFrequency();
 
 		// should these be initialized to point to the same address?
 
-		syncWavetable.increment = pllController.increment;
-		syncWavetable.phaseReset = pllController.phaseReset;
+		syncWavetable.increment = increment;
+		syncWavetable.phaseReset = phaseReset;
 
-		outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(pllController.ratioChange);
+		outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(ratioChange);
 
 	} else {
-		pllController.tapTempo = 1;
+		tapTempo = 1;
 	}
 
 	this->syncUI.dispatch(EXPAND_SW_ON_SIG);
@@ -120,8 +120,8 @@ void ViaSync::buttonReleasedCallback(void) {
 
 void ViaSync::auxTimer1InterruptCallback(void) {
 
-	pllController.yIndexChange = 0;
-	setLEDD(pllController.yIndexChange);
+	yIndexChange = 0;
+	setLEDD(yIndexChange);
 
 }
 
@@ -157,7 +157,7 @@ void ViaSync::halfTransferCallback(void) {
 		int32_t sample = syncWavetable.signalOut[readIndex];
 		outputs.dac1Samples[writeIndex] = 4095 - sample;
 		outputs.dac2Samples[writeIndex] = sample;
-		//outputs.dac3Samples[writeIndex] = pllController.errorSig;
+		//outputs.dac3Samples[writeIndex] = errorSig;
 
 		writeIndex ++;
 		readIndex ++;
@@ -192,7 +192,7 @@ void ViaSync::transferCompleteCallback(void) {
 		int32_t sample = syncWavetable.signalOut[readIndex];
 		outputs.dac1Samples[writeIndex] = 4095 - sample;
 		outputs.dac2Samples[writeIndex] = sample;
-		//outputs.dac3Samples[writeIndex] = pllController.errorSig;
+		//outputs.dac3Samples[writeIndex] = errorSig;
 
 		writeIndex ++;
 		readIndex ++;
@@ -216,11 +216,11 @@ void ViaSync::slowConversionCallback(void) {
 
 	controls.update();
 	syncWavetable.parseControls(&controls);
-	pllController.parseControls(&controls, &inputs);
+	parseControls(&controls, &inputs);
 
-	if (pllController.tapTempo) {
-		pllController.generateFrequency();
-		syncWavetable.increment = pllController.increment;
+	if (tapTempo) {
+		generateFrequency();
+		syncWavetable.increment = increment;
 	}
 
 	int32_t sample = outputs.dac2Samples[0];

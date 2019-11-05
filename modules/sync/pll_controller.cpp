@@ -15,7 +15,7 @@
  */
 
 
-void PllController::parseControls(ViaControls * controls, ViaInputStreams * input) {
+void ViaSync::parseControls(ViaControls * controls, ViaInputStreams * input) {
 
 	int32_t ratioX = controls->knob1Value + controls->cv1Value - cv1Offset - 2048;
 	ratioX = __USAT(ratioX, 12);
@@ -28,7 +28,7 @@ void PllController::parseControls(ViaControls * controls, ViaInputStreams * inpu
 	rootModLocal += controls->knob2Value;
 	int32_t	ratioY = __USAT(rootModLocal, 12);
 
-	ratioY = ratioYHysterisis(ratioY, scale->t2Bitshift);
+	ratioY = ratioYHysterisis(ratioY, selectedScale->t2Bitshift);
 
 	if (ratioY != lastYIndex) {
 		yIndexChange = 1;
@@ -36,12 +36,12 @@ void PllController::parseControls(ViaControls * controls, ViaInputStreams * inpu
 
 	lastYIndex = ratioY;
 
-	fracMultiplier = scale->grid[ratioY][ratioX]->fractionalPart;
-	intMultiplier = scale->grid[ratioY][ratioX]->integerPart;
-	gcd = scale->grid[ratioY][ratioX]->fundamentalDivision;
+	fracMultiplier = selectedScale->grid[ratioY][ratioX]->fractionalPart;
+	intMultiplier = selectedScale->grid[ratioY][ratioX]->integerPart;
+	gcd = selectedScale->grid[ratioY][ratioX]->fundamentalDivision;
 
 }
-void PllController::doPLL(void) {
+void ViaSync::doPLL(void) {
 
 	pllCounter++;
 	pllCounter = (pllCounter >= gcd) ? 0 : pllCounter;
@@ -131,27 +131,27 @@ void PllController::doPLL(void) {
 
 }
 
-void PllController::generateFrequency(void) {
+void ViaSync::generateFrequency(void) {
 
-#ifdef BUILD_F373
+// #ifdef BUILD_F373
 
 	int64_t incrementCalc = ((int64_t)intMultiplier << 16) | (fracMultiplier >> 16);
 	incrementCalc = ((uint64_t)(incrementCalc + pllNudge) * 1440) / (periodCount * 8);
 	increment = __USAT(incrementCalc, 31);
 
-#endif
+// #endif
 
-#ifdef BUILD_VIRTUAL
+// #ifdef BUILD_VIRTUAL
 
-	if (periodCount == 0) {
-		periodCount = 1;
-	}
+// 	if (periodCount == 0) {
+// 		periodCount = 1;
+// 	}
 
-	uint64_t incrementCalc = ((uint64_t)intMultiplier << 16) | (fracMultiplier >> 16);
-	incrementCalc = ((uint64_t)(incrementCalc + pllNudge)) / (periodCount * 8);
-	increment = incrementCalc;
+// 	uint64_t incrementCalc = ((uint64_t)intMultiplier << 16) | (fracMultiplier >> 16);
+// 	incrementCalc = ((uint64_t)(incrementCalc + pllNudge)) / (periodCount * 8);
+// 	increment = incrementCalc;
 
-#endif
+// #endif
 
 
 }

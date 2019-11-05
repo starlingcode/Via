@@ -11,7 +11,7 @@ void ViaSync::init(void) {
 
 	initializeScales();
 
-	pllController.scale = (Scale *) scaleArray[0][0];
+	scale = (Scale *) scaleArray[0][0];
 
 	calculateDac3 = &ViaSync::calculateDac3Phasor;
 	calculateLogicA = &ViaSync::calculateLogicAGate;
@@ -22,19 +22,19 @@ void ViaSync::init(void) {
 	inputBufferSize = 1;
 	outputBufferSize = SYNC_BUFFER_SIZE;
 
-	pllController.rootMod = inputs.cv2Samples;
+	rootMod = inputs.cv2Samples;
 	syncWavetable.fm = inputs.cv2VirtualGround;
 	syncWavetable.pm = inputs.cv2VirtualGround;
 	syncWavetable.pwm = inputs.cv2VirtualGround;
 
 	for (int i = 0; i < 32; i++) {
-		writeBuffer(&pllController.nudgeBuffer, 0);
+		writeBuffer(&nudgeBuffer, 0);
 	}
 
 	syncWavetable.morphMod = inputs.cv3Samples;
 
 	syncWavetable.phaseReset = 1;
-	pllController.phaseReset = 1;
+	phaseReset = 1;
 
 	syncWavetable.increment = 10000;
 
@@ -56,8 +56,8 @@ void ViaSync::init(void) {
 
 	inputs.cv2VirtualGround[0] = cv2Calibration;
 	inputs.cv3VirtualGround[0] = cv3Calibration;
-	pllController.cv1Offset = cv1Calibration;
-	pllController.cv2Offset = cv2Calibration;
+	cv1Offset = cv1Calibration;
+	cv2Offset = cv2Calibration;
 	syncWavetable.cv2Offset = cv2Calibration;
 	syncWavetable.cv3Offset = cv3Calibration;
 

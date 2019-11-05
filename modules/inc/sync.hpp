@@ -16,113 +16,9 @@
 
 class PllController {
 
-	uint32_t pllCounter = 0;
-	int32_t lastMultiplier = 1;
-	int32_t lastYIndex = 0;
-
-	int32_t ratioXTransitionPoint = 0;
-	int32_t ratioXStable = 1;
-
-	int32_t ratioXHysterisis(int32_t thisRatioX, int32_t control) {
-
-		if (ratioXStable) {
-			ratioXStable = ((lastRatioX - thisRatioX) == 0);
-			ratioXTransitionPoint = control & 0b111111100000;
-			lastRatioX = thisRatioX;
-			return thisRatioX;
-		} else {
-			ratioXStable = abs(control - ratioXTransitionPoint) > 8;
-			lastRatioX = ratioXStable ? thisRatioX : lastRatioX;
-			return lastRatioX;
-		}
-
-	}
-
-	int32_t ratioYTransitionPoint = 0;
-	int32_t ratioYStable = 1;
-
-	int32_t ratioYHysterisis(int32_t control, int32_t shiftAmount) {
-
-		int32_t thisRatioY = control >> shiftAmount;
-
-		if (ratioYStable) {
-			ratioYStable = ((lastRatioY - thisRatioY) == 0);
-			ratioYTransitionPoint = thisRatioY << shiftAmount;
-			lastRatioY = thisRatioY;
-			return thisRatioY;
-		} else {
-			ratioYStable = abs(control - ratioYTransitionPoint) > 8;
-			lastRatioY = ratioYStable ? thisRatioY : lastRatioY;
-			return lastRatioY;
-		}
-
-	}
-
-public:
-
-	int32_t lastRatioX = 1;
-	int32_t lastRatioY = 1;
 
 
 
-	uint32_t virtualTimer;
-
-	uint32_t periodCount = 48000;
-	uint32_t aggregatePeriod = 48000;
-	uint32_t pileUp = 0;
-	uint32_t skipPll = 0;
-	int32_t pllNudge = 0;
-	buffer nudgeBuffer;
-	int32_t nudgeSum = 0;
-
-	uint32_t phaseSignal = 0;
-	uint32_t phaseModSignal = 0;
-	uint32_t tapTempo = 0;
-	uint32_t pllReset = 0;
-
-	int16_t * rootMod;
-	uint32_t phaseOffset = 0;
-	uint32_t syncMode = 0;
-	Scale * scale;
-	int32_t cv2Offset;
-	int32_t cv1Offset;
-
-	uint32_t fracMultiplier = 0;
-	uint32_t intMultiplier = 0;
-	uint32_t gcd = 1;
-
-	uint32_t increment = 0;
-	uint32_t phaseReset = 0;
-	uint32_t ratioChange = 0;
-	uint32_t yIndexChange = 0;
-
-	uint32_t errorSig = 0;
-
-	void parseControls(ViaControls * controls, ViaInputStreams * input);
-
-	inline void measureFrequency(void) {
-
-#ifdef BUILD_F373
-
-			// store the length of the last period
-			periodCount = TIM2->CNT;
-
-			// reset the timer value
-			TIM2->CNT = 0;
-
-#endif
-
-#ifdef BUILD_VIRTUAL
-
-		periodCount = virtualTimer;
-		virtualTimer = 0;
-
-#endif
-
-	}
-
-	void doPLL(void);
-	void generateFrequency(void);
 
 };
 
@@ -442,7 +338,108 @@ public:
 	int32_t showYChange;
 
 	SyncWavetable syncWavetable;
-	PllController pllController;
+	
+		uint32_t pllCounter = 0;
+	int32_t lastMultiplier = 1;
+	int32_t lastYIndex = 0;
+
+	int32_t ratioXTransitionPoint = 0;
+	int32_t ratioXStable = 1;
+
+	int32_t ratioXHysterisis(int32_t thisRatioX, int32_t control) {
+
+		if (ratioXStable) {
+			ratioXStable = ((lastRatioX - thisRatioX) == 0);
+			ratioXTransitionPoint = control & 0b111111100000;
+			lastRatioX = thisRatioX;
+			return thisRatioX;
+		} else {
+			ratioXStable = abs(control - ratioXTransitionPoint) > 8;
+			lastRatioX = ratioXStable ? thisRatioX : lastRatioX;
+			return lastRatioX;
+		}
+
+	}
+
+	int32_t ratioYTransitionPoint = 0;
+	int32_t ratioYStable = 1;
+
+	int32_t ratioYHysterisis(int32_t control, int32_t shiftAmount) {
+
+		int32_t thisRatioY = control >> shiftAmount;
+
+		if (ratioYStable) {
+			ratioYStable = ((lastRatioY - thisRatioY) == 0);
+			ratioYTransitionPoint = thisRatioY << shiftAmount;
+			lastRatioY = thisRatioY;
+			return thisRatioY;
+		} else {
+			ratioYStable = abs(control - ratioYTransitionPoint) > 8;
+			lastRatioY = ratioYStable ? thisRatioY : lastRatioY;
+			return lastRatioY;
+		}
+
+	}
+
+	int32_t lastRatioX = 1;
+	int32_t lastRatioY = 1;
+
+	uint32_t periodCount = 48000;
+	uint32_t aggregatePeriod = 48000;
+	uint32_t pileUp = 0;
+	uint32_t skipPll = 0;
+	int32_t pllNudge = 0;
+	buffer nudgeBuffer;
+	int32_t nudgeSum = 0;
+
+	uint32_t phaseSignal = 0;
+	uint32_t phaseModSignal = 0;
+	uint32_t tapTempo = 0;
+	uint32_t pllReset = 0;
+
+	int16_t * rootMod;
+	uint32_t phaseOffset = 0;
+	uint32_t syncMode = 0;
+	Scale * selectedScale;
+	int32_t cv2Offset;
+	int32_t cv1Offset;
+
+	uint32_t fracMultiplier = 0;
+	uint32_t intMultiplier = 0;
+	uint32_t gcd = 1;
+
+	uint32_t increment = 0;
+	uint32_t phaseReset = 0;
+	uint32_t ratioChange = 0;
+	uint32_t yIndexChange = 0;
+
+	uint32_t errorSig = 0;
+
+	void parseControls(ViaControls * controls, ViaInputStreams * input);
+
+	inline void measureFrequency(void) {
+
+#ifdef BUILD_F373
+
+		// store the length of the last period
+		periodCount = TIM2->CNT;
+
+		// reset the timer value
+		TIM2->CNT = 0;
+
+#endif
+
+#ifdef BUILD_VIRTUAL
+
+		periodCount = readMeasurementTimer();
+		resetMeasurementTimer();
+
+#endif
+
+	}
+
+	void doPLL(void);
+	void generateFrequency(void);
 
 	// average tap tempo
 	int32_t lastTap = 0;
@@ -496,10 +493,6 @@ public:
 	int32_t virtualTimer = 0;
 	int32_t virtualTimerEnable = 0;
 	int32_t virtualTimerOverflow = 48;
-
-	void incrementVirtualTimer(void) {
-		pllController.virtualTimer++;
-	}
 
 };
 
