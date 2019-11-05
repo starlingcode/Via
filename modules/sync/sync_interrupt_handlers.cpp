@@ -144,7 +144,7 @@ void ViaSync::ioProcessCallback(void) {
 
 void ViaSync::halfTransferCallback(void) {
 
-	setLogicOut(0, runtimeDisplay);
+//	setLogicOut(0, runtimeDisplay);
 
 	syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables);
 
@@ -179,7 +179,7 @@ void ViaSync::halfTransferCallback(void) {
 
 void ViaSync::transferCompleteCallback(void) {
 
-	setLogicOut(0, runtimeDisplay);
+//	setLogicOut(0, runtimeDisplay);
 
 	syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables);
 

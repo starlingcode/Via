@@ -76,22 +76,22 @@ public:
 		}
 	}
 
-	uint32_t fix32Mul(uint32_t in0, uint32_t in1) {
-		uint64_t result = (uint64_t) in0 * (uint64_t) in1;
+	uint32_t fix32Mul(uint64_t in0, uint64_t in1) {
+		uint64_t result = in0 * in1;
 		return result >> 32;
 	}
 
-	inline uint32_t phaseDist(uint32_t phase, uint32_t bend) {
+	inline uint32_t phaseDist(uint32_t phase, uint32_t bend, uint32_t bendUp, uint32_t bendDown) {
 
-		bend = bend << 16;
+		bend <<= 16;
 
 		if (phase < bend) {
-			uint32_t bendFrac = ((uint64_t) phase << 31) / bend;
+			uint32_t bendFrac = fix16_mul(phase >> 1, bendUp);
 			return bendFrac;
 
 		} else {
 
-			uint32_t bendFrac = ((uint64_t) (phase - bend) << 31) / (0xffffffff - bend);
+			uint32_t bendFrac = fix16_mul((phase - bend) >> 1, bendDown);
 			return (1 << 31) + bendFrac;
 
 		}

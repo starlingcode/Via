@@ -48,6 +48,8 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 	int32_t localPWM = (int32_t) pwm[0];
 	localPWM <<= 1;
 	localPWM = __USAT(localPWM + cv2Offset + 32768, 16);
+	int32_t bendUp = 0xFFFFFFFF / localPWM;
+	int32_t bendDown = 0xFFFFFFFF / (0xFFFF - localPWM);
 	uint32_t pwmIndex = (localPWM >> 11);
 	uint32_t pwmFrac = (localPWM & 0x7FF) << 4;
 	// assuming that each phase distortion lookup table is 65 samples long stored as int32_t
@@ -62,7 +64,7 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t * phaseDistTable) {
 	// 			pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
 	// 			SPLINE_PWM_PHASE_FRAC);
 
-	int32_t localGhostPhase = phaseDist(localPhase, localPWM) >> 7;
+	int32_t localGhostPhase = phaseDist(localPhase, localPWM, bendUp, bendDown) >> 7;
 
 
 	int32_t morph = (int32_t) -morphMod[0];
@@ -101,7 +103,10 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 	// now oversample
 
 	int32_t localPWM = (int32_t) pwm[0];
+	localPWM <<= 1;
 	localPWM = __USAT(localPWM + cv2Offset + 32768, 16);
+	int32_t bendUp = 0xFFFFFFFF / localPWM;
+	int32_t bendDown = 0xFFFFFFFF / (0xFFFF - localPWM);
 	uint32_t pwmIndex = (localPWM >> 11);
 	uint32_t pwmFrac = (localPWM & 0x7FF) << 4;
 	// assuming that each phase distortion lookup table is 65 samples long stored as int32_t
@@ -143,7 +148,7 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 		// 		pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
 		// 		OS_PWM_PHASE_FRAC);
 
-		localGhostPhase = phaseDist(localPhase, localPWM) >> 7;
+		localGhostPhase = phaseDist(localPhase, localPWM, bendUp, bendDown) >> 7;
 
 		// write phase out
 		phaseOut[writeIndex] = localGhostPhase;
@@ -166,7 +171,7 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t * phaseDistTable) 
 	// 		pwmTable1[leftSample + 1], pwmTable2[leftSample + 1], pwmFrac,
 	// 		OS_PWM_PHASE_FRAC);
 
-	localGhostPhase = phaseDist(localPhase, localPWM) >> 7;
+	localGhostPhase = phaseDist(localPhase, localPWM, bendUp, bendDown) >> 7;
 
 	phaseOut[writeIndex] = localGhostPhase;
 
