@@ -22,6 +22,8 @@ void ViaSync::init(void) {
 	inputBufferSize = 1;
 	outputBufferSize = SYNC_BUFFER_SIZE;
 
+	syncWavetable.signalOut = outputs.dac2Samples;
+
 	rootMod = inputs.cv2Samples;
 	syncWavetable.fm = inputs.cv2VirtualGround;
 	syncWavetable.pm = inputs.cv2VirtualGround;

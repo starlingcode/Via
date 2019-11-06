@@ -1,9 +1,47 @@
 #include "sync.hpp"
 
 
-const int32_t phaseModPWMTables[33][65] = {phaseModPWM_0, phaseModPWM_1, phaseModPWM_2, phaseModPWM_3, phaseModPWM_4, phaseModPWM_5, phaseModPWM_6, phaseModPWM_7, phaseModPWM_8, phaseModPWM_9, phaseModPWM_10, phaseModPWM_11, phaseModPWM_12, phaseModPWM_13, phaseModPWM_14, phaseModPWM_15, phaseModPWM_16, phaseModPWM_17, phaseModPWM_18, phaseModPWM_19, phaseModPWM_20, phaseModPWM_21, phaseModPWM_22, phaseModPWM_23, phaseModPWM_24, phaseModPWM_25, phaseModPWM_26, phaseModPWM_27, phaseModPWM_28, phaseModPWM_29, phaseModPWM_30, phaseModPWM_31, phaseModPWM_32};
-
 void ViaSync::mainRisingEdgeCallback(void) {
+
+#ifdef BUILD_VIRTUAL
+	uint32_t reading = readMeasurementTimer();
+#endif
+#ifdef BUILD_F373
+	uint32_t reading = TIM2->CNT;
+#endif
+
+	if (reading < 4 * 1440) {
+
+		pileUp += 1;
+
+	} else {
+
+		measureFrequency(reading);
+#ifdef BUILD_VIRTUAL
+		uint32_t playbackPosition = (reading % 1440)/180;
+#endif
+#ifdef BUILD_F373
+		uint32_t playbackPosition = (SYNC_BUFFER_SIZE * 2) - DMA1_Channel5->CNDTR;
+#endif
+
+		phaseSignal = syncWavetable.purePhaseOut[playbackPosition];
+		doCorrection = 0;
+		clockDiv = pileUp + 1;
+		pileUp = 0;
+
+		int32_t multKey = fracMultiplier + intMultiplier;
+		ratioChange = (lastMultiplier != multKey);
+		lastMultiplier = multKey;
+		outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(ratioChange);
+
+		if (runtimeDisplay & showYChange) {
+			setLEDD(yIndexChange);
+	#ifdef BUILD_F373
+			TIM17->CR1 |= TIM_CR1_CEN;
+	#endif
+		}
+
+	}
 
 	simultaneousTrigFlag = 1;
 #ifdef BUILD_VIRTUAL
@@ -15,26 +53,6 @@ void ViaSync::mainRisingEdgeCallback(void) {
 	TIM18->CR1 |= TIM_CR1_CEN;
 #endif
 
-
-	measureFrequency();
-	phaseSignal = syncWavetable.phase;
-	phaseModSignal = syncWavetable.phaseMod;
-	doPLL();
-	generateFrequency();
-
-
-	// should these be initialized to point to the same address?
-
-	syncWavetable.increment = increment;
-	syncWavetable.phase = phaseSignal;
-
-	outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(ratioChange);
-	if (runtimeDisplay & showYChange) {
-		setLEDD(yIndexChange);
-#ifdef BUILD_F373
-		TIM17->CR1 |= TIM_CR1_CEN;
-#endif
-	}
 	tapTempo = 0;
 
 }
@@ -54,9 +72,8 @@ void ViaSync::auxRisingEdgeCallback(void) {
 		pllReset = 0;
 		phaseSignal = syncWavetable.phase;
 		phaseModSignal = syncWavetable.phaseMod;
-		doPLL();
-		generateFrequency();
 
+		doCorrection = 0;
 		// should these be initialized to point to the same address?
 
 		syncWavetable.increment = increment;
@@ -83,9 +100,9 @@ void ViaSync::buttonPressedCallback(void) {
 
 #ifdef BUILD_VIRTUAL
 
-		int32_t tap = virtualTimer;
+		int32_t tap = readMeasurementTimer();
 		// reset the timer value
-		virtualTimer = 0;
+		resetMeasurementTimer();
 #endif
 
 		tapSum += tap - readBuffer(&tapStore, 1);
@@ -94,6 +111,8 @@ void ViaSync::buttonPressedCallback(void) {
 		periodCount = tapSum >> 1;
 
 		lastTap = tap;
+
+		clockDiv = 1;
 
 		// doPLL();
 		generateFrequency();
@@ -144,26 +163,11 @@ void ViaSync::ioProcessCallback(void) {
 
 void ViaSync::halfTransferCallback(void) {
 
-//	setLogicOut(0, runtimeDisplay);
+	setLogicOut(0, runtimeDisplay);
 
-	syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables);
+	updateFrequency();
 
-	int32_t samplesRemaining = outputBufferSize;
-	int32_t writeIndex = 0;
-	int32_t readIndex = 0;
-
-	while (samplesRemaining) {
-
-		int32_t sample = syncWavetable.signalOut[readIndex];
-		outputs.dac1Samples[writeIndex] = 4095 - sample;
-		outputs.dac2Samples[writeIndex] = sample;
-		//outputs.dac3Samples[writeIndex] = errorSig;
-
-		writeIndex ++;
-		readIndex ++;
-		samplesRemaining --;
-
-	}
+	syncWavetable.advance((uint32_t *)wavetableRead, 0);
 
 	int32_t thisSample = syncWavetable.ghostPhase >> 16;
 	int32_t thisState = !(thisSample >> 8);
@@ -179,26 +183,11 @@ void ViaSync::halfTransferCallback(void) {
 
 void ViaSync::transferCompleteCallback(void) {
 
-//	setLogicOut(0, runtimeDisplay);
+	setLogicOut(0, runtimeDisplay);
 
-	syncWavetable.advance((uint32_t *)wavetableRead, (uint32_t *) phaseModPWMTables);
+	updateFrequency();
 
-	int32_t samplesRemaining = outputBufferSize;
-	int32_t writeIndex = SYNC_BUFFER_SIZE;
-	int32_t readIndex = 0;
-
-	while (samplesRemaining) {
-
-		int32_t sample = syncWavetable.signalOut[readIndex];
-		outputs.dac1Samples[writeIndex] = 4095 - sample;
-		outputs.dac2Samples[writeIndex] = sample;
-		//outputs.dac3Samples[writeIndex] = errorSig;
-
-		writeIndex ++;
-		readIndex ++;
-		samplesRemaining --;
-
-	}
+	syncWavetable.advance((uint32_t *)wavetableRead, SYNC_BUFFER_SIZE);
 
 	int32_t thisSample = syncWavetable.ghostPhase >> 16;
 	int32_t thisState = !(thisSample >> 8);

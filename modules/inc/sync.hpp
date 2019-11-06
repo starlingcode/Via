@@ -15,14 +15,6 @@
 #include "stdio.h"
 
 
-class PllController {
-
-
-
-
-
-};
-
 class SyncWavetable {
 
 	int32_t previousPhase = 0;
@@ -51,28 +43,24 @@ public:
 	int32_t phaseEvent = 0;
 	int32_t delta = 0;
 
-	int32_t phaseOut[32];
-	int32_t signalOut[32];
+	uint32_t phaseOut[32];
+	uint32_t purePhaseOut[16];
+	uint32_t * signalOut;
 
 	int32_t oversamplingFactor = 3;
 	int32_t bufferSize = 8;
 
 	void parseControls(ViaControls * controls);
 
-	inline int32_t incrementPhase(uint32_t * phaseDistTable);
+	void oversample(uint32_t * wavetable, uint32_t writePosition);
 
-	void oversample(uint32_t * wavetable,
-			uint32_t * phaseDistTable);
+	void spline(uint32_t * wavetable, uint32_t writePosition);
 
-	void spline(uint32_t * wavetable,
-			uint32_t * phaseDistTable);
-
-	void advance(uint32_t * wavetable,
-			uint32_t * phaseDistTable) {
+	void advance(uint32_t * wavetable, uint32_t writePosition) {
 		if (increment > (1 << 22)) {
-			oversample(wavetable, phaseDistTable);
+			oversample(wavetable, writePosition);
 		} else {
-			spline(wavetable, phaseDistTable);
+			spline(wavetable, writePosition);
 		}
 	}
 
@@ -265,13 +253,11 @@ public:
 
 	// declare arrays to store the active tables
 	uint32_t wavetableRead[9][517];
-	//uint32_t sync_phaseDistRead[33][65];
 
 	// declare functions to set the currently active tables
 	void switchWavetable(const Wavetable *);
 	void switchWavetableGlobal(const Wavetable *);
-	// phase distortion table is fixed
-	void initPhaseDistTable(void);
+
 	void fillWavetableArray(void);
 
 
@@ -362,9 +348,11 @@ public:
 
 	SyncWavetable syncWavetable;
 	
-		uint32_t pllCounter = 0;
+	uint32_t pllCounter = 0;
 	int32_t lastMultiplier = 1;
 	int32_t lastYIndex = 0;
+
+	int32_t doCorrection = 1;
 
 	int32_t ratioXTransitionPoint = 0;
 	int32_t ratioXStable = 1;
@@ -410,6 +398,7 @@ public:
 	uint32_t periodCount = 48000;
 	uint32_t aggregatePeriod = 48000;
 	uint32_t pileUp = 0;
+	uint32_t clockDiv = 0;
 	uint32_t skipPll = 0;
 	int32_t pllNudge = 0;
 	buffer nudgeBuffer;
@@ -440,13 +429,12 @@ public:
 
 	void parseControls(ViaControls * controls, ViaInputStreams * input);
 
-	inline void measureFrequency(void) {
+	inline void measureFrequency(uint32_t reading) {
 
 #ifdef BUILD_F373
 
 		// store the length of the last period
-		periodCount = TIM2->CNT;
-
+		periodCount = reading;
 		// reset the timer value
 		TIM2->CNT = 0;
 
@@ -454,7 +442,7 @@ public:
 
 #ifdef BUILD_VIRTUAL
 
-		periodCount = readMeasurementTimer();
+		periodCount = reading;
 		resetMeasurementTimer();
 
 #endif
@@ -463,6 +451,15 @@ public:
 
 	void doPLL(void);
 	void generateFrequency(void);
+
+	inline void updateFrequency(void) {
+		if (doCorrection == 0) {
+			doPLL();
+			generateFrequency();
+			syncWavetable.increment = increment;
+			doCorrection = 1;
+		}
+	}
 
 	// average tap tempo
 	int32_t lastTap = 0;

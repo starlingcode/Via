@@ -43,7 +43,7 @@ void ViaSync::parseControls(ViaControls * controls, ViaInputStreams * input) {
 }
 void ViaSync::doPLL(void) {
 
-	pllCounter++;
+	pllCounter += clockDiv;
 	pllCounter = (pllCounter >= gcd) ? 0 : pllCounter;
 
 
@@ -77,81 +77,56 @@ void ViaSync::doPLL(void) {
 	int32_t iTerm;
 	int32_t dTerm;
 
-	switch (syncMode) {
-		case IGNORE:
-			break;
-		case SLOW_PLL:
+	if (syncMode == 0) {
 
-			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 31);
-			writeBuffer(&nudgeBuffer, error);
-			pTerm = error;
-			iTerm = nudgeSum >> 5;
-			dTerm = (error - readBuffer(&nudgeBuffer, 3));
+		nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 31);
+		writeBuffer(&nudgeBuffer, error);
+		pTerm = error;
+		iTerm = nudgeSum >> 5;
+		dTerm = (error - readBuffer(&nudgeBuffer, 3));
 
-			pllNudge = (pTerm + iTerm + dTerm) >> 4;
+		pllNudge = (pTerm + iTerm + dTerm) >> 4;
 
-			break;
-		case FAST_PLL:
+	} else if (syncMode == 1) {
 
-			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 7);
-			writeBuffer(&nudgeBuffer, error);
-			pTerm = error;
-			iTerm = nudgeSum >> 3;
+		nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 7);
+		writeBuffer(&nudgeBuffer, error);
+		pTerm = error;
+		iTerm = nudgeSum >> 3;
 
-			pllNudge = (pTerm + iTerm) >> 2;
+		pllNudge = (pTerm + iTerm) >> 2;
 
-			break;
-		case WILD_PLL:
+	} else if (syncMode == 2) {
 
-			pTerm = error;
-			nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 7);
-			writeBuffer(&nudgeBuffer, error);
-			iTerm = nudgeSum >> 3;
-			pllNudge = pTerm;
+		pTerm = error;
+		nudgeSum = error + nudgeSum - readBuffer(&nudgeBuffer, 7);
+		writeBuffer(&nudgeBuffer, error);
+		iTerm = nudgeSum >> 3;
+		pllNudge = pTerm;
 
-			break;
-		case HARD_SYNC:
+	} else if (syncMode == 3) {
 
-			pllNudge = 0;
-			nudgeSum = 0;
-			phaseSignal = (localPhaseOffset << 7) + (phaseModSignal << 7) + target;
-
-			break;
-
-		default:
-			break;
+		pllNudge = 0;
+		nudgeSum = 0;
+		syncWavetable.phase = (localPhaseOffset << 7) + (phaseModSignal << 7) + target;
 
 	}
-
-	int32_t multKey = fracMultiplier + intMultiplier;
-
-	ratioChange = (lastMultiplier != multKey);
-
-	lastMultiplier = multKey;
 
 }
 
 void ViaSync::generateFrequency(void) {
 
-// #ifdef BUILD_F373
+#ifdef BUILD_VIRTUAL
+
+	if (periodCount == 0) {
+		periodCount = 48000;
+	}
+
+#endif
+
 
 	int64_t incrementCalc = ((int64_t)intMultiplier << 16) | (fracMultiplier >> 16);
-	incrementCalc = ((uint64_t)(incrementCalc + pllNudge) * 1440) / (periodCount * 8);
+	incrementCalc = ((int64_t) (incrementCalc * (int64_t)clockDiv + (int64_t)pllNudge) * 1440) / (periodCount * 8);
 	increment = __USAT(incrementCalc, 31);
-
-// #endif
-
-// #ifdef BUILD_VIRTUAL
-
-// 	if (periodCount == 0) {
-// 		periodCount = 1;
-// 	}
-
-// 	uint64_t incrementCalc = ((uint64_t)intMultiplier << 16) | (fracMultiplier >> 16);
-// 	incrementCalc = ((uint64_t)(incrementCalc + pllNudge)) / (periodCount * 8);
-// 	increment = incrementCalc;
-
-// #endif
-
 
 }
