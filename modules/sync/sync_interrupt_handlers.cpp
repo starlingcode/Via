@@ -71,7 +71,7 @@ void ViaSync::auxRisingEdgeCallback(void) {
 	} else {
 		pllReset = 0;
 #ifdef BUILD_VIRTUAL
-		uint32_t playbackPosition = (reading % 1440)/180;
+		uint32_t playbackPosition = 0;
 #endif
 #ifdef BUILD_F373
 		uint32_t playbackPosition = (SYNC_BUFFER_SIZE * 2) - DMA1_Channel5->CNDTR;
