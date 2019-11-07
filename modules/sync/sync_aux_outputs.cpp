@@ -26,17 +26,16 @@ void ViaSync::calculateLogicADelta(int32_t writeIndex) {
 void ViaSync::calculateDac3Phasor(int32_t writeIndex) {
 
 	int32_t samplesRemaining = outputBufferSize;
-	int32_t readIndex = 0;
 
 	while (samplesRemaining) {
 
-		if (syncWavetable.phaseOut[readIndex] >> 24) {
-			outputs.dac3Samples[writeIndex] = 8191 - (syncWavetable.phaseOut[readIndex] >> 12);
+		if (syncWavetable.phaseOut[writeIndex] >> 24) {
+			outputs.dac3Samples[writeIndex] = 8191 - (syncWavetable.phaseOut[writeIndex] >> 12);
 		} else {
-			outputs.dac3Samples[writeIndex] = syncWavetable.phaseOut[readIndex] >> 12;
+			outputs.dac3Samples[writeIndex] = syncWavetable.phaseOut[writeIndex] >> 12;
 		}
+		outputs.dac1Samples[writeIndex] = 4095 - syncWavetable.signalOut[writeIndex];
 
-		readIndex ++;
 		writeIndex ++;
 		samplesRemaining --;
 
@@ -47,13 +46,12 @@ void ViaSync::calculateDac3Phasor(int32_t writeIndex) {
 void ViaSync::calculateDac3Contour(int32_t writeIndex) {
 
 	int32_t samplesRemaining = outputBufferSize;
-	int32_t readIndex = 0;
 
 	while (samplesRemaining) {
-		outputs.dac3Samples[writeIndex] = syncWavetable.signalOut[readIndex];
+		outputs.dac3Samples[writeIndex] = syncWavetable.signalOut[writeIndex];
+		outputs.dac1Samples[writeIndex] = 4095 - syncWavetable.signalOut[writeIndex];
 
 		writeIndex ++;
-		readIndex ++;
 		samplesRemaining --;
 
 	}

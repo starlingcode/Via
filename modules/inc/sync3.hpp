@@ -191,6 +191,7 @@ public:
 	int32_t lastPhaseMod = 0;
 	int32_t phaseModIncrement2 = 0;
 	int32_t phaseModIncrement3 = 0;
+	uint32_t phaseModTracker = 0;
 	uint32_t phaseModTracker2 = 0;
 	uint32_t phaseModTracker3 = 0;
 
@@ -208,8 +209,8 @@ public:
 	int32_t lastTap = 0;
 	uint32_t measurementDivider = 1;
 
-	inline void advanceSubharm(void) {
-		subharm = (subharm + 1) & 1;
+	inline void advanceSubharm(uint32_t advance) {
+		subharm = (subharm + advance) & 1;
 		setAuxLogic(subharm);
 	}
 
@@ -288,7 +289,7 @@ public:
 		} else if (freqCorrect == 1) {
 			divCount3 += measurementDivider;
 			divCount3 %= denominator2Select;
-			int32_t error = (divCount3 * sync2Div * numerator2Alt) - error2 + (1 << 30) + phaseModTracker2;
+			int32_t error = (divCount3 * sync2Div * numerator2Alt) - error2 + (1 << 30) + phaseModTracker;
 			int64_t phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator2Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator2Select;
@@ -297,7 +298,7 @@ public:
 		} else if (freqCorrect == 2) {
 			divCount4 += measurementDivider;
 			divCount4 %= denominator3Select;
-			int32_t error = (divCount4 * sync3Div * numerator3Alt) - error3 + (1 << 31) + phaseModTracker2;
+			int32_t error = (divCount4 * sync3Div * numerator3Alt) - error3 + (1 << 31) + phaseModTracker;
 			int64_t phaseSpan = (uint64_t) (measurementDivider) * (uint64_t) numerator3Alt;
 			phaseSpan <<= 32;
 			phaseSpan /= denominator3Select;
@@ -510,16 +511,17 @@ public:
 	/// Event handlers calling the corresponding methods from the state machine.
 	void mainRisingEdgeCallback(void) {
 		#ifdef BUILD_F373
-		int32_t reading = TIM2->CNT;
+		uint32_t reading = TIM2->CNT;
 		#endif
 		#ifdef BUILD_VIRTUAL
-		int32_t reading = readMeasurementTimer();
+		uint32_t reading = readMeasurementTimer();
 		#endif
 
 		if (reading < (1440 * 64)) {
-			errorPileup ++;
-			advanceSubharm();
-		} else if (reading > (periodCount >> 4)) {
+			uint32_t valid = (reading > (periodCount >> 8));
+			errorPileup += valid;
+			advanceSubharm(valid);
+		} else {
 			#ifdef BUILD_F373
 			TIM2->CNT = 0;
 			int32_t playbackPosition = (VIA_SYNC3_BUFFER_SIZE * 2) - DMA1_Channel5->CNDTR;
@@ -531,11 +533,17 @@ public:
 
 			periodCount = reading;
 
-			advanceSubharm();
+			advanceSubharm(1);
 
 			error1 = phases2[playbackPosition];
 			error2 = phases3[playbackPosition];
 			error3 = phases4[playbackPosition];
+
+//			playbackPosition = (playbackPosition > 23) ? playbackPosition - 24 : playbackPosition;
+//
+//			phaseModTracker = phaseModTracker3 + phaseModIncrement2 * playbackPosition;
+
+			phaseModTracker = phaseModTracker3;
 
 			freqCorrect = 0;
 
@@ -641,20 +649,22 @@ public:
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
 
-		phaseMod();
-
 		updateFrequencies();
 
 		(this->*updateOutputs)(0);
 
+		phaseMod();
+
 	}
 	void transferCompleteCallback(void) {
 
-		phaseMod();
+
 
 		updateFrequencies();
 
 		(this->*updateOutputs)(VIA_SYNC3_BUFFER_SIZE);
+
+		phaseMod();
 
 	}
 	void slowConversionCallback(void) {
@@ -755,11 +765,15 @@ public:
 
 			#endif
 
-			advanceSubharm();
+			advanceSubharm(1);
 
 			error1 = phases2[playbackPosition];
 			error2 = phases3[playbackPosition];
 			error3 = phases4[playbackPosition];
+
+			playbackPosition = (playbackPosition > 23) ? playbackPosition - 24 : playbackPosition;
+
+			phaseModTracker = phaseModTracker3 + phaseModIncrement2 * playbackPosition;
 
 			freqCorrect = 0;
 
