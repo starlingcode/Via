@@ -35,9 +35,6 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t writePosition) {
 
 	localPhase += localIncrement;
 
-	localPhase *= phaseReset;
-	phaseReset = 1;
-
 	// log a -1 if the max value index of the wavetable is traversed from the left
 	// log a 1 if traversed from the right
 	// do this by subtracting the sign bit of the last phase from the current phase, both less the max phase index
@@ -47,7 +44,9 @@ void SyncWavetable::spline(uint32_t * wavetable, uint32_t writePosition) {
 
 	int32_t localPWM = (int32_t) pwm[0];
 	localPWM <<= 1;
-	localPWM = __USAT(localPWM + cv2Offset + 32768, 16);
+	localPWM = localPWM + cv2Offset + 32768;
+	if (localPWM >= 0xFFFF) {localPWM = 0xFFFF - 1;}
+	else if (localPWM <= 0) {localPWM = 1;}
 	int32_t bendUp = 0xFFFFFFFF / localPWM;
 	int32_t bendDown = 0xFFFFFFFF / (0xFFFF - localPWM);
 
@@ -94,7 +93,7 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t writePosition) {
 	pmAmount += 32767 + cv2Offset;
 	int32_t phaseModulationValue = (pmAmount - previousPhaseMod) << (16 - oversamplingFactor);
 	previousPhaseMod = pmAmount;
-	phaseMod += phaseModulationValue;
+	phaseMod += phaseModulationValue << 3;
 
 	// now oversample
 
@@ -117,7 +116,7 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t writePosition) {
 	int32_t localIncrement = increment + phaseModulationValue;
 	uint32_t leftSample;
 
-	uint32_t localPhase = phase * phaseReset;
+	uint32_t localPhase = phase;
 
 	int32_t samplesRemaining = bufferSize - 1;
 	int32_t writeIndex = writePosition;

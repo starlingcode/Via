@@ -70,14 +70,17 @@ void ViaSync::auxRisingEdgeCallback(void) {
 		pllReset = 0;
 	} else {
 		pllReset = 0;
-		phaseSignal = syncWavetable.phase;
-		phaseModSignal = syncWavetable.phaseMod;
+#ifdef BUILD_VIRTUAL
+		uint32_t playbackPosition = (reading % 1440)/180;
+#endif
+#ifdef BUILD_F373
+		uint32_t playbackPosition = (SYNC_BUFFER_SIZE * 2) - DMA1_Channel5->CNDTR;
+#endif
+
+		phaseSignal = syncWavetable.purePhaseOut[playbackPosition];
 
 		doCorrection = 0;
-		// should these be initialized to point to the same address?
 
-		syncWavetable.increment = increment;
-		syncWavetable.phase = phaseSignal;
 	}
 
 }
@@ -120,7 +123,6 @@ void ViaSync::buttonPressedCallback(void) {
 		// should these be initialized to point to the same address?
 
 		syncWavetable.increment = increment;
-		syncWavetable.phaseReset = phaseReset;
 
 		outputs.auxLogic[0] = GET_EXPAND_LOGIC_MASK(ratioChange);
 

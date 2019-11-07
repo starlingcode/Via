@@ -79,7 +79,7 @@ void ViaSync::handleButton4ModeChange(int32_t mode) {
 		writeBuffer(&nudgeBuffer, 0);
 	}
 
-	syncMode = mode + 1;
+	syncMode = mode;
 
 }
 

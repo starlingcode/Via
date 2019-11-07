@@ -53,7 +53,7 @@ void ViaSync::doPLL(void) {
 
 	int32_t localPhaseOffset = fix48_mul(phaseOffset, fracMultiplier) + fix16_mul(phaseOffset, intMultiplier);
 
-	uint32_t phase = phaseSignal - phaseModSignal + (localPhaseOffset << 7);
+	uint32_t phase = phaseSignal - syncWavetable.phaseMod + (localPhaseOffset << 7);
 
 	uint32_t span = ((int64_t)intMultiplier << 16) | (fracMultiplier >> 16);
 
