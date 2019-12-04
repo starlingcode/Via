@@ -844,7 +844,7 @@ public:
 		if (ob1Data == 254 && ob2Data == 255) {
 			readCalibrationPacket();
 			osc3UI.writeStockPresets();
-			writeOptionBytes(6, 1);
+			writeOptionBytes(6, 2);
 		} else if (ob1Data == 6) {
 			readCalibrationPacket();
 		} else if (ob1Data != 0) {

@@ -108,7 +108,7 @@ void ViaSync::doPLL(void) {
 
 		pllNudge = 0;
 		nudgeSum = 0;
-		syncWavetable.phase = (localPhaseOffset << 7) + (phaseModSignal << 7) + target;
+		syncWavetable.phase = target;
 
 	}
 

@@ -195,7 +195,7 @@ public:
 	uint32_t phaseModTracker2 = 0;
 	uint32_t phaseModTracker3 = 0;
 
-	uint32_t periodCount = 1000;
+	uint32_t periodCount = 163636;
 	int32_t errorPileup = 0;
 	int32_t phaseLockOn = 0;
 	int32_t hardSync = 0;
@@ -222,6 +222,8 @@ public:
 		uint32_t pllStyle;
 	};
 
+/// INSERT SCALES
+
 	static const struct Sync3Scale perfect;
 	static const struct Sync3Scale simpleRhythms;
 	static const struct Sync3Scale ints;
@@ -230,6 +232,8 @@ public:
 	static const struct Sync3Scale minorArp;
 	static const struct Sync3Scale evenOdds;
 	static const struct Sync3Scale bP;
+
+/// INSERT SCALES
 
 	static const struct Sync3Scale * scales[8];
 
@@ -865,7 +869,7 @@ public:
 		if (ob1Data == 254 && ob2Data == 255) {
 			readCalibrationPacket();
 			sync3UI.writeStockPresets();
-			writeOptionBytes(7, 1);
+			writeOptionBytes(7, 2);
 		} else if (ob1Data == 7) {
 			readCalibrationPacket();
 		} else if (ob1Data != 0) {

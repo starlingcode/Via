@@ -752,7 +752,7 @@ public:
 		if (ob1Data == 254 && ob2Data == 255) {
 			readCalibrationPacket();
 			atsrUI.writeStockPresets();
-			writeOptionBytes(5, 1);
+			writeOptionBytes(5, 2);
 		} else if (ob1Data == 5) {
 			readCalibrationPacket();
 		} else if (ob1Data != 0) {
