@@ -233,14 +233,14 @@ public:
 	static const struct Sync3Scale evenOdds;
 	static const struct Sync3Scale bP;
 
-/// INSERT SCALES
-
 	static const struct Sync3Scale * scales[8];
 
 	const uint32_t * numerators = ints.numerators;
 	const uint32_t * denominators = ints.denominators;
 	const uint32_t * dividedPhases = ints.dividedPhases;
 	const uint32_t * keys = ints.keys;
+
+/// INSERT SCALES
 
 	inline void displayRatio(void) {
 		setRGB(hueSpace[sync3UI.button2Mode * 2]);
