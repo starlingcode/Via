@@ -100,6 +100,10 @@ void SyncWavetable::oversample(uint32_t * wavetable, uint32_t writePosition) {
 	int32_t localPWM = (int32_t) pwm[0];
 	localPWM <<= 1;
 	localPWM = __USAT(localPWM + cv2Offset + 32768, 16);
+#ifdef BUILD_VIRTUAL
+	if (localPWM >= 0xFFFF) {localPWM = 0xFFFF - 1;}
+	else if (localPWM <= 0) {localPWM = 1;}
+#endif
 	int32_t bendUp = 0xFFFFFFFF / localPWM;
 	int32_t bendDown = 0xFFFFFFFF / (0xFFFF - localPWM);
 

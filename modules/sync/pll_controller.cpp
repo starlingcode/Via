@@ -127,6 +127,6 @@ void ViaSync::generateFrequency(void) {
 
 	int64_t incrementCalc = ((int64_t)intMultiplier << 16) | (fracMultiplier >> 16);
 	incrementCalc = ((int64_t) (incrementCalc * (int64_t)clockDiv + (int64_t)pllNudge) * 1440) / (periodCount * 8);
-	increment = __USAT(incrementCalc, 31);
+	increment = __USAT(incrementCalc, 30);
 
 }

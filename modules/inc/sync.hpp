@@ -86,6 +86,13 @@ public:
 
 	}
 
+	SyncWavetable() {
+		for (int i = 0; i < 32; i++) {
+			phaseOut[i] = 0;
+			purePhaseOut[i >> 1] = 0;
+		}
+	}
+
 
 };
 
