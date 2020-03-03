@@ -72,6 +72,8 @@ void ViaScanner::halfTransferCallback(void) {
 	scanner.xInput += scanner.cv2Offset;
 	scanner.yInput += scanner.cv3Offset;
 
+	scanner.updateControlParams();
+
 	scanner.fillBufferExternal();
 
 	int32_t sample;
@@ -119,6 +121,8 @@ void ViaScanner::transferCompleteCallback(void) {
 
 	scanner.xInput += scanner.cv2Offset;
 	scanner.yInput += scanner.cv3Offset;
+
+	scanner.updateControlParams();
 
 	scanner.fillBufferExternal();
 

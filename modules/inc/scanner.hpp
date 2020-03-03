@@ -42,6 +42,8 @@ private:
 
 	int32_t xOffset = 0;
 	int32_t yOffset = 0;
+	int32_t xOffsetControl = 0;
+	int32_t yOffsetControl = 0;
 
 //	uint32_t noisyZIndex = 0;
 //	uint32_t lastZIndex = 0;
@@ -180,6 +182,7 @@ public:
 
 	//control rate input
 	uint32_t zIndex = 0;
+	uint32_t zIndexControl = 0;
 
 	// mode parameters
 	uint32_t terrainType = 0;
@@ -194,6 +197,22 @@ public:
 
 	int32_t hemisphereBlend = 0;
 	int32_t deltaBlend = 0;
+
+	// dumb
+	int32_t fix32Mul(int32_t x, int32_t y) {
+		int64_t out = (int64_t) x * (int64_t) y;
+		out >>= 32;
+		return (int32_t) out;
+	}
+
+#define UPSAMPLE_CUTOFF (1 << 28)
+
+	void updateControlParams(void) {
+		xOffset += fix32Mul(xOffsetControl - xOffset, UPSAMPLE_CUTOFF);
+		yOffset += fix32Mul(yOffsetControl - yOffset, UPSAMPLE_CUTOFF);
+		zIndex += fix32Mul(zIndexControl - zIndex, UPSAMPLE_CUTOFF);
+	}
+
 
 	inline void fillBufferExternal(void) {
 		(this->*fillBuffer)();

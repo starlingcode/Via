@@ -10,11 +10,11 @@
 
 void ThreeAxisScanner::parseControls(ViaControls * controls) {
 
-	xOffset = (controls->knob2Value - 2048) << 13;
-	yOffset = (controls->knob3Value - 2048) << 13;
+	xOffsetControl = (controls->knob2Value - 2048) << 13;
+	yOffsetControl = (controls->knob3Value - 2048) << 13;
 
 	int32_t zKnobCV = controls->knob1Value - 2200 + controls->cv1Value;
-	zIndex = __USAT(zKnobCV, 12) << 6;
+	zIndexControl = __USAT(zKnobCV, 12) << 6;
 
 //	scannerXHysterisis();
 //	scannerYHysterisis();
@@ -51,8 +51,8 @@ void ThreeAxisScanner::scanSetup() {
 		xIndex += xIncrement;
 		yIndex += yIncrement;
 
-		xIndexBuffer[writeIndex] = foldSignal25Bit((xIndex << 8) + thisXOffset);
-		yIndexBuffer[writeIndex] = foldSignal25Bit((yIndex << 8) + thisYOffset);
+		xIndexBuffer[writeIndex] = foldSignal25Bit((xIndex << 5) + thisXOffset);
+		yIndexBuffer[writeIndex] = foldSignal25Bit((yIndex << 5) + thisYOffset);
 
 
 		samplesRemaining --;
