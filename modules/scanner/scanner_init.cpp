@@ -34,7 +34,7 @@ void ViaScanner::init(void) {
 	if (ob1Data == 254 && ob2Data == 255) {
 		readCalibrationPacket();
 		scannerUI.writeStockPresets();
-		writeOptionBytes(3, 2);
+		writeOptionBytes(3, 3);
 	} else if (ob1Data == 3) {
 		readCalibrationPacket();
 	} else if (ob1Data != 0) {
