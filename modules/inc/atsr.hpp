@@ -685,9 +685,10 @@ public:
 				tMod), 25);
 		atsrState->releaseIncrement = __USAT(fix16_mul(expo.convert(4095 - controls.knob3Value) >> 7,
 				rMod), 25);
-		setRedLED((atsrState->bLevel >> 4) * runtimeDisplay);
-		setBlueLED((atsrState->aLevel >> 4) * runtimeDisplay);
-		setGreenLED(((atsrState->aLevel + atsrState->bLevel) >> 4) * cycleTime * runtimeDisplay);
+		updateRGBDisplay(atsrState->bLevel >> 4,
+				((atsrState->aLevel + atsrState->bLevel) >> 4) * cycleTime,
+				atsrState->aLevel >> 4,
+						runtimeDisplay);
 
 #ifdef BUILD_VIRTUAL
 
@@ -752,7 +753,7 @@ public:
 		if (ob1Data == 254 && ob2Data == 255) {
 			readCalibrationPacket();
 			atsrUI.writeStockPresets();
-			writeOptionBytes(5, 2);
+			writeOptionBytes(5, 3);
 		} else if (ob1Data == 5) {
 			readCalibrationPacket();
 		} else if (ob1Data != 0) {

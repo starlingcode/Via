@@ -124,6 +124,7 @@ void DualEuclidean::parseControls(ViaControls * controls,
 			multIndex = (fix16_lerp(0, controls->knob2Value,
 					cv2Sample << 5)) >> 9;
 		}
+		multIndex = __USAT(multIndex, 3);
 		//0-7 -> 1-8
 		multiplier = multipliers[multIndex];
 		// ???

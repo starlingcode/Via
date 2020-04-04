@@ -354,11 +354,18 @@ public:
 			restoreGreen = *(this_module.greenLevel);
 			restoreBlue = *(this_module.blueLevel);
 			this_module.updateRGBDisplay(4095, 4095, 4095, 1);
+		#ifdef BUILD_F373
+			this_module.setBlueLEDAlt(1);
+		#endif
 		}
 
 		void blinkOffCallback(void) override {
 			this_module.updateRGBDisplay(restoreRed, restoreGreen,
 					restoreBlue, 1);
+		#ifdef BUILD_F373
+			this_module.setBlueLEDAlt(0);
+		#endif
+
 		}
 
 		// TODO use enums
