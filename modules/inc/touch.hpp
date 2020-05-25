@@ -192,8 +192,8 @@ public:
 		return low2 >> 4;
 	}
 
-	int32_t rawButton2Reading = 0;
-	int32_t button2Reading = 0;
+	int32_t rawButton3Reading = 0;
+	int32_t button3Reading = 0;
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
@@ -217,21 +217,21 @@ public:
 	}
 	void ioProcessCallback(void) {}
 	void halfTransferCallback(void) {
-		button2Reading = processSVF(rawButton2Reading);
-		outputs.dac3Samples[0] = button2Reading;
+		button3Reading = processSVF(rawButton3Reading);
+		outputs.dac3Samples[0] = button3Reading;
 	}
 	void transferCompleteCallback(void) {
-		button2Reading = processSVF(rawButton2Reading);
-		outputs.dac3Samples[1] = button2Reading;
+		button3Reading = processSVF(rawButton3Reading);
+		outputs.dac3Samples[1] = button3Reading;
 	}
 	void slowConversionCallback(void) {
 
 
 		#ifdef BUILD_F373
-		rawButton2Reading = __USAT(MyTKeys[0].p_ChD->Ref - MyTKeys[0].p_ChD->Meas, 8) << 4;
+		rawButton3Reading = __USAT(MyTKeys[1].p_ChD->Ref - MyTKeys[1].p_ChD->Meas, 8) << 4;
 		#endif
 
-		setRedLED(button2Reading);
+		setRedLED(button3Reading);
 
 	}
 	void auxTimer1InterruptCallback(void) {

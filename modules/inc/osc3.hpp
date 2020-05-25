@@ -847,6 +847,9 @@ public:
 			writeOptionBytes(6, 2);
 		} else if (ob1Data == 6) {
 			readCalibrationPacket();
+			if (ob2Data != 6) {
+				writeOptionBytes(6, 2);
+			}
 		} else if (ob1Data != 0) {
 			writeOptionBytes(0, 0);
 		}

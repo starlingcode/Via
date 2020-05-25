@@ -52,6 +52,9 @@ void ViaSync::init(void) {
 		writeOptionBytes(2, 2);
 	} else if (ob1Data == 2) {
 		readCalibrationPacket();
+		if (ob2Data != 2) {
+			writeOptionBytes(2, 2);
+		}
 	} else if (ob1Data != 0) {
 		writeOptionBytes(0, 0);
 	}

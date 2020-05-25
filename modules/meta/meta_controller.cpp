@@ -342,7 +342,7 @@ int32_t MetaController::envAttackState(void) {
 
 int32_t MetaController::envReleaseState(void) {
 
-	if (triggerSignal == 0) {
+	if (triggerSignal == 0 && phase > (WAVETABLE_LENGTH >> 1)) {
 		incrementArbiter = &MetaController::envRetriggerState;
 		return -increment1;
 		// if at a from attack or at a from release
@@ -369,6 +369,7 @@ int32_t MetaController::envRetriggerState(void) {
 		return increment1;
 
 	} else {
+
 		return -increment1;
 
 	}
@@ -423,7 +424,7 @@ int32_t MetaController::gatedState(void) {
 
 int32_t MetaController::gateReleaseState(void) {
 
-	if (gateSignal) {
+	if (gateSignal && phase > (WAVETABLE_LENGTH >> 1)) {
 		incrementArbiter = &MetaController::gateRetriggerState;
 		return -increment1;
 	} else if (phaseEvent == AT_A_FROM_RELEASE) {

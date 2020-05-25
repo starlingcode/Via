@@ -37,6 +37,9 @@ void ViaScanner::init(void) {
 		writeOptionBytes(3, 3);
 	} else if (ob1Data == 3) {
 		readCalibrationPacket();
+		if (ob2Data != 3) {
+			writeOptionBytes(3, 3);
+		}
 	} else if (ob1Data != 0) {
 		writeOptionBytes(0, 0);
 	}

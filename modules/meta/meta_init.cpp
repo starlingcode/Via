@@ -69,6 +69,9 @@ void ViaMeta::init() {
 		writeOptionBytes(1, 2);
 	} else if (ob1Data == 1) {
 		readCalibrationPacket();
+		if (ob2Data != 1) {
+			writeOptionBytes(1, 2);
+		}
 	} else if (ob1Data != 0) {
 		writeOptionBytes(0, 0);
 	}
