@@ -224,16 +224,18 @@ public:
 
 /// INSERT SCALES
 
-	static const struct Sync3Scale perfect;
-	static const struct Sync3Scale simpleRhythms;
-	static const struct Sync3Scale ints;
-	static const struct Sync3Scale circleFifths;
-	static const struct Sync3Scale fourthsFifths;
-	static const struct Sync3Scale minorArp;
-	static const struct Sync3Scale evenOdds;
-	static const struct Sync3Scale bP;
+	static const struct Sync3Scale perfect __attribute__((section(".scales")));
+	static const struct Sync3Scale simpleRhythms __attribute__((section(".scales")));
+	static const struct Sync3Scale ints __attribute__((section(".scales")));
+	static const struct Sync3Scale circleFifths __attribute__((section(".scales")));
+	static const struct Sync3Scale fourthsFifths __attribute__((section(".scales")));
+	static const struct Sync3Scale minorArp __attribute__((section(".scales")));
+	static const struct Sync3Scale evenOdds __attribute__((section(".scales")));
+	static const struct Sync3Scale bP __attribute__((section(".scales")));
 
-	static const struct Sync3Scale * scales[8];
+#ifdef BUILD_F373
+	const struct Sync3Scale * scales = (const struct Sync3Scale *) 0x8020000;
+#endif
 
 	const uint32_t * numerators = ints.numerators;
 	const uint32_t * denominators = ints.denominators;

@@ -64,5 +64,5 @@ const ViaSync3::Sync3Scale ViaSync3::bP = {
 	0
 };
 
-const struct ViaSync3::Sync3Scale * ViaSync3::scales[8] = {&ViaSync3::simpleRhythms, &ViaSync3::ints, &ViaSync3::perfect, &ViaSync3::circleFifths, &ViaSync3::fourthsFifths, &ViaSync3::minorArp, &ViaSync3::evenOdds, &ViaSync3::bP};
+//const struct ViaSync3::Sync3Scale * ViaSync3::scales[8] = {&ViaSync3::simpleRhythms, &ViaSync3::ints, &ViaSync3::perfect, &ViaSync3::circleFifths, &ViaSync3::fourthsFifths, &ViaSync3::minorArp, &ViaSync3::evenOdds, &ViaSync3::bP};
 
