@@ -66,11 +66,11 @@ void ViaMeta::init() {
 	if (ob1Data == 254 && ob2Data == 255) {
 		readCalibrationPacket();
 		metaUI.writeStockPresets();
-		writeOptionBytes(1, 2);
+		writeOptionBytes(1, 3);
 	} else if (ob1Data == 1) {
 		readCalibrationPacket();
-		if (ob2Data != 1) {
-			writeOptionBytes(1, 2);
+		if (ob2Data != 3) {
+			writeOptionBytes(1, 3);
 		}
 	} else if (ob1Data != 0) {
 		writeOptionBytes(0, 0);
