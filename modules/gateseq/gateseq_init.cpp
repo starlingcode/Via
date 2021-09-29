@@ -4,13 +4,16 @@ void ViaGateseq::init(void) {
 
 	initializeAuxOutputsGateseq();
 
-	initializePatterns();
+#ifdef BUILD_VIRTUAL
+    banks = (GateseqPatternBank *) malloc(8 * sizeof(GateseqPatternBank)); 
+    sequencer.bankBaseAddress = (uint32_t *) banks;
+#endif
 
 	gateController.updateGateA(SOFT_GATE_HIGH);
 	gateController.updateGateB(SOFT_GATE_HIGH);
 
-	sequencer.currentABank = seq1Banks[0];
-	sequencer.currentBBank = seq2Banks[0];
+	sequencer.currentABank = &(banks[0]);
+	sequencer.currentBBank = &(banks[4]);
 
 	sequencer.gateAEvent = SOFT_GATE_EXECUTE;
 	sequencer.gateBEvent = SOFT_GATE_EXECUTE;

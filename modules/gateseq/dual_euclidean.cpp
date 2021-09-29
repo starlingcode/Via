@@ -19,7 +19,7 @@ void DualEuclidean::advanceSequencerA(void) {
 
 	aPatternIndex = (aCounter + offset) % aLength;
 
-	aPatternValue = currentABank->patternBank[aPatternMorph][aPatternIndex];
+	aPatternValue = currentAPattern[aPatternIndex];
 
 	aCounter = (aCounter + 1) % aLength;
 
@@ -35,7 +35,7 @@ void DualEuclidean::advanceSequencerB(void) {
 	bPatternIndex = bCounter;
 
 	//lookup the logic values
-	bPatternValue = currentBBank->patternBank[bPatternMorph][bPatternIndex];
+	bPatternValue = currentAPattern[bPatternIndex];
 
 	//increment the sequence counter
 	bCounter = (bCounter + 1) % bLength;
@@ -166,6 +166,8 @@ void DualEuclidean::parseControls(ViaControls * controls,
 
 	aLength = currentABank->lengths[aPatternMorph];
 	bLength = currentBBank->lengths[bPatternMorph];
+    currentAPattern = bankBaseAddress + currentABank->patternOffsets[aPatternMorph];
+    currentBPattern = bankBaseAddress + currentBBank->patternOffsets[bPatternMorph];
 
 }
 

@@ -229,21 +229,9 @@ public:
 /// INSERT SCALES
 
 #ifdef BUILD_F373
-	static const struct Sync3Scale perfect __attribute__((section(".scales")));
-	static const struct Sync3Scale simpleRhythms __attribute__((section(".scales")));
-	static const struct Sync3Scale ints __attribute__((section(".scales")));
-	static const struct Sync3Scale circleFifths __attribute__((section(".scales")));
-	static const struct Sync3Scale fourthsFifths __attribute__((section(".scales")));
-	static const struct Sync3Scale minorArp __attribute__((section(".scales")));
-	static const struct Sync3Scale evenOdds __attribute__((section(".scales")));
-	static const struct Sync3Scale bP __attribute__((section(".scales")));
 
 	const struct Sync3Scale * scales = (const struct Sync3Scale *) 0x8020000;
 	
-    const uint32_t * numerators = ints.numerators;
-	const uint32_t * denominators = ints.denominators;
-	const uint32_t * dividedPhases = ints.dividedPhases;
-	const uint32_t * keys = ints.keys;
 #endif
 #ifdef BUILD_VIRTUAL
     struct Sync3Scale * scales;
@@ -255,12 +243,12 @@ public:
         fread(scales, 129, 8, scaleFile);
         fclose(scaleFile);
     }
+#endif
+
 	uint32_t * numerators = scales[0].numerators;
 	uint32_t * denominators = scales[0].denominators;
 	uint32_t * dividedPhases = scales[0].dividedPhases;
 	uint32_t * keys = scales[0].keys;
-#endif
-
 
 /// INSERT SCALES
 

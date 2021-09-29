@@ -9,11 +9,12 @@
 
 #include <via_platform_binding.hpp>
 #include <user_interface.hpp>
-#include "boolean_sequences.hpp"
 
-// #ifdef BUILD_VIRTUAL
-// #include <iostream>
-// #endif
+#ifdef BUILD_VIRTUAL
+#include <stdlib.h>
+#include <stdio.h>
+#include <string>
+#endif
 
 enum {
 	// Dual soft gate (use crossfader as dual and gate with followed by mixing "or" stage)
@@ -22,6 +23,10 @@ enum {
 	SOFT_GATE_LOW
 };
 
+struct GateseqPatternBank {
+    uint32_t patternOffsets[16];
+    uint32_t lengths[16];
+};
 /*
  *
  * Dual euclidean sequencer
@@ -113,8 +118,20 @@ public:
 	uint32_t gateBEvent = 0;
 	uint32_t auxLogicMode = 0;
 
-	const booleanSequenceBank *currentABank;
-	const booleanSequenceBank *currentBBank;
+#ifdef BUILD_F373
+	const uint32_t * currentAPattern;
+	const uint32_t * currentBPattern;
+    const GateseqPatternBank * currentABank;
+    const GateseqPatternBank * currentBBank;
+    const uint32_t * bankStart; 
+#endif
+#ifdef BUILD_VIRTUAL
+	uint32_t * currentAPattern;
+	uint32_t * currentBPattern;
+    GateseqPatternBank * currentABank;
+    GateseqPatternBank * currentBBank;
+    uint32_t * bankBaseAddress; 
+#endif
 
 	// "outputs"
 	uint32_t aOutput = 0;
@@ -420,14 +437,30 @@ public:
 	 *
 	 */
 
-	/// Pointer to an array of type booleanSequenceBank for use with sequencer I.
-	const booleanSequenceBank *seq1Banks[4];
-	/// Pointer to an array of type booleanSequenceBank for use with sequencer II.
-	const booleanSequenceBank *seq2Banks[4];
 
-	/// Load seq1Banks and seq2Banks a set of sequence banks for each sequencer.
-	/// Each of the sequencer's 4 modes gets a bank.
-	void initializePatterns(void);
+#ifdef BUILD_F373
+	const struct GateseqPatternBank * banks = (const struct GateseqPatternBank *) 0x8020000;
+#endif
+#ifdef BUILD_VIRTUAL
+    struct GateseqPatternBank * banks;
+    void readPatternsFromFile(std::string path) {
+        FILE * patternsFile = fopen(path.c_str(), "r");
+        if (patternsFile == NULL) {
+            return; // TODO: Error handling for file not exist or something
+        }
+        
+        fseek(patternsFile, 0, SEEK_END);
+        uint32_t lSize = ftell(patternsFile);
+        rewind(patternsFile);
+
+        free(banks);
+        banks = (GateseqPatternBank *) malloc(lSize);
+        sequencer.bankBaseAddress = (uint32_t *) banks;
+
+        fread(banks, 1, lSize, patternsFile);
+        fclose(patternsFile);
+    };
+#endif
 
 	/*
 	 *
