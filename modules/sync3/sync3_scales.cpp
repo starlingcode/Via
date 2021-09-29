@@ -6,7 +6,7 @@
  */
 
 #include "sync3.hpp"
-
+#ifdef BUILD_F373
 const ViaSync3::Sync3Scale ViaSync3::perfect = {
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 6, 6, 8, 8, 12, 12, 16, 16},
 	{32, 32, 16, 16, 12, 12, 8, 8, 6, 6, 4, 4, 3, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -63,6 +63,6 @@ const ViaSync3::Sync3Scale ViaSync3::bP = {
 	{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32},
 	0
 };
-
+#endif
 //const struct ViaSync3::Sync3Scale * ViaSync3::scales[8] = {&ViaSync3::simpleRhythms, &ViaSync3::ints, &ViaSync3::perfect, &ViaSync3::circleFifths, &ViaSync3::fourthsFifths, &ViaSync3::minorArp, &ViaSync3::evenOdds, &ViaSync3::bP};
 

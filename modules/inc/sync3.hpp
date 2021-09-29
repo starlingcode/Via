@@ -11,7 +11,11 @@
 #include "user_interface.hpp"
 #include <via_platform_binding.hpp>
 #include "dsp.hpp"
-
+#ifdef BUILD_VIRTUAL
+#include <stdlib.h>
+#include <stdio.h>
+#include <string>
+#endif
 /// Macro used to specify the number of samples to per DAC transfer.
 #define VIA_SYNC3_BUFFER_SIZE 24
 
@@ -224,6 +228,7 @@ public:
 
 /// INSERT SCALES
 
+#ifdef BUILD_F373
 	static const struct Sync3Scale perfect __attribute__((section(".scales")));
 	static const struct Sync3Scale simpleRhythms __attribute__((section(".scales")));
 	static const struct Sync3Scale ints __attribute__((section(".scales")));
@@ -233,14 +238,29 @@ public:
 	static const struct Sync3Scale evenOdds __attribute__((section(".scales")));
 	static const struct Sync3Scale bP __attribute__((section(".scales")));
 
-#ifdef BUILD_F373
 	const struct Sync3Scale * scales = (const struct Sync3Scale *) 0x8020000;
-#endif
-
-	const uint32_t * numerators = ints.numerators;
+	
+    const uint32_t * numerators = ints.numerators;
 	const uint32_t * denominators = ints.denominators;
 	const uint32_t * dividedPhases = ints.dividedPhases;
 	const uint32_t * keys = ints.keys;
+#endif
+#ifdef BUILD_VIRTUAL
+    struct Sync3Scale * scales;
+    void readScalesFromFile(std::string path) {
+        FILE * scaleFile = fopen(path.c_str(), "r");
+        if (scaleFile == NULL) {
+            return; // TODO: Error handling for file not exist or something
+        }
+        fread(scales, 129, 8, scaleFile);
+        fclose(scaleFile);
+    }
+	uint32_t * numerators = scales[0].numerators;
+	uint32_t * denominators = scales[0].denominators;
+	uint32_t * dividedPhases = scales[0].dividedPhases;
+	uint32_t * keys = scales[0].keys;
+#endif
+
 
 /// INSERT SCALES
 
@@ -849,6 +869,10 @@ public:
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
 	ViaSync3() : sync3UI(*this) {
+
+        #ifdef BUILD_VIRTUAL
+        scales = (Sync3Scale *) malloc(8 * sizeof(Sync3Scale)); 
+        #endif
 
 		/// Link the module GPIO registers.
 		initializeAuxOutputs();
