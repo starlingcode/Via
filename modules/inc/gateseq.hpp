@@ -442,7 +442,7 @@ public:
 	const struct GateseqPatternBank * banks = (const struct GateseqPatternBank *) 0x8020000;
 #endif
 #ifdef BUILD_VIRTUAL
-    struct GateseqPatternBank * banks;
+    struct GateseqPatternBank * banks = NULL;
     void readPatternsFromFile(std::string path) {
         FILE * patternsFile = fopen(path.c_str(), "r");
         if (patternsFile == NULL) {
@@ -452,6 +452,7 @@ public:
         fseek(patternsFile, 0, SEEK_END);
         uint32_t lSize = ftell(patternsFile);
         rewind(patternsFile);
+        printf("Reading file of size: %d\n", lSize);
 
         free(banks);
         banks = (GateseqPatternBank *) malloc(lSize);
@@ -546,7 +547,13 @@ public:
 	 */
 
 	/// Call the init function which is basically the constructor and should be inlined here
+#ifdef BUILD_F373
 	ViaGateseq() : gateseqUI(*this) {
+#endif
+#ifdef BUILD_VIRTUAL
+	ViaGateseq(std::string binPath) : gateseqUI(*this) {
+        readPatternsFromFile(binPath);
+#endif
 		init();
 	}
 

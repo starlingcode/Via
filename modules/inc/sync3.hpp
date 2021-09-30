@@ -240,7 +240,7 @@ public:
         if (scaleFile == NULL) {
             return; // TODO: Error handling for file not exist or something
         }
-        fread(scales, 129, 8, scaleFile);
+        fread(scales, 129 * 4, 8, scaleFile);
         fclose(scaleFile);
     }
 #endif
@@ -856,10 +856,16 @@ public:
 	}
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
+#ifdef BUILD_F373
 	ViaSync3() : sync3UI(*this) {
+#endif
+#ifdef BUILD_VIRTUAL
+    ViaSync3(std::string binPath) : sync3UI(*this) {
+#endif
 
         #ifdef BUILD_VIRTUAL
-        scales = (Sync3Scale *) malloc(8 * sizeof(Sync3Scale)); 
+        scales = (Sync3Scale *) malloc(8 * sizeof(Sync3Scale));
+        readScalesFromFile(binPath);
         #endif
 
 		/// Link the module GPIO registers.
