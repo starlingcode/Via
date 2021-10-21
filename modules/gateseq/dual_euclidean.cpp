@@ -35,7 +35,7 @@ void DualEuclidean::advanceSequencerB(void) {
 	bPatternIndex = bCounter;
 
 	//lookup the logic values
-	bPatternValue = currentAPattern[bPatternIndex];
+	bPatternValue = currentBPattern[bPatternIndex];
 
 	//increment the sequence counter
 	bCounter = (bCounter + 1) % bLength;
@@ -188,7 +188,7 @@ void DualEuclidean::processMainRisingEdge(void) {
 #ifdef BUILD_VIRTUAL
 	periodCount = virtualTimer1Count;
 	virtualTimer1Count = 0;
-	if (!clockOn || virtualTimer2Count > 16) {
+	if (!clockOn || (virtualTimer2Count > 128)) {
 		virtualTimer3Enable = 0;
 		virtualTimer3Count = 0;
 		//virtualTimer2Prescaler = divider - 1; // no division implemented yet
