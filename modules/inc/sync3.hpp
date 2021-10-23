@@ -252,7 +252,7 @@ public:
 
 /// INSERT SCALES
 
-	inline void displayRatio(void) {
+	virtual void displayRatio(void) {
 		setRGB(hueSpace[sync3UI.button2Mode * 2]);
 	}
 
