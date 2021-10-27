@@ -846,7 +846,7 @@ public:
 	void handleButton1ModeChange(int32_t);
 	void handleButton2ModeChange(int32_t);
 	void handleButton3ModeChange(int32_t);
-	void handleButton4ModeChange(int32_t);
+	virtual void handleButton4ModeChange(int32_t);
 	void handleButton5ModeChange(int32_t);
 	void handleButton6ModeChange(int32_t);
 

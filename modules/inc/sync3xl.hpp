@@ -241,6 +241,14 @@ public:
 		#endif
 
 	}
+
+    void handleButton4ModeChange(int32_t mode) {
+
+        phaseModOn = mode;
+        phaseModTracker2 = 0;
+        setPMLED(mode);
+
+    }
 };
 
 #endif /* INC_SYNC3XL_HPP_ */
