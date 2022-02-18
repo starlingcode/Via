@@ -523,7 +523,7 @@ public:
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
-	void mainRisingEdgeCallback(void) {
+	void mainRisingEdgeCallback(void) override {
 		#ifdef BUILD_F373
 		uint32_t reading = TIM2->CNT;
 		#endif
@@ -583,7 +583,7 @@ public:
 		tapTempo = 0;
 
 	}
-	void mainFallingEdgeCallback(void) {
+	void mainFallingEdgeCallback(void) override {
 
 		setLogicA(0);
 		if (runtimeDisplay) {
@@ -593,7 +593,7 @@ public:
 
 	}
 
-	void auxRisingEdgeCallback(void) {
+	void auxRisingEdgeCallback(void) override {
 
 		setSH(1, 1);
 		if (runtimeDisplay) {
@@ -601,7 +601,7 @@ public:
 		}
 
 	}
-	void auxFallingEdgeCallback(void) {
+	void auxFallingEdgeCallback(void) override {
 
 		setSH(0, 0);
 		if (runtimeDisplay) {
@@ -609,7 +609,7 @@ public:
 		}
 
 	}
-	void buttonPressedCallback(void) {
+	void buttonPressedCallback(void) override {
 
 		#ifdef BUILD_F373
 
@@ -652,7 +652,7 @@ public:
 
 
 	}
-	void buttonReleasedCallback(void) {
+	void buttonReleasedCallback(void) override {
 
 		if (runtimeDisplay) {
 			setLEDC(0);
@@ -660,8 +660,8 @@ public:
 		}
 
 	}
-	void ioProcessCallback(void) {}
-	void halfTransferCallback(void) {
+	void ioProcessCallback(void) override {}
+	void halfTransferCallback(void) override {
 
 		updateFrequencies();
 
@@ -670,7 +670,7 @@ public:
 		phaseMod();
 
 	}
-	void transferCompleteCallback(void) {
+	void transferCompleteCallback(void) override {
 
 
 
@@ -681,7 +681,7 @@ public:
 		phaseMod();
 
 	}
-	void slowConversionCallback(void) {
+	void slowConversionCallback(void) override {
 
 		controls.updateExtraNoCV1();
 
@@ -763,7 +763,7 @@ public:
 		#endif
 
 	}
-	void auxTimer1InterruptCallback(void) {
+	void auxTimer1InterruptCallback(void) override {
 
 		if (tapTempo) {
 
@@ -822,7 +822,7 @@ public:
 		}
 
 	}
-	void auxTimer2InterruptCallback(void) {
+	void auxTimer2InterruptCallback(void) override {
 
 		setLogicA(0);
 		if (runtimeDisplay) {

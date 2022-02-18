@@ -18,12 +18,12 @@ public:
     void setSyncLED(uint32_t level) {setGreenLED(4095 * level);}
     void setPMLED(uint32_t level) {tempPM = level;}
 
-    void displayRatio(void) {setLEDs(sync3UI.button2Mode);}
+    void displayRatio(void) override {setLEDs(sync3UI.button2Mode);}
     void clearRGB(void) {}
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
-	void mainRisingEdgeCallback(void) {
+	void mainRisingEdgeCallback(void) override {
 		#ifdef BUILD_F373
 		uint32_t reading = TIM2->CNT;
 		#endif
@@ -83,7 +83,7 @@ public:
 		tapTempo = 0;
 
 	}
-	void mainFallingEdgeCallback(void) {
+	void mainFallingEdgeCallback(void) override {
 
 		setLogic1(0);
 		setLogic2(0);
@@ -92,7 +92,7 @@ public:
 
 	}
 
-	void slowConversionCallback(void) {
+	void slowConversionCallback(void) override {
 
 		controls.updateExtraNoCV1();
 
@@ -170,7 +170,7 @@ public:
 		#endif
 
 	}
-	void auxTimer1InterruptCallback(void) {
+	void auxTimer1InterruptCallback(void) override {
 
 		if (tapTempo) {
 
@@ -229,7 +229,7 @@ public:
 		}
 
 	}
-	void auxTimer2InterruptCallback(void) {
+	void auxTimer2InterruptCallback(void) override {
 
 		setLogic1(0);
 		setLogic2(0);
@@ -242,7 +242,7 @@ public:
 
 	}
 
-    void handleButton4ModeChange(int32_t mode) {
+    void handleButton4ModeChange(int32_t mode) override {
 
         phaseModOn = mode;
         phaseModTracker2 = 0;

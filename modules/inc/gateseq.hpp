@@ -563,36 +563,36 @@ public:
 	}
 
 	/// Handle a rising edge at the main logic input
-	void mainRisingEdgeCallback(void);
+	void mainRisingEdgeCallback(void) override;
 	/// Handle a falling edge at the main logic input
-	void mainFallingEdgeCallback(void);
+	void mainFallingEdgeCallback(void) override;
 
 	/// Handle a rising edge at the expander logic input
-	void auxRisingEdgeCallback(void);
+	void auxRisingEdgeCallback(void) override;
 	/// Handle a falling edge at the expander logic input
-	void auxFallingEdgeCallback(void);
+	void auxFallingEdgeCallback(void) override;
 
 	/// Handle a press event on the expander control button
-	void buttonPressedCallback(void);
+	void buttonPressedCallback(void) override;
 	/// Handle a release event on the expander control button
-	void buttonReleasedCallback(void);
+	void buttonReleasedCallback(void) override;
 
 	/// unused
-	void ioProcessCallback(void);
+	void ioProcessCallback(void) override;
 
 	/// Fill the first half of the dac buffers
-	void halfTransferCallback(void);
+	void halfTransferCallback(void) override;
 	/// Fill the second half of the dac buffers
-	void transferCompleteCallback(void);
+	void transferCompleteCallback(void) override;
 	/// Handle an end of conversion event for the 12 bit control rate ADCs
-	void slowConversionCallback(void);
+	void slowConversionCallback(void) override;
 
 	/// Handle an overflow interrupt from aux timer 1
-	void auxTimer1InterruptCallback(void);
+	void auxTimer1InterruptCallback(void) override;
 	/// Handle an overflow interrupt from aux timer 2
-	void auxTimer2InterruptCallback(void);
+	void auxTimer2InterruptCallback(void) override;
 	/// Handle an overflow interrupt from aux timer 3
-	void auxTimer3InterruptCallback(void);
+	void auxTimer3InterruptCallback(void) override;
 
 	/// Dispatch a signal to the touch sense interface
 	void ui_dispatch(int32_t sig) {

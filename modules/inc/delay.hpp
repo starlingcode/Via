@@ -244,29 +244,29 @@ public:
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
-	void mainRisingEdgeCallback(void) {
+	void mainRisingEdgeCallback(void) override {
 
 		burstCounter = 128;
 
 	}
-	void mainFallingEdgeCallback(void) {
+	void mainFallingEdgeCallback(void) override {
 	}
-	void auxRisingEdgeCallback(void) {
+	void auxRisingEdgeCallback(void) override {
 
 	}
-	void auxFallingEdgeCallback(void) {
+	void auxFallingEdgeCallback(void) override {
 	}
-	void buttonPressedCallback(void) {
+	void buttonPressedCallback(void) override {
 	}
-	void buttonReleasedCallback(void) {}
-	void ioProcessCallback(void) {}
-	void halfTransferCallback(void) {
+	void buttonReleasedCallback(void) override {}
+	void ioProcessCallback(void) override {}
+	void halfTransferCallback(void) override {
 		render(0);
 	}
-	void transferCompleteCallback(void) {
+	void transferCompleteCallback(void) override {
 		render(DELAY_BUFFER_SIZE);
 	}
-	void slowConversionCallback(void) {
+	void slowConversionCallback(void) override {
 		upsamplesLeft = 8;
 		controls.updateExtra();
 		int32_t rawControls = 4095 - __USAT(controls.cv1Value - 2048 + controls.knob1Value, 12);
@@ -276,10 +276,10 @@ public:
 		slewFactor = (delayTimeTarget - lastTarget) >> 3;
 
 	}
-	void auxTimer1InterruptCallback(void) {
+	void auxTimer1InterruptCallback(void) override {
 
 	}
-	void auxTimer2InterruptCallback(void) {
+	void auxTimer2InterruptCallback(void) override {
 
 	}
 

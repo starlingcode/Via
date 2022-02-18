@@ -200,40 +200,40 @@ public:
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
 
-	void mainRisingEdgeCallback(void) {
+	void mainRisingEdgeCallback(void) override {
 
 	}
-	void mainFallingEdgeCallback(void) {
+	void mainFallingEdgeCallback(void) override {
 
 	}
-	void auxRisingEdgeCallback(void) {
+	void auxRisingEdgeCallback(void) override {
 
 	}
-	void auxFallingEdgeCallback(void) {
+	void auxFallingEdgeCallback(void) override {
 
 	}
-	void buttonPressedCallback(void) {
+	void buttonPressedCallback(void) override {
 
 	}
-	void buttonReleasedCallback(void) {
+	void buttonReleasedCallback(void) override {
 
 	}
-	// void ioProcessCallback(void) {
+	// void ioProcessCallback(void) override {
 
 	// }
-	void halfTransferCallback(void) {
+	void halfTransferCallback(void) override {
 
 	}
-	void transferCompleteCallback(void) {
+	void transferCompleteCallback(void) override {
 
 	}
-	void slowConversionCallback(void) {
+	void slowConversionCallback(void) override {
 
 	}
-	void auxTimer1InterruptCallback(void) {
+	void auxTimer1InterruptCallback(void) override {
 
 	}
-	void auxTimer2InterruptCallback(void) {
+	void auxTimer2InterruptCallback(void) override {
 
 	}
 

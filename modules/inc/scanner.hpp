@@ -470,23 +470,19 @@ public:
 		decodeCalibrationPacket();
 	}
 
-	void mainRisingEdgeCallback(void);
-	void mainFallingEdgeCallback(void);
+	void mainRisingEdgeCallback(void) override;
+	void mainFallingEdgeCallback(void) override;
 
-	void auxRisingEdgeCallback(void);
-	void auxFallingEdgeCallback(void);
+	void auxRisingEdgeCallback(void) override;
+	void auxFallingEdgeCallback(void) override;
 
-	void buttonPressedCallback(void);
-	void buttonReleasedCallback(void);
+	void buttonPressedCallback(void) override;
+	void buttonReleasedCallback(void) override;
 
-	void ioProcessCallback(void);
-	void halfTransferCallback(void);
-	void transferCompleteCallback(void);
-	void cv2HalfTransferCallback(void);
-	void cv2TransferCompleteCallback(void);
-	void cv3HalfTransferCallback(void);
-	void cv3TransferCompleteCallback(void);
-	void slowConversionCallback(void);
+	void ioProcessCallback(void) override;
+	void halfTransferCallback(void) override;
+	void transferCompleteCallback(void) override;
+	void slowConversionCallback(void) override;
 
 	void ui_dispatch(int32_t sig) {
 		scannerUI.dispatch(sig);

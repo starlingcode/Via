@@ -450,34 +450,34 @@ public:
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
-	void mainRisingEdgeCallback(void) {
+	void mainRisingEdgeCallback(void) override {
 		currentState->mainRisingEdgeHandler();
 	}
-	void mainFallingEdgeCallback(void) {
+	void mainFallingEdgeCallback(void) override {
 		currentState->mainFallingEdgeHandler();
 	}
-	void auxRisingEdgeCallback(void) {
+	void auxRisingEdgeCallback(void) override {
 		currentState->auxRisingEdgeHandler();
 	}
-	void auxFallingEdgeCallback(void) {
+	void auxFallingEdgeCallback(void) override {
 		currentState->auxFallingEdgeHandler();
 	}
-	void buttonPressedCallback(void) {
+	void buttonPressedCallback(void) override {
 		currentState->buttonPressedHandler();
 	}
-	void buttonReleasedCallback(void) {}
-	void ioProcessCallback(void) {}
-	void halfTransferCallback(void) {
+	void buttonReleasedCallback(void) override {}
+	void ioProcessCallback(void) override {}
+	void halfTransferCallback(void) override {
 		currentState->dacHalfTransferHandler();
 	}
-	void transferCompleteCallback(void) {
+	void transferCompleteCallback(void) override {
 		currentState->dacTransferHandler();
 	}
-	void slowConversionCallback(void) {
+	void slowConversionCallback(void) override {
 		currentState->slowConversionHandler();
 	}
-	void auxTimer1InterruptCallback(void) {}
-	void auxTimer2InterruptCallback(void) {}
+	void auxTimer1InterruptCallback(void) override {}
+	void auxTimer2InterruptCallback(void) override {}
 	//@}
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.

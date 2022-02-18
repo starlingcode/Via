@@ -691,17 +691,17 @@ public:
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
-	void mainRisingEdgeCallback(void) {
+	void mainRisingEdgeCallback(void) override {
 
 		octave = 1;
 
 	}
-	void mainFallingEdgeCallback(void) {
+	void mainFallingEdgeCallback(void) override {
 
 		octave = 0;
 
 	}
-	void auxRisingEdgeCallback(void) {
+	void auxRisingEdgeCallback(void) override {
 
 		if (!buttonPressed) {
 			unity = !clockedBeat;
@@ -735,7 +735,7 @@ public:
 		}
 
 	}
-	void auxFallingEdgeCallback(void) {
+	void auxFallingEdgeCallback(void) override {
 
 		if (!buttonPressed) {
 			unity = 0;
@@ -743,7 +743,7 @@ public:
 		auxLogicHigh = 0;
 
 	}
-	void buttonPressedCallback(void) {
+	void buttonPressedCallback(void) override {
 
 		if (!auxLogicHigh) {
 			unity = 1;
@@ -751,7 +751,7 @@ public:
 		buttonPressed = 1;
 
 	}
-	void buttonReleasedCallback(void) {
+	void buttonReleasedCallback(void) override {
 
 		if (!auxLogicHigh) {
 			unity = 0;
@@ -759,16 +759,16 @@ public:
 		buttonPressed = 0;
 
 	}
-	void ioProcessCallback(void) {}
-	void halfTransferCallback(void) {
+	void ioProcessCallback(void) override {}
+	void halfTransferCallback(void) override {
 		setLogicOutNoA(0, runtimeDisplay);
 		(this->*render)(0);
 	}
-	void transferCompleteCallback(void) {
+	void transferCompleteCallback(void) override {
 		setLogicOutNoA(0, runtimeDisplay);
 		(this->*render)(OSC3_BUFFER_SIZE);
 	}
-	void slowConversionCallback(void) {
+	void slowConversionCallback(void) override {
 
 		controls.updateExtra();
 		
@@ -791,10 +791,10 @@ public:
 		}
 
 	}
-	void auxTimer1InterruptCallback(void) {
+	void auxTimer1InterruptCallback(void) override {
 
 	}
-	void auxTimer2InterruptCallback(void) {
+	void auxTimer2InterruptCallback(void) override {
 
 	}
 

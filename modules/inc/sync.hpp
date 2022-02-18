@@ -496,22 +496,22 @@ public:
 	rgb scaleColor;
 	int32_t scaleHue;
 
-	void mainRisingEdgeCallback(void);
-	void mainFallingEdgeCallback(void);
+	void mainRisingEdgeCallback(void) override;
+	void mainFallingEdgeCallback(void) override;
 
-	void auxRisingEdgeCallback(void);
-	void auxFallingEdgeCallback(void);
+	void auxRisingEdgeCallback(void) override;
+	void auxFallingEdgeCallback(void) override;
 
-	void buttonPressedCallback(void);
-	void buttonReleasedCallback(void);
+	void buttonPressedCallback(void) override;
+	void buttonReleasedCallback(void) override;
 
-	void ioProcessCallback(void);
-	void halfTransferCallback(void);
-	void transferCompleteCallback(void);
-	void slowConversionCallback(void);
+	void ioProcessCallback(void) override;
+	void halfTransferCallback(void) override;
+	void transferCompleteCallback(void) override;
+	void slowConversionCallback(void) override;
 
-	void auxTimer1InterruptCallback(void);
-	void auxTimer2InterruptCallback(void);
+	void auxTimer1InterruptCallback(void) override;
+	void auxTimer2InterruptCallback(void) override;
 
 	void ui_dispatch(int32_t sig) {
 		syncUI.dispatch(sig);

@@ -600,45 +600,45 @@ public:
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
-	void mainRisingEdgeCallback(void) {
+	void mainRisingEdgeCallback(void) override {
 		atsrState->processGateHigh();
 		gateOn = 1;
 	}
-	void mainFallingEdgeCallback(void) {
+	void mainFallingEdgeCallback(void) override {
 		if (!buttonOn) {
 			atsrState->processGateLow();
 		}
 		gateOn = 0;
 	}
-	void auxRisingEdgeCallback(void) {
+	void auxRisingEdgeCallback(void) override {
 		if (gateOn | buttonOn | (gateLowCountdown != 0)) {
 			atsrState->processGateHigh();
 			auxLogicHold = 1;
 		}
 	}
-	void auxFallingEdgeCallback(void) {
+	void auxFallingEdgeCallback(void) override {
 		auxLogicHold = 0;
 	}
-	void buttonPressedCallback(void) {
+	void buttonPressedCallback(void) override {
 		atsrState->processGateHigh();
 		buttonOn = 1;
 	}
-	void buttonReleasedCallback(void) {
+	void buttonReleasedCallback(void) override {
 		if (!gateOn) {
 			atsrState->processGateLow();
 		}
 		buttonOn = 0;
 	}
-	void ioProcessCallback(void) {}
-	void halfTransferCallback(void) {
+	void ioProcessCallback(void) override {}
+	void halfTransferCallback(void) override {
 		render(0);
 		gateLowCountdown = __USAT(gateLowCountdown - 1, 16);
 	}
-	void transferCompleteCallback(void) {
+	void transferCompleteCallback(void) override {
 		render(VIA_ATSR_BUFFER_SIZE);
 		gateLowCountdown = __USAT(gateLowCountdown - 1, 16);
 	}
-	void slowConversionCallback(void) {
+	void slowConversionCallback(void) override {
 
 		startup = __USAT(startup - 1, 16);
 
@@ -700,10 +700,10 @@ public:
 
 
 	}
-	void auxTimer1InterruptCallback(void) {
+	void auxTimer1InterruptCallback(void) override {
 
 	}
-	void auxTimer2InterruptCallback(void) {
+	void auxTimer2InterruptCallback(void) override {
 
 	}
 

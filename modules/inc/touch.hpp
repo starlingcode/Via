@@ -197,34 +197,34 @@ public:
 
 	//@{
 	/// Event handlers calling the corresponding methods from the state machine.
-	void mainRisingEdgeCallback(void) {
+	void mainRisingEdgeCallback(void) override {
 
 	}
-	void mainFallingEdgeCallback(void) {
+	void mainFallingEdgeCallback(void) override {
 
 	}
-	void auxRisingEdgeCallback(void) {
+	void auxRisingEdgeCallback(void) override {
 
 	}
-	void auxFallingEdgeCallback(void) {
+	void auxFallingEdgeCallback(void) override {
 
 	}
-	void buttonPressedCallback(void) {
+	void buttonPressedCallback(void) override {
 
 	}
-	void buttonReleasedCallback(void) {
+	void buttonReleasedCallback(void) override {
 
 	}
-	void ioProcessCallback(void) {}
-	void halfTransferCallback(void) {
+	void ioProcessCallback(void) override {}
+	void halfTransferCallback(void) override {
 		button3Reading = processSVF(rawButton3Reading);
 		outputs.dac3Samples[0] = button3Reading;
 	}
-	void transferCompleteCallback(void) {
+	void transferCompleteCallback(void) override {
 		button3Reading = processSVF(rawButton3Reading);
 		outputs.dac3Samples[1] = button3Reading;
 	}
-	void slowConversionCallback(void) {
+	void slowConversionCallback(void) override {
 
 
 		#ifdef BUILD_F373
@@ -234,10 +234,10 @@ public:
 		setRedLED(button3Reading);
 
 	}
-	void auxTimer1InterruptCallback(void) {
+	void auxTimer1InterruptCallback(void) override {
 
 	}
-	void auxTimer2InterruptCallback(void) {
+	void auxTimer2InterruptCallback(void) override {
 
 	}
 
