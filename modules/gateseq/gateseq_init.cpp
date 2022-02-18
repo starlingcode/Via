@@ -39,5 +39,9 @@ void ViaGateseq::init(void) {
 	sequencer.cv2Offset = cv2Calibration;
 	sequencer.cv3Offset = cv3Calibration;
 
+    sequencer.currentAPattern = sequencer.bankBaseAddress + sequencer.currentABank->patternOffsets[0];
+    sequencer.currentBPattern = sequencer.bankBaseAddress + sequencer.currentBBank->patternOffsets[0];
+
+
 }
 
