@@ -5,8 +5,8 @@
  *      Author: willmitchell
  */
 
-#include "user_interface.hpp"
-#include "touch_lib_link.hpp"
+#include "user-interface.hpp"
+#include "touch-lib-link.hpp"
 
 /// Called when subclasses are constructed.
 void linkUI(void * callback, void * ui) {

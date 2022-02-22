@@ -8,10 +8,10 @@
 #ifndef INC_META_HPP_
 #define INC_META_HPP_
 
-#include "user_interface.hpp"
-#include <via_platform_binding.hpp>
+#include "user-interface.hpp"
+#include <via-platform-binding.hpp>
 #include <dsp.hpp>
-#include "meta_tables.hpp"
+#include "meta-tables.hpp"
 
 // simplest wavetable, provide a phase and a morph
 

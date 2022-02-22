@@ -8,10 +8,10 @@
 #ifndef INC_SYNC_HPP_
 #define INC_SYNC_HPP_
 
-#include "user_interface.hpp"
-#include <via_platform_binding.hpp>
-#include "sync_scale_defs.hpp"
-#include "sync_tables.hpp"
+#include "user-interface.hpp"
+#include <via-platform-binding.hpp>
+#include "sync-scale-defs.hpp"
+#include "sync-tables.hpp"
 #include "stdio.h"
 
 

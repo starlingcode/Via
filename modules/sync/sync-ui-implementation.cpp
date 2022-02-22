@@ -7,7 +7,7 @@
 
 
 #include "sync.hpp"
-#include "user_interface.hpp"
+#include "user-interface.hpp"
 
 void ViaSync::ViaSyncUI::initialize(void) {
 

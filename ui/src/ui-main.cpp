@@ -5,7 +5,7 @@
  *      Author: willmitchell
  */
 
-#include "user_interface.hpp"
+#include "user-interface.hpp"
 
 
 // Call the current state with a signal

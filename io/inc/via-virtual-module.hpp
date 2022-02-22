@@ -11,8 +11,8 @@
 
 #ifdef BUILD_VIRTUAL
 
-#include <via_virtual_system.hpp>
-#include "via_module_template.hpp"
+#include <via-virtual-system.hpp>
+#include "via-module-template.hpp"
 
 struct ViaModuleGeneric: ViaModuleTest<ViaModuleGeneric> {
 

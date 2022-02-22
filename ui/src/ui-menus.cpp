@@ -5,7 +5,7 @@
  *      Author: willmitchell
  */
 
-#include "user_interface.hpp"
+#include "user-interface.hpp"
 
 /// On entry, call handler function. If release before 4095 ticks of the UI timer (magic number alert), call tap handler function, otherwise call hold handler function.
 void ViaUI::button1Menu(int32_t sig) {

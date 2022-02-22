@@ -7,7 +7,7 @@
 
 
 #include <touch.hpp>
-#include "user_interface.hpp"
+#include "user-interface.hpp"
 
 /// Callback to link to the C code in the STM32 Touch Sense Library.
 void touchTouchLink (void * uiVoid) {

@@ -7,7 +7,7 @@
 
 
 #include "gateseq.hpp"
-#include "user_interface.hpp"
+#include "user-interface.hpp"
 
 void ViaGateseq::ViaGateseqUI::initialize(void) {
 

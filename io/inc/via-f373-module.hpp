@@ -7,8 +7,8 @@
 #ifndef INC_VIA_F373_MODULE_HPP_
 #define INC_VIA_F373_MODULE_HPP_
 
-#include <via_f373_system.hpp>
-#include "via_module_template.hpp"
+#include <via-f373-system.hpp>
+#include "via-module-template.hpp"
 
 struct ViaModuleF373: ViaModuleTest<ViaModuleF373> {
 

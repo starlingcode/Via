@@ -1,5 +1,5 @@
 #include "dsp.hpp"
-#include "via_global_signals.hpp"
+#include "via-global-signals.hpp"
 
 template <typename Target>
 struct ViaModuleTest {

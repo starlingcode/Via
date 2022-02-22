@@ -2,8 +2,8 @@
 #ifndef INC_EMPTYVIA_HPP_
 #define INC_EMPTYVIA_HPP_
 
-#include "user_interface.hpp"
-#include <via_platform_binding.hpp>
+#include "user-interface.hpp"
+#include <via-platform-binding.hpp>
 #include "dsp.hpp"
 
 /// By default, the DAC buffer update rate is exactly synchronous with the SDADC conversions

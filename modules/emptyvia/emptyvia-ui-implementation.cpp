@@ -7,7 +7,7 @@
 
 
 #include <emptyvia.hpp>
-#include "user_interface.hpp"
+#include "user-interface.hpp"
 
 /// Link to the STM32 Touch Sense Library.
 void emptyviaTouchLink (void * uiVoid) {

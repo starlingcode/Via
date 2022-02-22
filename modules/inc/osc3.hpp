@@ -13,8 +13,8 @@ void osc3TouchLink (void *);
 #ifndef INC_Calib_HPP_
 #define INC_Calib_HPP_
 
-#include "user_interface.hpp"
-#include <via_platform_binding.hpp>
+#include "user-interface.hpp"
+#include <via-platform-binding.hpp>
 #include <dsp.hpp>
 
 /// Calibration/template module class.

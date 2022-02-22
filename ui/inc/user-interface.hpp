@@ -7,7 +7,7 @@
 #ifndef INC_USER_INTERFACE_HPP_
 #define INC_USER_INTERFACE_HPP_
 
-#include <via_platform_binding.hpp>
+#include <via-platform-binding.hpp>
 
 
 #ifdef __cplusplus

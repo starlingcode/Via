@@ -3,7 +3,7 @@
  *
  */
 
-#include "via_global_signals.hpp"
+#include "via-global-signals.hpp"
 
 void ViaControls::update(void) {
 

@@ -8,9 +8,9 @@
 #ifndef INC_SCANNER_HPP_
 #define INC_SCANNER_HPP_
 
-#include "user_interface.hpp"
-#include <via_platform_binding.hpp>
-#include <scanner_tables.hpp>
+#include "user-interface.hpp"
+#include <via-platform-binding.hpp>
+#include <scanner-tables.hpp>
 
 class ThreeAxisScanner {
 

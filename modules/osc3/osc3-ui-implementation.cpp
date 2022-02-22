@@ -6,10 +6,10 @@
  */
 
 
-#include <atsr.hpp>
-#include "user_interface.hpp"
+#include <osc3.hpp>
+#include "user-interface.hpp"
 
-void ViaAtsr::ViaAtsrUI::initialize(void) {
+void ViaOsc3::ViaOsc3UI::initialize(void) {
 
 #ifdef BUILD_VIRTUAL
 
@@ -44,12 +44,12 @@ void ViaAtsr::ViaAtsrUI::initialize(void) {
 	transition(&ViaUI::defaultMenu);
 }
 
-void atsrTouchLink (void * uiVoid) {
-	ViaAtsr::ViaAtsrUI * ui = (ViaAtsr::ViaAtsrUI *) uiVoid;
+void osc3TouchLink (void * uiVoid) {
+	ViaOsc3::ViaOsc3UI * ui = (ViaOsc3::ViaOsc3UI *) uiVoid;
 	ui->dispatch(SENSOR_EVENT_SIG);
 }
 
-void ViaAtsr::ViaAtsrUI::recallModuleState(void) {
+void ViaOsc3::ViaOsc3UI::recallModuleState(void) {
 
 	button1Mode %= this_module.numButton1Modes;
 	button2Mode %= this_module.numButton2Modes;
@@ -61,13 +61,13 @@ void ViaAtsr::ViaAtsrUI::recallModuleState(void) {
 	this_module.handleButton1ModeChange(button1Mode);
 	this_module.handleButton2ModeChange(button2Mode);
 	this_module.handleButton3ModeChange(button3Mode);
-	this_module.handleButton4ModeChange(button4Mode);
+//	this_module.handleButton4ModeChange(button4Mode);
 	this_module.handleButton5ModeChange(button5Mode);
 	this_module.handleButton6ModeChange(button6Mode);
 
 }
 
-void ViaAtsr::ViaAtsrUI::uiSetLEDs(int mode) {
+void ViaOsc3::ViaOsc3UI::uiSetLEDs(int mode) {
 
 	/// This connects the UI library's LED setting calls to the enumerated LED handler of the this_module.
 	/// This could probably go away with some refactoring.
@@ -76,29 +76,31 @@ void ViaAtsr::ViaAtsrUI::uiSetLEDs(int mode) {
 
 }
 
-void ViaAtsr::ViaAtsrUI::defaultEnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::defaultEnterMenuCallback(void) {
 
 	/// Executed when the module returns to an idle state, waiting for a touch event
 	this_module.runtimeDisplay = 1;
+	this_module.clearLEDs();
+	this_module.setLEDD(this_module.chordMode);
 
 }
-void ViaAtsr::ViaAtsrUI::newModeEnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::newModeEnterMenuCallback(void) {
 
-//	transition(&ViaAtsr::ViaAtsrUI::defaultMenu);
-
-}
-void ViaAtsr::ViaAtsrUI::newAuxModeEnterMenuCallback(void) {
-
-	transition(&ViaAtsr::ViaAtsrUI::defaultMenu);
+//	transition(&ViaOsc3::ViaOsc3UI::defaultMenu);
 
 }
-void ViaAtsr::ViaAtsrUI::presetEnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::newAuxModeEnterMenuCallback(void) {
 
-	transition(&ViaAtsr::ViaAtsrUI::defaultMenu);
+	transition(&ViaOsc3::ViaOsc3UI::defaultMenu);
+
+}
+void ViaOsc3::ViaOsc3UI::presetEnterMenuCallback(void) {
+
+	transition(&ViaOsc3::ViaOsc3UI::defaultMenu);
 
 }
 
-void ViaAtsr::ViaAtsrUI::button1EnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::button1EnterMenuCallback(void) {
 
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
@@ -107,7 +109,7 @@ void ViaAtsr::ViaAtsrUI::button1EnterMenuCallback(void) {
 	resetTimerMenu();
 
 }
-void ViaAtsr::ViaAtsrUI::button2EnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::button2EnterMenuCallback(void) {
 
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
@@ -116,7 +118,7 @@ void ViaAtsr::ViaAtsrUI::button2EnterMenuCallback(void) {
 	resetTimerMenu();
 
 }
-void ViaAtsr::ViaAtsrUI::button3EnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::button3EnterMenuCallback(void) {
 
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
@@ -125,25 +127,26 @@ void ViaAtsr::ViaAtsrUI::button3EnterMenuCallback(void) {
 	resetTimerMenu();
 
 }
-void ViaAtsr::ViaAtsrUI::button4EnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::button4EnterMenuCallback(void) {
 
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
-	this_module.setLEDs(button4Mode);
+	this_module.setLEDs(button1Mode);
 	resetTimerMenu();
 
 }
-void ViaAtsr::ViaAtsrUI::button5EnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::button5EnterMenuCallback(void) {
 
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
 	this_module.clearRGB();
+	this_module.showQuant();
 	this_module.setLEDs(button5Mode);
 	resetTimerMenu();
 
 }
-void ViaAtsr::ViaAtsrUI::button6EnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::button6EnterMenuCallback(void) {
 
 	this_module.runtimeDisplay = 0;
 	this_module.clearLEDs();
@@ -151,14 +154,14 @@ void ViaAtsr::ViaAtsrUI::button6EnterMenuCallback(void) {
 	this_module.setLEDs(button6Mode);
 	resetTimerMenu();
 }
-void ViaAtsr::ViaAtsrUI::aux1EnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::aux1EnterMenuCallback(void) {
 
 	/// Executed after a press is detected at button 1 from the shift state
 	this_module.runtimeDisplay = 0;
 	resetTimerMenu();
 
 }
-void ViaAtsr::ViaAtsrUI::aux2EnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::aux2EnterMenuCallback(void) {
 
 	/// Executed after a press is detected at button 3 from the shift state
 	this_module.runtimeDisplay = 0;
@@ -166,7 +169,7 @@ void ViaAtsr::ViaAtsrUI::aux2EnterMenuCallback(void) {
 
 }
 
-void ViaAtsr::ViaAtsrUI::aux2AltEnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::aux2AltEnterMenuCallback(void) {
 
 	/// Executed after a press is detected at button 2 from the shift state
 	this_module.runtimeDisplay = 0;
@@ -174,14 +177,14 @@ void ViaAtsr::ViaAtsrUI::aux2AltEnterMenuCallback(void) {
 
 }
 
-void ViaAtsr::ViaAtsrUI::aux3EnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::aux3EnterMenuCallback(void) {
 
 	/// Executed after a press is detected at button 4 from the shift state
 	this_module.runtimeDisplay = 0;
 	resetTimerMenu();
 
 }
-void ViaAtsr::ViaAtsrUI::aux4EnterMenuCallback(void) {
+void ViaOsc3::ViaOsc3UI::aux4EnterMenuCallback(void) {
 
 	/// Executed after a press is detected at button 6 from the shift state
 	this_module.runtimeDisplay = 0;
@@ -192,152 +195,155 @@ void ViaAtsr::ViaAtsrUI::aux4EnterMenuCallback(void) {
 
 /// Executed after exiting a button menu with a release event in less than half a second (roughly)
 
-void ViaAtsr::ViaAtsrUI::button1TapCallback(void) {
+void ViaOsc3::ViaOsc3UI::button1TapCallback(void) {
 
-	button1Mode = incrementModeAndStore(button1Mode, BUTTON1_MASK, this_module.numButton1Modes, BUTTON1_SHIFT);
+	button1Mode = button1Mode > 4 ? 5 : button1Mode + 1;
+	storeMode(button1Mode, BUTTON1_MASK, BUTTON1_SHIFT);
 	this_module.handleButton1ModeChange(button1Mode);
 	this_module.clearLEDs();
 	this_module.setLEDs(button1Mode);
-	transition(&ViaAtsr::ViaAtsrUI::newModeMenu);
+	transition(&ViaOsc3::ViaOsc3UI::newModeMenu);
 
 }
-void ViaAtsr::ViaAtsrUI::button2TapCallback(void) {
+void ViaOsc3::ViaOsc3UI::button2TapCallback(void) {
 
 	button2Mode = incrementModeAndStore(button2Mode, BUTTON2_MASK, this_module.numButton2Modes, BUTTON2_SHIFT);
 	this_module.handleButton2ModeChange(button2Mode);
 	this_module.clearLEDs();
 	this_module.setLEDs(button2Mode);
-	transition(&ViaAtsr::ViaAtsrUI::newModeMenu);
+	transition(&ViaOsc3::ViaOsc3UI::newModeMenu);
 
 }
-void ViaAtsr::ViaAtsrUI::button3TapCallback(void) {
+void ViaOsc3::ViaOsc3UI::button3TapCallback(void) {
 
 	button3Mode = incrementModeAndStore(button3Mode, BUTTON3_MASK, this_module.numButton3Modes, BUTTON3_SHIFT);
 	this_module.handleButton3ModeChange(button3Mode);
 	this_module.clearLEDs();
 	this_module.setLEDs(button3Mode);
-	transition(&ViaAtsr::ViaAtsrUI::newModeMenu);
+	transition(&ViaOsc3::ViaOsc3UI::newModeMenu);
 
 }
-void ViaAtsr::ViaAtsrUI::button4TapCallback(void) {
+void ViaOsc3::ViaOsc3UI::button4TapCallback(void) {
 
-	button4Mode = incrementModeAndStore(button4Mode, BUTTON4_MASK, this_module.numButton4Modes, BUTTON4_SHIFT);
-	this_module.handleButton4ModeChange(button4Mode);
+	button1Mode = button1Mode <= 0 ? 0 : button1Mode - 1;
+	storeMode(button1Mode, BUTTON1_MASK, BUTTON1_SHIFT);
+	this_module.handleButton1ModeChange(button1Mode);
 	this_module.clearLEDs();
-	this_module.setLEDs(button4Mode);
-	transition(&ViaAtsr::ViaAtsrUI::newModeMenu);
+	this_module.setLEDs(button1Mode);
+	transition(&ViaOsc3::ViaOsc3UI::newModeMenu);
 
 }
-void ViaAtsr::ViaAtsrUI::button5TapCallback(void) {
+void ViaOsc3::ViaOsc3UI::button5TapCallback(void) {
 
 	button5Mode = incrementModeAndStore(button5Mode, BUTTON5_MASK, this_module.numButton5Modes, BUTTON5_SHIFT);
 	this_module.handleButton5ModeChange(button5Mode);
 	this_module.clearLEDs();
 	this_module.setLEDs(button5Mode);
-	transition(&ViaAtsr::ViaAtsrUI::newModeMenu);
+	this_module.showQuant();
+	transition(&ViaOsc3::ViaOsc3UI::newModeMenu);
 
 }
-void ViaAtsr::ViaAtsrUI::button6TapCallback(void) {
+void ViaOsc3::ViaOsc3UI::button6TapCallback(void) {
 
 	button6Mode = incrementModeAndStore(button6Mode, BUTTON6_MASK, this_module.numButton6Modes, BUTTON6_SHIFT);
 	this_module.handleButton6ModeChange(button6Mode);
 	this_module.clearLEDs();
 	this_module.setLEDs(button6Mode);
-	transition(&ViaAtsr::ViaAtsrUI::newModeMenu);
+	transition(&ViaOsc3::ViaOsc3UI::newModeMenu);
 
 }
 
-void ViaAtsr::ViaAtsrUI::aux1TapCallback(void) {
+void ViaOsc3::ViaOsc3UI::aux1TapCallback(void) {
 
-	transition(&ViaAtsr::ViaAtsrUI::newModeMenu);
-
-}
-
-void ViaAtsr::ViaAtsrUI::aux2TapCallback(void) {
-
-	transition(&ViaAtsr::ViaAtsrUI::newModeMenu);
+	transition(&ViaOsc3::ViaOsc3UI::newModeMenu);
 
 }
 
-void ViaAtsr::ViaAtsrUI::aux2AltTapCallback(void) {
+void ViaOsc3::ViaOsc3UI::aux2TapCallback(void) {
 
-	transition(&ViaAtsr::ViaAtsrUI::newModeMenu);
-
-}
-
-void ViaAtsr::ViaAtsrUI::aux3TapCallback(void) {
-
-	transition(&ViaAtsr::ViaAtsrUI::newModeMenu);
+	transition(&ViaOsc3::ViaOsc3UI::newModeMenu);
 
 }
 
-void ViaAtsr::ViaAtsrUI::aux4TapCallback(void) {
+void ViaOsc3::ViaOsc3UI::aux2AltTapCallback(void) {
 
-	transition(&ViaAtsr::ViaAtsrUI::newModeMenu);
+	transition(&ViaOsc3::ViaOsc3UI::newModeMenu);
+
+}
+
+void ViaOsc3::ViaOsc3UI::aux3TapCallback(void) {
+
+	transition(&ViaOsc3::ViaOsc3UI::newModeMenu);
+
+}
+
+void ViaOsc3::ViaOsc3UI::aux4TapCallback(void) {
+
+	transition(&ViaOsc3::ViaOsc3UI::newModeMenu);
 
 }
 
 
 /// Executed after exiting a button menu with a release event in more than half a second (roughly)
 
-void ViaAtsr::ViaAtsrUI::button1HoldCallback(void) {
+void ViaOsc3::ViaOsc3UI::button1HoldCallback(void) {
 
-	transition(&ViaAtsr::ViaAtsrUI::defaultMenu);
-
-}
-void ViaAtsr::ViaAtsrUI::button2HoldCallback(void) {
-
-	transition(&ViaAtsr::ViaAtsrUI::defaultMenu);
+	transition(&ViaOsc3::ViaOsc3UI::defaultMenu);
 
 }
-void ViaAtsr::ViaAtsrUI::button3HoldCallback(void) {
+void ViaOsc3::ViaOsc3UI::button2HoldCallback(void) {
 
-	transition(&ViaAtsr::ViaAtsrUI::defaultMenu);
-
-}
-void ViaAtsr::ViaAtsrUI::button4HoldCallback(void) {
-
-	transition(&ViaAtsr::ViaAtsrUI::defaultMenu);
+	transition(&ViaOsc3::ViaOsc3UI::defaultMenu);
 
 }
-void ViaAtsr::ViaAtsrUI::button5HoldCallback(void) {
+void ViaOsc3::ViaOsc3UI::button3HoldCallback(void) {
 
-	transition(&ViaAtsr::ViaAtsrUI::defaultMenu);
-
-}
-void ViaAtsr::ViaAtsrUI::button6HoldCallback(void) {
-
-	transition(&ViaAtsr::ViaAtsrUI::defaultMenu);
+	transition(&ViaOsc3::ViaOsc3UI::defaultMenu);
 
 }
+void ViaOsc3::ViaOsc3UI::button4HoldCallback(void) {
 
-void ViaAtsr::ViaAtsrUI::aux1HoldCallback(void) {
+	transition(&ViaOsc3::ViaOsc3UI::defaultMenu);
 
-	transition(&ViaAtsr::ViaAtsrUI::button5Menu);
+}
+void ViaOsc3::ViaOsc3UI::button5HoldCallback(void) {
+
+	transition(&ViaOsc3::ViaOsc3UI::defaultMenu);
+
+}
+void ViaOsc3::ViaOsc3UI::button6HoldCallback(void) {
+
+	transition(&ViaOsc3::ViaOsc3UI::defaultMenu);
 
 }
 
-void ViaAtsr::ViaAtsrUI::aux2HoldCallback(void) {
+void ViaOsc3::ViaOsc3UI::aux1HoldCallback(void) {
 
-	transition(&ViaAtsr::ViaAtsrUI::button5Menu);
-
-}
-
-void ViaAtsr::ViaAtsrUI::aux2AltHoldCallback(void) {
-
-	transition(&ViaAtsr::ViaAtsrUI::button5Menu);
+	transition(&ViaOsc3::ViaOsc3UI::button5Menu);
 
 }
 
-void ViaAtsr::ViaAtsrUI::aux3HoldCallback(void) {
+void ViaOsc3::ViaOsc3UI::aux2HoldCallback(void) {
 
-	transition(&ViaAtsr::ViaAtsrUI::button5Menu);
+	transition(&ViaOsc3::ViaOsc3UI::button5Menu);
 
 }
 
-void ViaAtsr::ViaAtsrUI::aux4HoldCallback(void) {
+void ViaOsc3::ViaOsc3UI::aux2AltHoldCallback(void) {
 
-	transition(&ViaAtsr::ViaAtsrUI::button5Menu);
+	transition(&ViaOsc3::ViaOsc3UI::button5Menu);
+
+}
+
+void ViaOsc3::ViaOsc3UI::aux3HoldCallback(void) {
+
+	transition(&ViaOsc3::ViaOsc3UI::button5Menu);
+
+}
+
+void ViaOsc3::ViaOsc3UI::aux4HoldCallback(void) {
+
+	transition(&ViaOsc3::ViaOsc3UI::button5Menu);
 
 }
 

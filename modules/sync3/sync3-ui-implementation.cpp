@@ -7,7 +7,7 @@
 
 
 #include <sync3.hpp>
-#include "user_interface.hpp"
+#include "user-interface.hpp"
 
 /// Callback to link to the C code in the STM32 Sync3 Sense Library.
 void sync3TouchLink (void * uiVoid) {

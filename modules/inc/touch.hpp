@@ -8,8 +8,8 @@
 #ifndef INC_TOUCH_HPP_
 #define INC_TOUCH_HPP_
 
-#include "user_interface.hpp"
-#include <via_platform_binding.hpp>
+#include "user-interface.hpp"
+#include <via-platform-binding.hpp>
 #include "dsp.hpp"
 
 /// Macro used to specify the number of samples to per DAC transfer.
