@@ -215,34 +215,6 @@ public:
 	int32_t shAOn = 1;
 	int32_t shBOn = 1;
 
-	int32_t chromatic[128] = {0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123};
-	int32_t major[128] = {0, 0, 0, 0, 0, 0, 2, 2, 4, 5, 5, 7, 7, 9, 9, 11, 12, 12, 14, 14, 16, 17, 17, 19, 19, 21, 21, 23, 24, 24, 26, 26, 28, 29, 29, 31, 31, 33, 33, 35, 36, 36, 38, 38, 40, 41, 41, 43, 43, 45, 45, 47, 48, 48, 50, 50, 52, 53, 53, 55, 55, 57, 57, 59, 60, 60, 62, 62, 64, 65, 65, 67, 67, 69, 69, 71, 72, 72, 74, 74, 76, 77, 77, 79, 79, 81, 81, 83, 84, 84, 86, 86, 88, 89, 89, 91, 91, 93, 93, 95, 96, 96, 98, 98, 100, 101, 101, 103, 103, 105, 105, 107, 108, 108, 110, 110, 112, 113, 113, 115, 115, 117, 117, 119, 120, 120, 122, 123};
-	int32_t minor[128] = {0, 0, 0, 0, 0, 0, 2, 3, 3, 5, 5, 7, 8, 8, 10, 10, 12, 12, 14, 15, 15, 17, 17, 19, 20, 20, 22, 22, 24, 24, 26, 27, 27, 29, 29, 31, 32, 32, 34, 34, 36, 36, 38, 39, 39, 41, 41, 43, 44, 44, 46, 46, 48, 48, 50, 51, 51, 53, 53, 55, 56, 56, 58, 58, 60, 60, 62, 63, 63, 65, 65, 67, 68, 68, 70, 70, 72, 72, 74, 75, 75, 77, 77, 79, 80, 80, 82, 82, 84, 84, 86, 87, 87, 89, 89, 91, 92, 92, 94, 94, 96, 96, 98, 99, 99, 101, 101, 103, 104, 104, 106, 106, 108, 108, 110, 111, 111, 113, 113, 115, 116, 116, 118, 118, 120, 120, 122, 123};
-
-	int32_t minorIntervals[40] = {-24, -22, -21, -19, -17, -16, -14, -12, -10, -9, -7, -5, -4, -2, 0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 24};
-	int32_t majorIntervals[40] = {-24, -22, -20, -19, -17, -15, -13, -12, -10, -8, -7, -5, -3, -1, 0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24};
-	int32_t scaleDegrees[12] = {0, 1, 1, 2, 2, 3, 3, 4, 5, 5, 6, 6};
-
-	// quantize the CV:
-	// returns semitone lookup
-
-	// determine the scale degree of the CV:
-	// semitone lookup less 64 modulo 12, lookup in table of size 12
-
-	// get chord notes as scale degree offsets from the CV
-	// scale
-
-	int32_t chords[17][2] = {
-		{0, 0}, {-1, 0}, {-1, 1},{-1, 2}, {-2, 2}, {-3, 2}, {-3, 3}, {-2, 3},
-          {-4, 2}, {-5, 4}, {-5, 5}, {-4, 5}, {-6, 5}, {-6, 6}, {-6, 7}, {-7, 7}, {-7, 7}
-	};
-
-	int32_t * scale = chromatic;
-	int32_t * intervals = majorIntervals;
-	int32_t scaleMode = 0;
-
-	int32_t chordMode = 0;
-
 	int32_t lastOffset = 0;
 	int32_t lastRoot = 0;
 	int32_t lastChord = 0;
@@ -328,184 +300,146 @@ public:
 
 	}
 
+// TODO: see if code can read from flash in a timely fashion or does this need to load flash into ram buffers?
+
+    // A scale is some subset of the 12TET pitch classes
+//      struct Osc3Scale {
+//          int32_t notes[128];
+//          int32_t intervals[36];
+//          int32_t degrees[12];
+//          int32_t chords[17][2];
+//      };
+//  
+//  #ifdef BUILD_F373
+//  
+//      const struct Osc3Scale * scales = (const struct Osc3Scale *) 0x8020000;
+//  
+//  #endif
+//  #ifdef BUILD_VIRTUAL
+//      struct Osc3Scale * scales;
+//      void readScalesFromFile(std::string path) {
+//          FILE * scaleFile = fopen(path.c_str(), "r");
+//          if (scaleFile == NULL) {
+//              return; // TODO: Error handling for file not exist or something
+//          }
+//          // words in struct * 4 bytes per word * 3 structs in array
+//          fread(scales, 4 * (128 + 36 + 34 + 12), 3, scaleFile);
+//          fclose(scaleFile);
+//      }
+//  #endif
+
+	int32_t chromatic[128] = {0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123};
+	int32_t major[128] = {0, 0, 0, 0, 0, 0, 2, 2, 4, 5, 5, 7, 7, 9, 9, 11, 12, 12, 14, 14, 16, 17, 17, 19, 19, 21, 21, 23, 24, 24, 26, 26, 28, 29, 29, 31, 31, 33, 33, 35, 36, 36, 38, 38, 40, 41, 41, 43, 43, 45, 45, 47, 48, 48, 50, 50, 52, 53, 53, 55, 55, 57, 57, 59, 60, 60, 62, 62, 64, 65, 65, 67, 67, 69, 69, 71, 72, 72, 74, 74, 76, 77, 77, 79, 79, 81, 81, 83, 84, 84, 86, 86, 88, 89, 89, 91, 91, 93, 93, 95, 96, 96, 98, 98, 100, 101, 101, 103, 103, 105, 105, 107, 108, 108, 110, 110, 112, 113, 113, 115, 115, 117, 117, 119, 120, 120, 122, 123};
+	int32_t minor[128] = {0, 0, 0, 0, 0, 0, 2, 3, 3, 5, 5, 7, 8, 8, 10, 10, 12, 12, 14, 15, 15, 17, 17, 19, 20, 20, 22, 22, 24, 24, 26, 27, 27, 29, 29, 31, 32, 32, 34, 34, 36, 36, 38, 39, 39, 41, 41, 43, 44, 44, 46, 46, 48, 48, 50, 51, 51, 53, 53, 55, 56, 56, 58, 58, 60, 60, 62, 63, 63, 65, 65, 67, 68, 68, 70, 70, 72, 72, 74, 75, 75, 77, 77, 79, 80, 80, 82, 82, 84, 84, 86, 87, 87, 89, 89, 91, 92, 92, 94, 94, 96, 96, 98, 99, 99, 101, 101, 103, 104, 104, 106, 106, 108, 108, 110, 111, 111, 113, 113, 115, 116, 116, 118, 118, 120, 120, 122, 123};
+
+    // Array size is (max scale size) + (max pitch class) + (max scale size) + 1 = 12 + 11 + 12 + 1
+	int32_t minorIntervals[36] = {0, 0, 0, 0, 0, -12, -10, -9, -7, -5, -4, -2, 0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22, 24};
+	int32_t majorIntervals[36] = {0, 0, 0, 0, 0, -12, -10, -8, -7, -5, -3, -1, 0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24};
+	int32_t scaleDegrees[12] = {0, 1, 1, 2, 2, 3, 3, 4, 5, 5, 6, 6};
+
+	int32_t chords[17][2] = {
+		{0, 0}, {-1, 0}, {-1, 1},{-1, 2}, {-2, 2}, {-3, 2}, {-3, 3}, {-2, 3},
+          {-4, 2}, {-5, 4}, {-5, 5}, {-4, 5}, {-6, 5}, {-6, 6}, {-6, 7}, {-7, 7}, {-7, 7}
+	};
+
+	int32_t * scale = chromatic;
+	int32_t * intervals = majorIntervals;
+	int32_t scaleMode = 0;
+	int32_t chordMode = 0;
+
 	void (ViaOsc3::*updateBaseFreqs)(void) = &ViaOsc3::updateBaseFreqsSmooth;
 
 	void updateBaseFreqsScale(void) {
 
-		int32_t cv1Index = __USAT(controls.cv1Value - cv1Calibration, 12);
-		// coarse range in octaves is 4
-		int32_t knob1Index = (controls.knob1Value * 3) >> 3;
-
 		int32_t root;
 		int32_t offset;
 
+        // Read knob to number in range [0, 48] effectively quantizing to semitones
+		int32_t knob1Index = (controls.knob1Value * 3) >> 3;
 		root = knob1Index >> 5;
 		root = rootHysterisis(root, knob1Index);
-		// quanitzied
+		
+        // Get CV
+		int32_t cv1Index = __USAT(controls.cv1Value - cv1Calibration, 12);
 		int32_t offsetIndex = vOctHysterisisScale(cv1Index >> 4, cv1Index);
 		offset = scale[offsetIndex >> 1];
-		int32_t next = scale[__USAT((offsetIndex >> 1) + 1, 7)];
+        
+        // Round to quantized pitch
+        int32_t next = scale[__USAT((offsetIndex >> 1) + 1, 7)];
 		int32_t distance = offset - next;
 		int32_t remainder = offsetIndex & 1;
-
 		if (distance == 2) {
 			offset = next; 
 		} else if (remainder) {
 			offset = next;
 		} // else truncate
 
-		if (chordMode) {
+		if (!chordMode) {
 
+            // This ends up specifying a phase increment (frequency) that is
+            // The root frequency selected by the coarse knob
+            // Transposed by the quantized CV value
+			cBasePitch = fix16_mul(expo.convert(root << 5) >> 3,
+					expo.convert(offset << 5) >> 2);
+            // Correct to an absolute pitch based on sample rate
+			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
+            // Detune from fine tune knob
+			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
+			detuneBase = clockedBeat + (controls.knob3Value << 4);
+            // Calculate pitch change trigger
+			if ((root != lastRoot) || (offset != lastOffset)) {
+				noteChange = 1;
+			} else {
+				noteChange = 0;
+			}
+
+		} else { // Chord mode
+
+            // Find the specified center frequency similar to the non-chord section			
 			int32_t fineTune = 65535 + (controls.knob2Value << 3);
 			int32_t coarseTune = expo.convert(root << 5) >> 3;
+			coarseTune = fix16_mul(coarseTune, absoluteTune);
+			coarseTune = fix16_mul(coarseTune, fineTune);
+			cBasePitch = fix16_mul(coarseTune,
+					expo.convert(offset << 5) >> 2);
 
+            // CV transpose amount reduced to the 12 semitones
 			int32_t pitchClass = offset % 12;
-			int32_t octaveOffset = offset - 60 - pitchClass;
+            // Map that pitch class to the corresponding degree in the scale 
 			int32_t scaleDegree = scaleDegrees[pitchClass];
+            // Get a value that sets an octave amount for the CV offset
+            // Think like "integer part" with the decimal as the mod 12 instead of mod 10
+			int32_t cvOctave = offset - pitchClass;
 
+            // Chord knob and CV to number [0, 15]
 			int32_t chord = __USAT(((controls.knob3Value << 4)) + (int32_t) -inputs.cv3Samples[0], 16);
 			chord = chordHysterisis(chord >> 12, chord);
 			
+            // Do the weird transpose thing to keep chords from being voiced at ugly low pitches
 			int32_t chordTranspose = 0;
 			int32_t fundamentalPitch = root + 12 * octaveRange;
-
 			if (fundamentalPitch < 36) {
 				chordTranspose = 1 + abs((fundamentalPitch - 36)/12);
 			}
 
-			cBasePitch = fix16_mul(coarseTune,
-					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
-			cBasePitch = fix16_mul(cBasePitch, fineTune);
+            // This is the most cursed expression
+            // 4 + cvOctave: generates an integer that will give us the root in the scale array
+            // intervals[14 + scaleDegree + chords[chord][1]]: 
+			int32_t chordMultiplier = scale[__USAT(4 + cvOctave + intervals[12 + scaleDegree + chords[chord][1]], 7)] << 5;
+			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2) << chordTranspose;
 
-			int32_t chordMultiplier = scale[64 + octaveOffset + intervals[14 + scaleDegree + chords[chord][1]]] << 5;
-
-			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			aBasePitch = fix16_mul(aBasePitch, absoluteTune);
-			aBasePitch = fix16_mul(aBasePitch, fineTune) << chordTranspose;
-
-			chordMultiplier = scale[64 + octaveOffset + intervals[14 + scaleDegree + chords[chord][0]]] << 5;
-
-			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			bBasePitch = fix16_mul(bBasePitch, absoluteTune);
-			bBasePitch = fix16_mul(bBasePitch, fineTune) << chordTranspose;
+			chordMultiplier = scale[__USAT(4 + cvOctave + intervals[12 + scaleDegree + chords[chord][0]], 7)] << 5;
+			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2) << chordTranspose;
 
 			detuneBase = 0;
 
+            // Calcuate pitch change trigger
 			if ((root != lastRoot) || (offset != lastOffset) || (chord != lastChord)) {
 				noteChange = 1;
 			} else {
 				noteChange = 0;
 			}
-
 			lastChord = chord;
-
-			detuneBase = 0;
-
-		} else {
-			
-			cBasePitch = fix16_mul(expo.convert(root << 5) >> 3,
-					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
-			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
-			detuneBase = clockedBeat + (controls.knob3Value << 4);
-
-			if ((root != lastRoot) || (offset != lastOffset)) {
-				noteChange = 1;
-			} else {
-				noteChange = 0;
-			}
-
-		}
-
-		lastOffset = offset;
-		lastRoot = root;
-
-	}
-
-	void updateBaseFreqsSemi(void) {
-
-		int32_t cv1Index = __USAT(controls.cv1Value - cv1Calibration, 12);
-		// coarse range in octaves is 4
-		int32_t knob1Index = (controls.knob1Value * 3) >> 3;
-
-		int32_t root;
-		int32_t offset;
-
-		root = knob1Index >> 5;
-		root = rootHysterisis(root, knob1Index);
-		// quanitzied
-		int32_t offsetIndex = vOctHysterisisScale(cv1Index >> 4, cv1Index);
-		offset = scale[offsetIndex >> 1];
-		int32_t next = scale[__USAT((offsetIndex >> 1) + 1, 7)];
-		int32_t distance = offset - next;
-		int32_t remainder = offsetIndex & 1;
-
-		if (distance == 2) {
-			offset = next;
-		} else if (remainder) {
-			offset = next;
-		} // else truncate
-
-		if (chordMode) {
-
-			int32_t fineTune = 65535 + (controls.knob2Value << 3);
-			int32_t coarseTune = expo.convert(root << 5) >> 3;
-
-			int32_t octaveOffset = offset - 60;
-
-			int32_t chord = __USAT(((controls.knob3Value << 4)) + (int32_t) -inputs.cv3Samples[0], 16);
-			chord = chordHysterisis(chord >> 12, chord);
-			
-			int32_t chordTranspose = 0;
-			int32_t fundamentalPitch = root + 12 * octaveRange;
-
-			if (fundamentalPitch < 36) {
-				chordTranspose = 1 + abs((fundamentalPitch - 36)/12);
-			}
-
-			cBasePitch = fix16_mul(coarseTune,
-					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
-			cBasePitch = fix16_mul(cBasePitch, fineTune);
-
-			int32_t chordMultiplier = scale[64 + octaveOffset + intervals[14 + chords[chord][1]]] << 5;
-
-			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			aBasePitch = fix16_mul(aBasePitch, absoluteTune);
-			aBasePitch = fix16_mul(aBasePitch, fineTune) << chordTranspose;
-
-			chordMultiplier = scale[64 + octaveOffset + intervals[14 + chords[chord][0]]] << 5;
-
-			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2);
-			bBasePitch = fix16_mul(bBasePitch, absoluteTune);
-			bBasePitch = fix16_mul(bBasePitch, fineTune) << chordTranspose;
-
-			detuneBase = 0;
-
-			if ((root != lastRoot) || (offset != lastOffset) || (chord != lastChord)) {
-				noteChange = 1;
-			} else {
-				noteChange = 0;
-			}
-
-			lastChord = chord;
-
-			detuneBase = 0;
-
-		} else {
-
-			cBasePitch = fix16_mul(expo.convert(root << 5) >> 3,
-					expo.convert(offset << 5) >> 2);
-			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
-			cBasePitch = fix16_mul(cBasePitch, 65535 + (controls.knob2Value << 3));
-			detuneBase = clockedBeat + (controls.knob3Value << 4);
-
-			if ((root != lastRoot) || (offset != lastOffset)) {
-				noteChange = 1;
-			} else {
-				noteChange = 0;
-			}
 
 		}
 
@@ -546,8 +480,8 @@ public:
 
 			aBasePitch = fix16_mul(cBasePitch, expo.convert(chordMultiplier) >> 5);
 
-			chordMultiplier = scale[64 + intervals[14 + chords[chord][0]]] << 5;
-			chordMultiplier1 = scale[64 + intervals[14 + chords[chord + 1][0]]] << 5;
+			chordMultiplier = scale[64 + intervals[12 + chords[chord][0]]] << 5;
+			chordMultiplier1 = scale[64 + intervals[12 + chords[chord + 1][0]]] << 5;
 			chordMultiplier = chordMultiplier + (((chordMultiplier1 - chordMultiplier) * chordFrac) >> 12);
 
 			bBasePitch = fix16_mul(cBasePitch, expo.convert(chordMultiplier) >> 5);

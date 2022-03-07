@@ -51,7 +51,7 @@ void ViaOsc3::handleButton5ModeChange(int32_t mode) {
 	} else if (mode == 1) {
 		scale = chromatic;
 		intervals = majorIntervals;
-		updateBaseFreqs = &ViaOsc3::updateBaseFreqsSemi;
+		updateBaseFreqs = &ViaOsc3::updateBaseFreqsScale;
 	} else if (mode == 2) {
 		scale = major;
 		intervals = majorIntervals;
