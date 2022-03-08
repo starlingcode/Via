@@ -45,24 +45,19 @@ void ViaOsc3::handleButton5ModeChange(int32_t mode) {
 	scaleMode = mode;
 
 	if (mode == 0) {
-		scale = chromatic;
-		intervals = minorIntervals;
 		updateBaseFreqs = &ViaOsc3::updateBaseFreqsSmooth;
-	} else if (mode == 1) {
-		scale = chromatic;
-		intervals = majorIntervals;
+        scale = scales[0].notes;
+        intervals = scales[0].intervals;
+        chords = scales[0].chords;
+        scaleDegrees = scales[0].degrees;
+	} else {
 		updateBaseFreqs = &ViaOsc3::updateBaseFreqsScale;
-	} else if (mode == 2) {
-		scale = major;
-		intervals = majorIntervals;
-		updateBaseFreqs = &ViaOsc3::updateBaseFreqsScale;
-	} else if (mode == 3) {
-		scale = minor;
-		intervals = minorIntervals;
-		updateBaseFreqs = &ViaOsc3::updateBaseFreqsScale;
-	}
-
-}
+        scale = scales[mode - 1].notes;
+        intervals = scales[mode - 1].intervals;
+        chords = scales[mode - 1].chords;
+        scaleDegrees = scales[mode - 1].degrees;
+    } 
+}  
 
 void ViaOsc3::handleButton6ModeChange(int32_t mode) {
 

@@ -312,7 +312,7 @@ public:
         int32_t notes[128];
         int32_t intervals[37];
         int32_t degrees[12];
-        int32_t chords[17][2];
+        int32_t chords[34];
     };
 
 #ifdef BUILD_F373
@@ -349,8 +349,8 @@ public:
 
 	int32_t * scale = scales[0].notes;
 	int32_t * intervals = scales[0].intervals;
-	int32_t * chords = scales[0].intervals;
-	int32_t * scaleDegrees = scales[0].scaleDegrees;
+	int32_t * chords = scales[0].chords;
+	int32_t * scaleDegrees = scales[0].degrees;
 	int32_t scaleMode = 0;
 	int32_t chordMode = 0;
 
@@ -432,10 +432,10 @@ public:
             // This is the most cursed expression
             // 4 + cvOctave: generates an integer that will give us the root in the scale array
             // intervals[14 + scaleDegree + chords[chord][1]]: 
-			int32_t chordMultiplier = scale[__USAT(4 + cvOctave + intervals[12 + scaleDegree + chords[chord][1]], 7)] << 5;
+			int32_t chordMultiplier = scale[__USAT(4 + cvOctave + intervals[12 + scaleDegree + chords[chord*2 + 1]], 7)] << 5;
 			aBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2) << chordTranspose;
 
-			chordMultiplier = scale[__USAT(4 + cvOctave + intervals[12 + scaleDegree + chords[chord][0]], 7)] << 5;
+			chordMultiplier = scale[__USAT(4 + cvOctave + intervals[12 + scaleDegree + chords[chord*2]], 7)] << 5;
 			bBasePitch = fix16_mul(coarseTune, expo.convert(chordMultiplier) >> 2) << chordTranspose;
 
 			detuneBase = 0;
@@ -481,14 +481,14 @@ public:
 			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, fineTune);
 
-			int32_t chordMultiplier = scale[64 + intervals[14 + chords[chord][1]]] << 5;
-			int32_t chordMultiplier1 = scale[64 + intervals[14 + chords[chord + 1][1]]] << 5;
+			int32_t chordMultiplier = scale[64 + intervals[14 + chords[chord*2 + 1]]] << 5;
+			int32_t chordMultiplier1 = scale[64 + intervals[14 + chords[(chord + 1)*2 + 1]]] << 5;
 			chordMultiplier = chordMultiplier + (((chordMultiplier1 - chordMultiplier) * chordFrac) >> 12);
 
 			aBasePitch = fix16_mul(cBasePitch, expo.convert(chordMultiplier) >> 5);
 
-			chordMultiplier = scale[64 + intervals[12 + chords[chord][0]]] << 5;
-			chordMultiplier1 = scale[64 + intervals[12 + chords[chord + 1][0]]] << 5;
+			chordMultiplier = scale[64 + intervals[12 + chords[chord*2]]] << 5;
+			chordMultiplier1 = scale[64 + intervals[12 + chords[(chord + 1)*2]]] << 5;
 			chordMultiplier = chordMultiplier + (((chordMultiplier1 - chordMultiplier) * chordFrac) >> 12);
 
 			bBasePitch = fix16_mul(cBasePitch, expo.convert(chordMultiplier) >> 5);
@@ -759,7 +759,17 @@ public:
 	}
 
 	/// On construction, call subclass constructors and pass each a pointer to the module class.
+#ifdef BUILD_F373
 	ViaOsc3() : osc3UI(*this) {
+#endif
+#ifdef BUILD_VIRTUAL
+    ViaOsc3(std::string binPath) : osc3UI(*this) {
+#endif
+
+        #ifdef BUILD_VIRTUAL
+        scales = (Osc3Scale *) malloc(8 * sizeof(Osc3Scale));
+        readScalesFromFile(binPath);
+        #endif
 
 		/// Link the module GPIO registers.
 		initializeAuxOutputs();
