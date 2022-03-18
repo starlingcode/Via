@@ -11,8 +11,12 @@
 #include "user-interface.hpp"
 #include <via-platform-binding.hpp>
 #include "sync-scale-defs.hpp"
-#include "sync-tables.hpp"
-#include "stdio.h"
+#include "tables.hpp"
+#ifdef BUILD_VIRTUAL
+#include <stdlib.h>
+#include <stdio.h>
+#include <string>
+#endif
 
 
 class SyncWavetable {
@@ -252,20 +256,41 @@ public:
 	 *
 	 */
 
-	SyncWavetableSet wavetableSet;
+    int32_t tableMemMaxSize = 20 * 4 * 4 + 9 * 257 * 2 * 20;
 
-	// declare an array of pointers to wavetables (stored in flash)
-	const Wavetable * wavetableArray[4][4];
-	const Wavetable * wavetableArrayGlobal[4];
+    // contains load methods
+    WavetableSet wavetableSet;
+
+#ifdef BUILD_F373
+
+	const Wavetable * wavetableArray = (const Wavetable *) 0x8020000;
+	
+#endif
+#ifdef BUILD_VIRTUAL
+    Wavetable * wavetableArray;
+    void readTableSetFromFile(std::string path) {
+        FILE * tableFile = fopen(path.c_str(), "r");
+        if (tableFile == NULL) {
+            return; // TODO: Error handling for file not exist or something
+        }
+        fread(wavetableArray, tableMemMaxSize, 1, tableFile);
+        fclose(tableFile);
+    }
+#endif
 
 	// declare arrays to store the active tables
 	uint32_t wavetableRead[9][517];
 
-	// declare functions to set the currently active tables
-	void switchWavetable(const Wavetable *);
-	void switchWavetableGlobal(const Wavetable *);
-
-	void fillWavetableArray(void);
+    // declare functions to set the currently active tables
+    #ifdef BUILD_F373
+    void switchWavetable(const Wavetable * table) {
+    #endif
+    #ifdef BUILD_VIRTUAL
+    void switchWavetable(Wavetable * table) {
+    #endif
+        wavetableSet.loadWavetableWithDiff(table, (uint32_t *) wavetableRead);
+        syncWavetable.tableSize = table->numWaveforms - 1;
+    }
 
 
 	const Scale * scaleArray[4][4];
@@ -481,7 +506,18 @@ public:
 	 *
 	 */
 
+#ifdef BUILD_F373
 	ViaSync() : syncUI(*this) {
+#endif
+#ifdef BUILD_VIRTUAL
+    ViaSync(std::string binPath) : syncUI(*this) {
+#endif
+
+        #ifdef BUILD_VIRTUAL
+        wavetableArray = (Wavetable *) malloc(tableMemMaxSize);
+        readTableSetFromFile(binPath);
+        #endif
+        wavetableSet.startAddress = ((uint16_t *) wavetableArray) + 8 * 20;
 		init();
 		for (int32_t i = 0; i < 32; i++) {
 			writeBuffer(&tapStore, 0);

@@ -3,8 +3,6 @@
 
 void ViaScanner::init(void) {
 
-	fillWavetableArray();
-
 	scanner.xTable = (uint32_t *) &wavetableXRead[0][0];
 	scanner.yTable = (uint32_t *) &wavetableYRead[0][0];
 

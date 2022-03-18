@@ -93,10 +93,10 @@ void ViaSync::handleButton5ModeChange(int32_t mode) {
 	scaleColor.b = hueSpace[scaleHue].b;
 	updateRGBDisplay(scaleColor.r, scaleColor.g, scaleColor.b, 1);
 	if (syncUI.TABLE_GROUP_MODE) {
-		switchWavetableGlobal(wavetableArrayGlobal[syncUI.TABLE_MODE]);
+		switchWavetable(wavetableArray + 4 * 4 + syncUI.TABLE_MODE);
 	} else {
 		syncUI.TABLE_MODE = 0;
-		switchWavetable(wavetableArray[mode][syncUI.TABLE_MODE]);
+		switchWavetable(wavetableArray + 4 * mode + syncUI.TABLE_MODE);
 	}
 
 }
@@ -110,10 +110,9 @@ void ViaSync::handleButton5ModeInit(int32_t mode) {
 	scaleColor.b = hueSpace[scaleHue].b;
 	updateRGBDisplay(scaleColor.r, scaleColor.g, scaleColor.b, 1);
 	if (syncUI.TABLE_GROUP_MODE) {
-		switchWavetableGlobal(wavetableArrayGlobal[syncUI.TABLE_MODE]);
+		switchWavetable(wavetableArray + 4 * 4 + syncUI.TABLE_MODE);
 	} else {
-		syncUI.TABLE_MODE = 0;
-		switchWavetable(wavetableArray[mode][syncUI.TABLE_MODE]);
+		switchWavetable(wavetableArray + 4 * mode + syncUI.TABLE_MODE);
 	}
 
 }
@@ -121,9 +120,9 @@ void ViaSync::handleButton5ModeInit(int32_t mode) {
 void ViaSync::handleButton6ModeChange(int32_t mode) {
 
 	if (syncUI.TABLE_GROUP_MODE) {
-		switchWavetableGlobal(wavetableArrayGlobal[mode]);
+		switchWavetable(wavetableArray + 4 * 4 + mode);
 	} else {
-		switchWavetable(wavetableArray[syncUI.GROUP_MODE][mode]);
+		switchWavetable(wavetableArray + 4 * syncUI.GROUP_MODE + mode);
 	}
 
 }
@@ -183,10 +182,10 @@ void ViaSync::handleAux3ModeChange(int32_t mode) {
 
 void ViaSync::handleAux4ModeChange(int32_t mode) {
 
-	if (mode) {
-		switchWavetableGlobal(wavetableArrayGlobal[syncUI.TABLE_MODE]);
+	if (syncUI.TABLE_GROUP_MODE) {
+		switchWavetable(wavetableArray + 4 * 4 + syncUI.TABLE_MODE);
 	} else {
-		switchWavetable(wavetableArray[syncUI.GROUP_MODE][syncUI.TABLE_MODE]);
+		switchWavetable(wavetableArray + 4 * syncUI.GROUP_MODE + syncUI.TABLE_MODE);
 	}
 
 }

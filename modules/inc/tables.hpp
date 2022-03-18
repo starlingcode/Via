@@ -11,10 +11,9 @@
 /// Wavetable data struct storing a wavetable as two halves, an attack and release, generated with (link)
 class Wavetable {
 public:
-    /// Array of attack slopes, each an array of 16 bit sample values.
-	const uint16_t (*attackSlope)[257];
-	/// Array of release slopes, each an array of 16 bit sample values stored in reverse time order.
-	const uint16_t (*releaseSlope)[257];
+    // Address offsets to slope family
+    uint32_t attackSlope;
+    uint32_t releaseSlope;
 	/// Length in samples of each slope.
 	uint32_t slopeLength;
 	/// Number of slopes in the arrays.
@@ -26,10 +25,22 @@ class WavetableSet {
 
 public:
 
+#ifdef BUILD_F373
+    const uint16_t * startAddress;
+#endif
+#ifdef BUILD_VIRTUAL
+    uint16_t * startAddress;
+#endif
+
 	/// Load each sample from flash to ram with bitshift by 3 and store in bottom halfword.
 	/// Store difference between sample and corresponding sample in adjacent waveform in top halfword
 
+#ifdef BUILD_F373
 	void loadWavetableWithDiff(const Wavetable * table,
+#endif
+#ifdef BUILD_VIRTUAL
+	void loadWavetableWithDiff(Wavetable * table,
+#endif
 			uint32_t * tableRead) {
 
 		uint32_t numSamples = table->slopeLength;
@@ -37,24 +48,24 @@ public:
 		//for each table in the table
 		for (uint32_t i = 0; i < table->numWaveforms; i++) {
 			//include the "last two" samples from release
-			*((tableRead + 517 * i) + 0) = *(*(table->releaseSlope + i) + 0) >> 3;
-			*((tableRead + 517 * i) + 1) = *(*(table->releaseSlope + i) + 0) >> 3;
+			*((tableRead + 517 * i) + 0) = *((startAddress + table->releaseSlope + i*257) + 0) >> 3;
+			*((tableRead + 517 * i) + 1) = *((startAddress + table->releaseSlope + i*257) + 0) >> 3;
 			//fill in a full cycle's worth of samples
 			//the release gets reversed
 			//we drop the last sample from attack and the first from releas
 			for (uint32_t j = 0; j < numSamples; j++) {
-				*((tableRead + 517 * i) + 2 + j) = *(*(table->attackSlope + i) + j)
+				*((tableRead + 517 * i) + 2 + j) = *((startAddress + table->attackSlope + i*257) + j)
 						>> 3;
 				*((tableRead + 517 * i) + 2 + numSamples + j) =
-						*(*(table->releaseSlope + i) + numSamples - j) >> 3;
+						*((startAddress + table->releaseSlope + i*257) + numSamples - j) >> 3;
 			}
 			//pad out the "first two" samples from attack
 			*((tableRead + 517 * i) + (numSamples << 1) + 2) =
-					*(*(table->attackSlope + i) + 0) >> 3;
+					*((startAddress + table->attackSlope + i*257) + 0) >> 3;
 			*((tableRead + 517 * i) + (numSamples << 1) + 3) =
-					*(*(table->attackSlope + i) + 0) >> 3;
+					*((startAddress + table->attackSlope + i*257) + 0) >> 3;
 			*((tableRead + 517 * i) + (numSamples << 1) + 4) =
-					*(*(table->attackSlope + i) + 0) >> 3;
+					*((startAddress + table->attackSlope + i*257) + 0) >> 3;
 		}
 
 		for (uint32_t i = 0; i < table->numWaveforms - 1; i++) {
@@ -69,7 +80,12 @@ public:
 	/// Load each sample from flash to ram at full precision and store in bottom halfword.
 	/// Store difference between sample and corresponding sample in adjacent waveform in top halfword
 
+#ifdef BUILD_F373
 	void loadWavetableWithDiff15Bit(const Wavetable * table,
+#endif
+#ifdef BUILD_VIRTUAL
+	void loadWavetableWithDiff15Bit(Wavetable * table,
+#endif
 			uint32_t * tableRead) {
 
 		uint32_t numSamples = table->slopeLength;
@@ -77,23 +93,23 @@ public:
 		//for each table in the table
 		for (uint32_t i = 0; i < table->numWaveforms; i++) {
 			//pad with duplicate samples
-			*((tableRead + 517 * i) + 0) = *(*(table->releaseSlope + i) + 0);
-			*((tableRead + 517 * i) + 1) = *(*(table->releaseSlope + i) + 0);
+			*((tableRead + 517 * i) + 0) = *((startAddress + table->releaseSlope + i*257) + 0);
+			*((tableRead + 517 * i) + 1) = *((startAddress + table->releaseSlope + i*257) + 0);
 			//fill in a full cycle's worth of samples
 			//the release gets reversed
 			//we drop the last sample from attack and the first from releas
 			for (uint32_t j = 0; j < numSamples; j++) {
-				*((tableRead + 517 * i) + 2 + j) = *(*(table->attackSlope + i) + j);
+				*((tableRead + 517 * i) + 2 + j) = *((startAddress + table->attackSlope + i*257) + j);
 				*((tableRead + 517 * i) + 2 + numSamples + j) =
-						*(*(table->releaseSlope + i) + numSamples - j);
+						*((startAddress + table->releaseSlope + i*257) + numSamples - j);
 			}
 			//pad with duplicate samples
 			*((tableRead + 517 * i) + (numSamples << 1) + 2) =
-					*(*(table->attackSlope + i) + 0);
+					*((startAddress + table->attackSlope + i*257) + 0);
 			*((tableRead + 517 * i) + (numSamples << 1) + 3) =
-					*(*(table->attackSlope + i) + 0);
+					*((startAddress + table->attackSlope + i*257) + 0);
 			*((tableRead + 517 * i) + (numSamples << 1) + 4) =
-					*(*(table->attackSlope + i) + 0);
+					*((startAddress + table->attackSlope + i*257) + 0);
 		}
 
 		for (uint32_t i = 0; i < table->numWaveforms - 1; i++) {
@@ -108,7 +124,12 @@ public:
 	/// Load each sample from flash to ram at full precision and store in bottom halfword.
 	/// Store difference between sample and corresponding sample in adjacent waveform in top halfword
 
+#ifdef BUILD_F373
 	void loadWavetableWithDiff15BitSlope(const Wavetable * table,
+#endif
+#ifdef BUILD_VIRTUAL
+	void loadWavetableWithDiff15BitSlope(Wavetable * table,
+#endif
 			uint32_t * tableRead) {
 
 		uint32_t numSamples = table->slopeLength;
@@ -116,15 +137,15 @@ public:
 		//for each table in the table
 		for (uint32_t i = 0; i < table->numWaveforms; i++) {
 			//pad with duplicate samples
-			*((tableRead + 517 * i) + 0) = *(*(table->releaseSlope + i) + 0);
-			*((tableRead + 517 * i) + 1) = *(*(table->releaseSlope + i) + 0);
+			*((tableRead + 517 * i) + 0) = *((startAddress + table->releaseSlope + i*257) + 0);
+			*((tableRead + 517 * i) + 1) = *((startAddress + table->releaseSlope + i*257) + 0);
 			//fill in a full cycle's worth of samples
 			//the release gets reversed
 			//we drop the last sample from attack and the first from releas
 			for (uint32_t j = 0; j < numSamples; j++) {
-				*((tableRead + 517 * i) + 2 + j) = *(*(table->attackSlope + i) + j);
+				*((tableRead + 517 * i) + 2 + j) = *((startAddress + table->attackSlope + i*257) + j);
 				*((tableRead + 517 * i) + 2 + numSamples + j) =
-						*(*(table->releaseSlope + i) + numSamples - j);
+						*((startAddress + table->releaseSlope + i*257) + numSamples - j);
 			}
 			//pad with duplicate samples
 			*((tableRead + 517 * i) + (numSamples << 1) + 2) =
@@ -145,8 +166,12 @@ public:
 	}
 
 
-
+#ifdef BUILD_F373
 	void loadSingleTable15Bit(const Wavetable * table,
+#endif
+#ifdef BUILD_VIRTUAL
+	void loadSingleTable15Bit(Wavetable * table,
+#endif
 			uint32_t * tableRead) {
 
 		uint32_t numSamples = table->slopeLength;
@@ -154,23 +179,23 @@ public:
 		//for each table in the table
 		for (uint32_t i = 0; i < 1; i++) {
 			//pad with duplicate samples
-			*((tableRead + 517 * i) + 0) = *(*(table->releaseSlope + i) + 0);
-			*((tableRead + 517 * i) + 1) = *(*(table->releaseSlope + i) + 0);
+			*((tableRead + 517 * i) + 0) = *((startAddress + table->releaseSlope + i*257) + 0);
+			*((tableRead + 517 * i) + 1) = *((startAddress + table->releaseSlope + i*257) + 0);
 			//fill in a full cycle's worth of samples
 			//the release gets reversed
 			//we drop the last sample from attack and the first from releas
 			for (uint32_t j = 0; j < numSamples; j++) {
-				*((tableRead + 517 * i) + 2 + j) = *(*(table->attackSlope + i) + j);
+				*((tableRead + 517 * i) + 2 + j) = *((startAddress + table->attackSlope + i*257) + j);
 				*((tableRead + 517 * i) + 2 + numSamples + j) =
-						*(*(table->releaseSlope + i) + numSamples - j);
+						*((startAddress + table->releaseSlope + i*257) + numSamples - j);
 			}
 			//pad with duplicate samples
 			*((tableRead + 517 * i) + (numSamples << 1) + 2) =
-					*(*(table->attackSlope + i) + 0);
+					*((startAddress + table->attackSlope + i*257) + 0);
 			*((tableRead + 517 * i) + (numSamples << 1) + 3) =
-					*(*(table->attackSlope + i) + 0);
+					*((startAddress + table->attackSlope + i*257) + 0);
 			*((tableRead + 517 * i) + (numSamples << 1) + 4) =
-					*(*(table->attackSlope + i) + 0);
+					*((startAddress + table->attackSlope + i*257) + 0);
 		}
 
 	}

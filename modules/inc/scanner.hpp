@@ -10,7 +10,12 @@
 
 #include "user-interface.hpp"
 #include <via-platform-binding.hpp>
-#include <scanner-tables.hpp>
+#include <tables.hpp>
+#ifdef BUILD_VIRTUAL
+#include <stdlib.h>
+#include <stdio.h>
+#include <string>
+#endif
 
 class ThreeAxisScanner {
 
@@ -418,20 +423,53 @@ public:
 	 *
 	 */
 
-	ScannerWavetableSet wavetableSet;
+    int32_t tableMemMaxSize = 16 * 4 * 4 + 5 * 257 * 2 * 32;
 
-	// declare an array of pointers to wavetables (stored in flash)
-	const Wavetable * wavetableArray[2][8];
+    // contains load methods
+    WavetableSet wavetableSet;
+
+#ifdef BUILD_F373
+
+	const Wavetable * wavetableArray = (const Wavetable *) 0x8020000;
+	
+#endif
+#ifdef BUILD_VIRTUAL
+    Wavetable * wavetableArray;
+    void readTableSetFromFile(std::string path) {
+        FILE * tableFile = fopen(path.c_str(), "r");
+        if (tableFile == NULL) {
+            return; // TODO: Error handling for file not exist or something
+        }
+        fread(wavetableArray, tableMemMaxSize, 1, tableFile);
+        fclose(tableFile);
+    }
+#endif
 
 	// declare arrays to store the active tables
 	uint32_t wavetableXRead[5][517];
 	uint32_t wavetableYRead[5][517];
 
-	void fillWavetableArray(void);
+    // declare functions to set the currently active tables
+    #ifdef BUILD_F373
+    void switchWavetableX(const Wavetable * table) {
+    #endif
+    #ifdef BUILD_VIRTUAL
+    void switchWavetableX(Wavetable * table) {
+    #endif
+        wavetableSet.loadWavetableWithDiff15BitSlope(table, (uint32_t *) wavetableXRead);
+        scanner.xTableSize = table->numWaveforms - 1;
+    }
 
-	// declare functions to set the currently active tables
-	void switchWavetableX(const Wavetable *);
-	void switchWavetableY(const Wavetable *);
+    // declare functions to set the currently active tables
+    #ifdef BUILD_F373
+    void switchWavetableY(const Wavetable * table) {
+    #endif
+    #ifdef BUILD_VIRTUAL
+    void switchWavetableY(Wavetable * table) {
+    #endif
+        wavetableSet.loadWavetableWithDiff15BitSlope(table, (uint32_t *) wavetableYRead);
+        scanner.yTableSize = table->numWaveforms - 1;
+    }
 
 	// phase distortion table is fixed
 	void initPhaseDistTable(void);
@@ -461,7 +499,18 @@ public:
 	 *
 	 */
 
+#ifdef BUILD_F373
 	ViaScanner() : scannerUI(*this) {
+#endif
+#ifdef BUILD_VIRTUAL
+    ViaScanner(std::string binPath) : scannerUI(*this) {
+#endif
+
+        #ifdef BUILD_VIRTUAL
+        wavetableArray = (Wavetable *) malloc(tableMemMaxSize * 2);
+        readTableSetFromFile(binPath);
+        #endif
+        wavetableSet.startAddress = ((uint16_t *) wavetableArray) + 8 * 16;
 		init();
 	}
 

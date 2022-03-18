@@ -35,13 +35,13 @@ void ViaMeta::handleButton1ModeChange(int32_t mode) {
 
 void ViaMeta::handleButton2ModeChange(int32_t mode) {
 
-	switchWavetable(wavetableArray[metaUI.FREQ_MODE][mode]);
+	switchWavetable(wavetableArray + 8*metaUI.FREQ_MODE + mode);
 
 }
 
 void ViaMeta::handleButton3ModeChange(int32_t mode) {
 
-	switchWavetable(wavetableArray[mode][metaUI.TABLE]);
+	switchWavetable(wavetableArray + 8*mode + metaUI.TABLE);
 
 	switch (mode) {
 	case audio:
@@ -114,7 +114,7 @@ void ViaMeta::handleButton4ModeChange(int32_t mode) {
 
 void ViaMeta::handleButton5ModeChange(int32_t mode) {
 
-	switchWavetable(wavetableArray[metaUI.FREQ_MODE][mode]);
+	switchWavetable(wavetableArray + 8*metaUI.FREQ_MODE + mode);
 
 }
 

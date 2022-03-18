@@ -11,7 +11,12 @@
 #include "user-interface.hpp"
 #include <via-platform-binding.hpp>
 #include <dsp.hpp>
-#include "meta-tables.hpp"
+#include "tables.hpp"
+#ifdef BUILD_VIRTUAL
+#include <stdlib.h>
+#include <stdio.h>
+#include <string>
+#endif
 
 // simplest wavetable, provide a phase and a morph
 
@@ -353,22 +358,50 @@ public:
 	 *
 	 */
 
-	MetaWavetableSet wavetableSet;
+    int32_t tableMemMaxSize = 16 * 4 + 5 * 257 * 2;
 
-	// declare an array of pointers to wavetables (stored in flash)
-	const Wavetable * wavetableArray[3][8];
+    // contains load methods
+    WavetableSet wavetableSet;
+
+#ifdef BUILD_F373
+
+	const Wavetable * wavetableArray = (const Wavetable *) 0x8020000;
+	
+#endif
+#ifdef BUILD_VIRTUAL
+    Wavetable * wavetableArray;
+    void readTableSetFromFile(std::string path) {
+        FILE * tableFile = fopen(path.c_str(), "r");
+        if (tableFile == NULL) {
+            return; // TODO: Error handling for file not exist or something
+        }
+        fread(wavetableArray, tableMemMaxSize, 1, tableFile);
+        fclose(tableFile);
+    }
+#endif
 
 	// declare arrays to store the active tables
 	uint32_t wavetableRead[9][517];
 	uint32_t wavetableReadDrum[517];
 	uint32_t wavetableReadDrum2[517];
 
-	// declare functions to set the currently active tables
-	void switchWavetable(const Wavetable *);
+    // declare functions to set the currently active tables
+    #ifdef BUILD_F373
+    void switchWavetable(const Wavetable * table) {
+    #endif
+    #ifdef BUILD_VIRTUAL
+    void switchWavetable(Wavetable * table) {
+    #endif
+        wavetableSet.loadWavetableWithDiff(table, (uint32_t *) wavetableRead);
+        metaWavetable.tableSize = table->numWaveforms - 1;
+    }
 	// phase distortion table is fixed
-	void initPhaseDistTable(void);
-	void fillWavetableArray(void);
-	void initDrum(void);
+    void initDrum(void) {
+        wavetableSet.loadSingleTable15Bit(wavetableArray + 3 * 8, (uint32_t *) wavetableReadDrum);
+        for (int32_t i = 0; i < 4; i++) {
+            drumFullScale[i] = 32767;
+        }
+    }
 	int16_t drumWrite[4];
 	int16_t drum2Write[4];
 	int16_t drum3Write[4];
@@ -607,7 +640,18 @@ public:
 	 *
 	 */
 
+#ifdef BUILD_F373
 	ViaMeta() : metaUI(*this) {
+#endif
+#ifdef BUILD_VIRTUAL
+    ViaMeta(std::string binPath) : metaUI(*this) {
+#endif
+
+        #ifdef BUILD_VIRTUAL
+        wavetableArray = (Wavetable *) malloc(tableMemMaxSize);
+        readTableSetFromFile(binPath);
+        #endif
+        wavetableSet.startAddress = ((uint16_t *) wavetableArray) + 8 * 25;
 		init();
 	}
 

@@ -5,7 +5,6 @@ void ViaSync::init(void) {
 
 	initializeAuxOutputs();
 
-	fillWavetableArray();
 
 	// switchWavetable(wavetableArray[0][0]);
 
