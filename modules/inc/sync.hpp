@@ -256,7 +256,7 @@ public:
 	 *
 	 */
 
-    int32_t tableMemMaxSize = 20 * 4 * 4 + 9 * 257 * 2 * 20;
+    int32_t tableMemMaxSize = (20 * 16) + (9 * 257 * 20 * 2 * 2);
 
     // contains load methods
     WavetableSet wavetableSet;

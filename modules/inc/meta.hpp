@@ -358,7 +358,7 @@ public:
 	 *
 	 */
 
-    int32_t tableMemMaxSize = 16 * 4 + 5 * 257 * 2;
+    int32_t tableMemMaxSize = (25 * 4 * 4) + (9 * 257 * 2 * 25 * 2);
 
     // contains load methods
     WavetableSet wavetableSet;
@@ -392,7 +392,7 @@ public:
     #ifdef BUILD_VIRTUAL
     void switchWavetable(Wavetable * table) {
     #endif
-        wavetableSet.loadWavetableWithDiff(table, (uint32_t *) wavetableRead);
+        wavetableSet.loadWavetableWithDiff15Bit(table, (uint32_t *) wavetableRead);
         metaWavetable.tableSize = table->numWaveforms - 1;
     }
 	// phase distortion table is fixed
