@@ -232,6 +232,12 @@ public:
 
 	const struct Sync3Scale * scales = (const struct Sync3Scale *) 0x8020000;
 	
+	const uint32_t * numerators = scales[0].numerators;
+	const uint32_t * denominators = scales[0].denominators;
+	const uint32_t * dividedPhases = scales[0].dividedPhases;
+	const uint32_t * keys = scales[0].keys;
+
+
 #endif
 #ifdef BUILD_VIRTUAL
     struct Sync3Scale * scales;
@@ -245,10 +251,6 @@ public:
     }
 #endif
 
-	uint32_t * numerators = scales[0].numerators;
-	uint32_t * denominators = scales[0].denominators;
-	uint32_t * dividedPhases = scales[0].dividedPhases;
-	uint32_t * keys = scales[0].keys;
 
 /// INSERT SCALES
 
