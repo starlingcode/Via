@@ -12,9 +12,9 @@
 extern "C" {
 #endif
 
-void (*touchStateChangeCallback)(void *);
-void (*touchStateErrorCallback)(void *);
-void * thisUI;
+extern void (*touchStateChangeCallback)(void *);
+extern void (*touchStateErrorCallback)(void *);
+extern void * thisUI;
 
 #ifdef __cplusplus
 }
