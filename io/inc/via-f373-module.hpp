@@ -155,6 +155,38 @@ struct ViaModuleF373: ViaModuleTest<ViaModuleF373> {
 		SET_BLUE_LED_ONOFF(onOff);
 	}
 
+	/// Handle a rising edge at the main logic input
+	virtual void mainRisingEdgeCallback(void) {};
+	/// Handle a falling edge at the main logic input
+	virtual void mainFallingEdgeCallback(void) {};
+
+	/// Handle a rising edge at the expander logic input
+	virtual void auxRisingEdgeCallback(void) {};
+	/// Handle a falling edge at the expander logic input
+	virtual void auxFallingEdgeCallback(void) {};
+
+	/// Handle a press event on the expander control button
+	virtual void buttonPressedCallback(void) {};
+	/// Handle a release event on the expander control button
+	virtual void buttonReleasedCallback(void) {};
+
+	/// unused
+	virtual void ioProcessCallback(void) {};
+
+	/// Fill the first half of the dac buffers
+	virtual void halfTransferCallback(void) {};
+	/// Fill the second half of the dac buffers
+	virtual void transferCompleteCallback(void) {};
+	/// Handle an end of conversion event for the 12 bit control rate ADCs
+	virtual void slowConversionCallback(void) {};
+
+	/// Handle an overflow interrupt from aux timer 1
+	virtual void auxTimer1InterruptCallback(void) {};
+	/// Handle an overflow interrupt from aux timer 2
+	virtual void auxTimer2InterruptCallback(void) {};
+	/// Handle an overflow interrupt from aux timer 3
+	virtual void auxTimer3InterruptCallback(void) {};
+
 };
 
 

@@ -1,4 +1,4 @@
-/** \file via_f373_system.hpp
+/** \file via-f373-system.hpp
  * \brief Hardware IO defines
  *
  *  Some hardware implementation macros and global variable definitions to connect with the CMSIS and STM32 libraries used

@@ -1,5 +1,5 @@
 /**
- * \file via_platform_binding.hpp
+ * \file via-platform-binding.hpp
  * \brief Link the correct module class definition per the build target.
  *
  *  Include the correct module class definition per the preprocessor defines.

@@ -16,6 +16,8 @@
 #include <string>
 #endif
 
+#define PATTERN_START_ADDRESS 0x8020000
+
 enum {
 	// Dual soft gate (use crossfader as dual and gate with followed by mixing "or" stage)
 	SOFT_GATE_EXECUTE,
@@ -123,7 +125,7 @@ public:
 	const uint32_t * currentBPattern;
     const GateseqPatternBank * currentABank;
     const GateseqPatternBank * currentBBank;
-    const uint32_t * bankStart; 
+    const uint32_t * bankBaseAddress = (const uint32_t *) PATTERN_START_ADDRESS; // TODO start addres
 #endif
 #ifdef BUILD_VIRTUAL
 	uint32_t * currentAPattern;
@@ -439,7 +441,7 @@ public:
 
 
 #ifdef BUILD_F373
-	const struct GateseqPatternBank * banks = (const struct GateseqPatternBank *) 0x8020000;
+	const struct GateseqPatternBank * banks = (const struct GateseqPatternBank *) PATTERN_START_ADDRESS;
 #endif
 #ifdef BUILD_VIRTUAL
     struct GateseqPatternBank * banks = NULL;

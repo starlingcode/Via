@@ -8,6 +8,18 @@
 #include "user-interface.hpp"
 #include "touch-lib-link.hpp"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void (*touchStateChangeCallback)(void *);
+void (*touchStateErrorCallback)(void *);
+void * thisUI;
+
+#ifdef __cplusplus
+}
+#endif
+
 /// Called when subclasses are constructed.
 void linkUI(void * callback, void * ui) {
 
