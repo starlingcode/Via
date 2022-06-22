@@ -240,8 +240,14 @@ public:
 
 #endif
 #ifdef BUILD_VIRTUAL
-    struct Sync3Scale * scales;
-    void readScalesFromFile(std::string path) {
+    	struct Sync3Scale * scales;
+
+	uint32_t * numerators = scales[0].numerators;
+	uint32_t * denominators = scales[0].denominators;
+	uint32_t * dividedPhases = scales[0].dividedPhases;
+	uint32_t * keys = scales[0].keys;
+
+    	void readScalesFromFile(std::string path) {
         FILE * scaleFile = fopen(path.c_str(), "r");
         if (scaleFile == NULL) {
             return; // TODO: Error handling for file not exist or something
