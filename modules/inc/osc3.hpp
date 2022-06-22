@@ -481,8 +481,8 @@ public:
 			cBasePitch = fix16_mul(cBasePitch, absoluteTune);
 			cBasePitch = fix16_mul(cBasePitch, fineTune);
 
-			int32_t chordMultiplier = scale[64 + intervals[14 + chords[chord*2 + 1]]] << 5;
-			int32_t chordMultiplier1 = scale[64 + intervals[14 + chords[(chord + 1)*2 + 1]]] << 5;
+			int32_t chordMultiplier = scale[64 + intervals[12 + chords[chord*2 + 1]]] << 5;
+			int32_t chordMultiplier1 = scale[64 + intervals[12 + chords[(chord + 1)*2 + 1]]] << 5;
 			chordMultiplier = chordMultiplier + (((chordMultiplier1 - chordMultiplier) * chordFrac) >> 12);
 
 			aBasePitch = fix16_mul(cBasePitch, expo.convert(chordMultiplier) >> 5);
