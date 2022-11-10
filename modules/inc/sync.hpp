@@ -269,7 +269,7 @@ public:
 #ifdef BUILD_VIRTUAL
     Wavetable * wavetableArray;
     void readTableSetFromFile(std::string path) {
-        FILE * tableFile = fopen(path.c_str(), "r");
+        FILE * tableFile = fopen(path.c_str(), "rb");
         if (tableFile == NULL) {
             return; // TODO: Error handling for file not exist or something
         }

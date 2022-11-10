@@ -248,7 +248,7 @@ public:
 	uint32_t * keys = scales[0].keys;
 
     	void readScalesFromFile(std::string path) {
-        FILE * scaleFile = fopen(path.c_str(), "r");
+        FILE * scaleFile = fopen(path.c_str(), "rb");
         if (scaleFile == NULL) {
             return; // TODO: Error handling for file not exist or something
         }

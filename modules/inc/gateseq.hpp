@@ -446,7 +446,7 @@ public:
 #ifdef BUILD_VIRTUAL
     struct GateseqPatternBank * banks = NULL;
     void readPatternsFromFile(std::string path) {
-        FILE * patternsFile = fopen(path.c_str(), "r");
+        FILE * patternsFile = fopen(path.c_str(), "rb");
         if (patternsFile == NULL) {
             return; // TODO: Error handling for file not exist or something
         }

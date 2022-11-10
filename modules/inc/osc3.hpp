@@ -328,7 +328,7 @@ public:
 #ifdef BUILD_VIRTUAL
     struct Osc3Scale * scales;
     void readScalesFromFile(std::string path) {
-        FILE * scaleFile = fopen(path.c_str(), "r");
+        FILE * scaleFile = fopen(path.c_str(), "rb");
         if (scaleFile == NULL) {
             return; // TODO: Error handling for file not exist or something
         }
