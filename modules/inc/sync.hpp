@@ -254,9 +254,31 @@ public:
 
 	SyncWavetableSet wavetableSet;
 
+<<<<<<< Updated upstream
 	// declare an array of pointers to wavetables (stored in flash)
 	const Wavetable * wavetableArray[4][4];
 	const Wavetable * wavetableArrayGlobal[4];
+=======
+    // contains load methods
+    WavetableSet wavetableSet;
+
+#ifdef BUILD_F373
+
+	const Wavetable * wavetableArray = (const Wavetable *) 0x8020788;
+	
+#endif
+#ifdef BUILD_VIRTUAL
+    Wavetable * wavetableArray;
+    void readTableSetFromFile(std::string path) {
+        FILE * tableFile = fopen(path.c_str(), "r");
+        if (tableFile == NULL) {
+            return; // TODO: Error handling for file not exist or something
+        }
+        fread(wavetableArray, tableMemMaxSize, 1, tableFile);
+        fclose(tableFile);
+    }
+#endif
+>>>>>>> Stashed changes
 
 	// declare arrays to store the active tables
 	uint32_t wavetableRead[9][517];
